@@ -12,6 +12,11 @@ public class CostoHorasTecnico {
 	CostoHorasTecnico() {
 	}
 
+	@Override
+	public String toString() {
+		return "CostoHorasTecnico [junior=" + junior + ", semiSenior=" + semiSenior + ", senior=" + senior + "]";
+	}
+
 	CostoHorasTecnico(double junior, double semiSenior, double senior) {
 		this.junior = junior > 0 ? junior : 0;
 		this.semiSenior = semiSenior > 0 ? semiSenior : 0;

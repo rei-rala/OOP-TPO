@@ -7,6 +7,11 @@ public abstract class Recurso {
 	private String descripcion;
 	private double costo;
 
+	public Recurso(String descripcion, double costo) {
+		this.descripcion = descripcion;
+		this.costo = costo;
+	}
+
 	public String getDescripcion() {
 		return descripcion;
 	}
@@ -20,7 +25,7 @@ public abstract class Recurso {
 	}
 
 	public void setCosto(double costo) {
-		this.costo = costo;
+		this.costo = costo > 0 ? costo : 0;
 	}
 
 	@Override

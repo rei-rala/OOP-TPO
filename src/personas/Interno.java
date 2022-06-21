@@ -10,10 +10,19 @@ public abstract class Interno extends Persona {
 	public static int conteoInternos = 0;
 	public final int legajo;
 
-	private String contrasena;
+	protected String contrasena;
 
 	public Interno(String nombre, long dni, String direccion, String telefono, String contrasena) {
 		super(nombre, dni, direccion, telefono);
+		this.legajo = ++conteoInternos;
+		this.contrasena = contrasena;
+
+		Empresa.getInstance().agregarInterno(this);
+	}
+
+	// ALTERNATIVO SIN DATOS
+	public Interno(String nombre, String contrasena) {
+		super(nombre);
 		this.legajo = ++conteoInternos;
 		this.contrasena = contrasena;
 
@@ -34,7 +43,7 @@ public abstract class Interno extends Persona {
 
 	@Override
 	public String toString() {
-		return "Interno [legajo=" + legajo + ", nombre=" + nombre + ", dni=" + dni + ", direccion=" + direccion
+		return "Interno [legajo=" + legajo + " PASS: " + ", nombre=" + nombre + ", dni=" + dni + ", direccion=" + direccion
 				+ ", telefono=" + telefono + "]";
 	}
 

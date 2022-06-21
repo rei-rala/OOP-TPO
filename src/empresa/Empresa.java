@@ -2,7 +2,7 @@ package empresa;
 
 import java.util.ArrayList;
 
-import comercial.Articulo;
+import comercial.*;
 import personas.*;
 
 public class Empresa {
@@ -12,11 +12,24 @@ public class Empresa {
 	static ArrayList<Interno> internos = new ArrayList<Interno>();
 	static ArrayList<Cliente> clientes = new ArrayList<Cliente>();
 	static ArrayList<Tecnico> tecnicos = new ArrayList<Tecnico>();
+	static ArrayList<Servicio> servicios = new ArrayList<Servicio>();
+	static ArrayList<Factura> facturas = new ArrayList<Factura>();
 	static double costoCombustible;
 	static double costoViaje;
 	static CostoHorasTecnico costoHorasTecnico = new CostoHorasTecnico();
 
-	private Empresa() {
+	private final double RENTABILIDAD = 0.3;
+	private final double IVA = 0.21;
+
+	public double getRENTABILIDAD() {
+		return RENTABILIDAD;
+	}
+
+	public double getIVA() {
+		return IVA;
+	}
+
+	public Empresa() {
 	}
 
 	public static Empresa getInstance() {
@@ -24,7 +37,6 @@ public class Empresa {
 			empresa = new Empresa();
 		}
 		return empresa;
-
 	}
 
 	// Metodos EMPRESA
@@ -35,13 +47,22 @@ public class Empresa {
 			if (interno.getLegajo() != legajo) {
 				continue;
 			}
-			if (interno.getContrasena() == contrasena) {
+
+			if (interno.getContrasena() == contrasena || interno.getContrasena().equals(contrasena)) {
 				loggeado = interno;
 				break;
 			}
 		}
 
 		return loggeado;
+	}
+
+	@Override
+	public String toString() {
+		return "Empresa [getCostoCombustible()=" + getCostoCombustible() + ", getCostoViaje()=" + getCostoViaje()
+				+ ", obtenerCostoHoraTecnico()=" + obtenerCostoHoraTecnico() + ", getArticulos()=" + getArticulos()
+				+ ", getInternos()=" + getInternos() + ", getTecnicos()=" + getTecnicos() + ", getClientes()="
+				+ getClientes() + "]";
 	}
 
 	public double getCostoCombustible() {
@@ -82,12 +103,6 @@ public class Empresa {
 	// FIN metodos EMPRESA
 
 	// Metodos: ARTICULOS
-	public void agregarArticulo(Articulo a) {
-		if (a != null) {
-			articulos.add(a);
-		}
-	}
-
 	public ArrayList<Articulo> getArticulos() {
 		return articulos;
 	}
@@ -115,21 +130,15 @@ public class Empresa {
 		return articuloEncontrado;
 	}
 
-	public void agregarArtAEmpresa(Articulo articuloAAgregar) {
-		boolean empresaContieneArt = articulos.contains(articuloAAgregar);
-
-		if (articuloAAgregar != null) {
-			return;
+	public boolean agregarArticulo(Articulo a) {
+		if (a == null || articulos.contains(a)) {
+			return false;
 		}
 
-		if (empresaContieneArt) {
-			return;
-		}
-
-		articulos.add(articuloAAgregar);
+		return articulos.add(a);
 	}
 
-	public void editarArtEmpresa(Articulo articuloAEditar, String descripcion, double stock, double costo) {
+	public void editarArticulo(Articulo articuloAEditar, String descripcion, double stock, double costo) {
 		Articulo articulo = getArticulos(articuloAEditar);
 
 		if (articulo != null) {
@@ -139,7 +148,7 @@ public class Empresa {
 		}
 	}
 
-	public void editarArtEmpresa(int SKU, String descripcion, double stock, double costo) {
+	public void editarArticulo(int SKU, String descripcion, double stock, double costo) {
 		Articulo articulo = getArticulos(SKU);
 
 		if (articulo != null) {
@@ -149,26 +158,111 @@ public class Empresa {
 		}
 	}
 
-	public void removerArticulo(int sku) {
+	public boolean removerArticulo(int sku) {
 		Articulo porBorrar = getArticulos(sku);
-
-		if (porBorrar != null) {
-			articulos.remove(sku);
-		}
+		return articulos.remove(porBorrar);
 	}
 
-	public void removerArticulo(Articulo articuloABorrar) {
-		if (articuloABorrar != null) {
-			articulos.remove(articuloABorrar);
-		}
+	public boolean removerArticulo(Articulo articuloABorrar) {
+		return articulos.remove(articuloABorrar);
+
 	}
 	// FIN Metodos: ARTICULOS
 
-	// Metodos: INTERNOS
-	public void agregarInterno(Interno i) {
-		if (i != null) {
-			internos.add(i);
+	// Metodos: SERVICIOS
+	public ArrayList<Servicio> getServicios() {
+		return servicios;
+	}
+
+	public Servicio getServicios(int nroServicio) {
+		Servicio servicioEncontrado = null;
+
+		for (Servicio s : servicios) {
+			if (s.nro == nroServicio) {
+				servicioEncontrado = s;
+				break;
+			}
 		}
+		return servicioEncontrado;
+	}
+
+	public Servicio getServicios(Servicio s) {
+		Servicio servicioEncontrado = null;
+
+		if (servicios.contains(s)) {
+			servicioEncontrado = s;
+		}
+
+		return servicioEncontrado;
+	}
+
+	public boolean agregarServicio(Servicio s) {
+		if (s == null || servicios.contains(s)) {
+			return false;
+		}
+		return servicios.add(s);
+	}
+
+	public boolean removerServicio(Servicio s) {
+		return servicios.remove(s);
+	}
+
+	public boolean removerServicio(int nroServicio) {
+		Servicio i = getServicios(nroServicio);
+		return servicios.remove(i);
+	}
+	// FIN Metodos: SERVICIOS
+
+	// Metodos: FACTURAS
+	public Factura getFacturas(int nroFactura) {
+		Factura facturaEncontrada = null;
+
+		for (Factura f : facturas) {
+			if (f.getNro() == nroFactura) {
+				facturaEncontrada = f;
+				break;
+			}
+		}
+		return facturaEncontrada;
+	}
+
+	public Factura getFacturas(Factura f) {
+		Factura facturaEncontrada = null;
+
+		if (facturas.contains(f)) {
+			facturaEncontrada = f;
+		}
+
+		return facturaEncontrada;
+	}
+
+	public ArrayList<Factura> getFacturas() {
+		return facturas;
+	}
+
+	public boolean agregarFactura(Factura f) {
+		if (f == null || facturas.contains(f)) {
+			return false;
+		}
+		return facturas.add(f);
+	}
+
+	public boolean removerFactura(Factura f) {
+		return facturas.remove(f);
+	}
+
+	public boolean removerFactura(int nroFactura) {
+		Factura i = getFacturas(nroFactura);
+		return facturas.remove(i);
+	}
+	// FIN Metodos: FACTURAS
+
+	// Metodos: INTERNOS
+	public boolean agregarInterno(Interno i) {
+		if (i == null || internos.contains(i)) {
+			return false;
+		}
+		return internos.add(i);
 	}
 
 	public Interno getInternos(int legajo) {
@@ -186,13 +280,30 @@ public class Empresa {
 	public ArrayList<Interno> getInternos() {
 		return internos;
 	}
+
+	public boolean removerInterno(Interno i) {
+		return internos.remove(i);
+	}
+
+	public boolean removerInterno(int legajo) {
+		Interno i = getInternos(legajo);
+
+		if (i.getClass() == Tecnico.class) {
+			Tecnico it = (Tecnico) i;
+			return removerTecnico(it);
+		}
+		return removerInterno(i);
+	}
 	// FIN Metodos: INTERNOS
 
 	// Metodos: TECNICOS
-	public void agregarTecnico(Tecnico t) {
-		if (t != null) {
-			internos.add(t);
-		}
+
+	public ArrayList<Tecnico> getTecnicos() {
+		return tecnicos;
+	}
+
+	public boolean removerTecnico(Tecnico t) {
+		return tecnicos.remove(t) && internos.remove(t);
 	}
 
 	public Tecnico getTecnicos(int legajo) {
@@ -207,31 +318,26 @@ public class Empresa {
 		return internoEncontrado;
 	}
 
-	public ArrayList<Tecnico> getTecnicos() {
-		return tecnicos;
-	}
-
-	public void removerTecnico(int legajo) {
-		for (Tecnico t : tecnicos) {
-			if (t.getLegajo() == legajo) {
-				tecnicos.remove(t);
-				internos.remove(t);
-				break;
-			}
+	public boolean agregarTecnico(Tecnico t) {
+		if (t == null || tecnicos.contains(t)) {
+			return false;
 		}
+		return tecnicos.add(t);
 	}
 
-	public void removerTecnico(Tecnico t) {
-		tecnicos.remove(t);
-		internos.remove(t);
+	public boolean removerTecnico(int legajo) {
+		Tecnico t = getTecnicos(legajo);
+		return removerTecnico(t);
 	}
+
 	// FIN Metodos: TECNICOS
 
 	// Metodos: CLIENTES
-	public void agregarCliente(Cliente c) {
-		if (c != null) {
-			clientes.add(c);
+	public boolean agregarCliente(Cliente c) {
+		if (c == null || clientes.contains(c)) {
+			return false;
 		}
+		return clientes.add(c);
 	}
 
 	public Cliente getClientes(int nroCliente) {
@@ -250,17 +356,13 @@ public class Empresa {
 		return clientes;
 	}
 
-	public void removerCliente(int nroCliente) {
-		for (Cliente c : clientes) {
-			if (c.getNro() == nroCliente) {
-				clientes.remove(nroCliente);
-				break;
-			}
-		}
+	public boolean removerCliente(Cliente c) {
+		return clientes.remove(c);
 	}
 
-	public void removerCliente(Cliente c) {
-		clientes.remove(c);
+	public boolean removerCliente(int nroCliente) {
+		Cliente c = getClientes(nroCliente);
+		return removerCliente(c);
 	}
 	// FIN Metodos: CLIENTES
 

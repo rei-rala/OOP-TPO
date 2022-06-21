@@ -1,16 +1,26 @@
 package personas;
 
 public abstract class Persona {
+	static int dniCounter = 0;
+
 	protected String nombre;
 	protected final long dni;
 	protected String direccion;
 	protected String telefono;
-	
+
 	public Persona(String nombre, long dni, String direccion, String telefono) {
 		this.nombre = nombre;
 		this.dni = dni;
 		this.direccion = direccion;
 		this.telefono = telefono;
+	}
+
+	// ALTERNATIVO SIN DATOS
+	public Persona(String nombre) {
+		this.nombre = nombre;
+		this.dni = ++dniCounter;
+		this.direccion = "dir" + this.dni;
+		this.telefono = "tel" + this.dni;
 	}
 
 	public String getNombre() {
@@ -46,5 +56,5 @@ public abstract class Persona {
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
-	
+
 }

@@ -1,6 +1,11 @@
 package comercial;
 
 public class Costo {
+	@Override
+	public String toString() {
+		return "Costo [cantidad=" + cantidad + ", articulo=" + articulo + "]";
+	}
+
 	private int cantidad;
 	private Recurso articulo;
 

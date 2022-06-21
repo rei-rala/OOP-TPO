@@ -12,7 +12,13 @@ public class Cliente extends Persona {
 		super(nombre, dni, direccion, telefono);
 		this.nro = ++contadorClientes;
 		this.AGENDA = "XXXX";
+		Empresa.getInstance().agregarCliente(this);
+	}
 
+	public Cliente(String nombre) {
+		super(nombre);
+		this.nro = ++contadorClientes;
+		this.AGENDA = "XXXX";
 		Empresa.getInstance().agregarCliente(this);
 	}
 
