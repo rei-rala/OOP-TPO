@@ -25,6 +25,34 @@ public class Administrativo extends Interno {
 	}
 
 	// Metodos para SERVICIOS
+	public Servicio verServicio(int nroServicio) {
+		return Empresa.getInstance().getServicios(nroServicio);
+	}
+	
+	public void editarOtrosCostosServicio(Servicio s, ArrayList<Costo> otrosCostos) {
+		Empresa.getInstance().getServicios(s).setOtrosCostos(otrosCostos);
+	}
+
+	public void editarOtrosCostosServicio(int SKU, ArrayList<Costo> otrosCostos) {
+		Empresa.getInstance().getServicios(SKU).setOtrosCostos(otrosCostos);
+	}
+
+	public ArrayList<Servicio> verServiciosAFacturar() {
+		ArrayList<Servicio> listaServicios = Empresa.getInstance().getServicios();
+		ArrayList<Servicio> listaSinFacturar = new ArrayList<Servicio>();
+
+		for (int i = 0; i < listaServicios.size(); i++) {
+			Servicio currentServicio = listaServicios.get(i);
+			boolean esServicioFinalizado = currentServicio.getEstadoServicio() == EstadoServicio.FINALIZADO;
+			boolean esServicioFacturado = currentServicio.isFacturado();
+
+			if (esServicioFinalizado && esServicioFacturado == false) {
+				listaSinFacturar.add(currentServicio);
+			}
+		}
+		return listaSinFacturar;
+	}
+
 	public Factura facturarServicio(Servicio s) throws ServicioException {
 		Servicio aFacturar = Empresa.getInstance().getServicios(s);
 		Factura nuevaFactura = null;
@@ -43,29 +71,6 @@ public class Administrativo extends Interno {
 	// Metodos para FACTURAS (propios de administrativo)
 	public Factura verFacturaEmpresa(int nroFactura) {
 		return Empresa.getInstance().getFacturas(nroFactura);
-	}
-
-	public Servicio crearServicio(Cliente cliente, Date fecha, TipoServicio tipoServicio) {
-		return new Servicio(cliente, fecha, tipoServicio);
-	}
-
-	public Servicio verServicio(int nroServicio) {
-		return Empresa.getInstance().getServicios(nroServicio);
-	}
-
-	public ArrayList<Servicio> verServiciosAsignados(int legajoTecnico) {
-		Tecnico tecnicoBuscado = Empresa.getInstance().getTecnicos(legajoTecnico);
-		ArrayList<Servicio> servAsignados = null;
-
-		if (tecnicoBuscado != null) {
-			servAsignados = tecnicoBuscado.getServiciosAsignados();
-		}
-
-		return servAsignados;
-	}
-
-	public void editarEstadoServicio(int SKU, EstadoServicio estadoServicio) {
-		Empresa.getInstance().getServicios(SKU).setEstadoServicio(estadoServicio);
 	}
 
 }

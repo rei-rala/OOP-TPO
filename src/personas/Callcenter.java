@@ -1,5 +1,6 @@
 package personas;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import empresa.Empresa;
@@ -15,6 +16,52 @@ public class Callcenter extends Interno {
 	// ALTERNATIVO SIN DATOS
 	public Callcenter(String nombre, String contrasena) {
 		super(nombre, contrasena);
+	}
+
+	// ARTICULOS
+	public Articulo buscarArticulos(int SKU) {
+		return Empresa.getInstance().getArticulos(SKU);
+	}
+	
+	public Articulo buscarArticulos(Articulo a) {
+		return Empresa.getInstance().getArticulos(a);
+	}
+
+	public ArrayList<Articulo> buscarArticulos() {
+		return Empresa.getInstance().getArticulos();
+	}
+
+	public ArrayList<Articulo> buscarArticulosSinStock() {
+		ArrayList<Articulo> articulos = buscarArticulos();
+		ArrayList<Articulo> articulosSinStock = new ArrayList<Articulo>();
+
+		for (int i = 0; i < articulos.size(); i++) {
+			Articulo current = articulos.get(i);
+			if (current.getStock() == 0) {
+				articulosSinStock.add(current);
+			}
+		}
+
+		return articulosSinStock;
+	}
+
+	public void anadirStock(Articulo a, int cantidad) throws StockException {
+		a.anadirStock(cantidad);
+	}
+
+	public void editarStock(Articulo a, int cantidad) throws StockException {
+		a.setStock(cantidad);
+	}
+
+	// TECNICOS
+	// TODO: Merge con la agenda
+	public ArrayList<Tecnico> buscarTecnicosDisponibles(Date fecha) {
+		return Empresa.getInstance().getTecnicos();
+	}
+
+	// TODO: Merge con la agenda
+	public ArrayList<Tecnico> buscarTecnicosDisponibles(Date fecha, int turno) {
+		return Empresa.getInstance().getTecnicos();
 	}
 
 	// SERVICIOS
@@ -69,11 +116,5 @@ public class Callcenter extends Interno {
 		}
 
 		return s.anadirTecnico(t);
-	}
-
-	// ARTICULOS
-
-	public static void anadirStock(Articulo a, int cantidad) throws StockException {
-		a.anadirStock(cantidad);
 	}
 }

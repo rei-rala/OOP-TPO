@@ -84,7 +84,7 @@ public class Tecnico extends Interno {
 	}
 
 	public void editarTiempoServicio(Servicio s, double tiempoTrabajado) throws AsignacionException, ServicioException {
-		String genExc = "No fue añadir editar tiempo de servicio: ";
+		String genExc = "No fue aï¿½adir editar tiempo de servicio: ";
 
 		if (s.getTecnicos().contains(this) == false) {
 			throw new AsignacionException(genExc + "No estas asignado a este servicio");
@@ -95,8 +95,9 @@ public class Tecnico extends Interno {
 		s.setTiempoTrabajado(tiempoTrabajado);
 	}
 
-	public void anadirMaterialServicio(Servicio s, int q, Articulo a) throws AsignacionException, ServicioException {
-		String genExc = "No fue posible añadir articulo: ";
+	public void anadirMaterialServicio(Servicio s, int cantidad, Articulo a)
+			throws AsignacionException, ServicioException {
+		String genExc = "No fue posible aï¿½adir articulo: ";
 
 		if (s.getTecnicos().contains(this) == false) {
 			throw new AsignacionException(genExc + "No estas asignado a este servicio");
@@ -105,7 +106,7 @@ public class Tecnico extends Interno {
 			throw new ServicioException(genExc + "El servicio ya fue facturado");
 		}
 
-		s.anadirArticulo(q, a);
+		s.anadirArticulo(cantidad, a);
 	}
 
 	public ArticuloExtra crearArticuloExtra(String descripcion, double costo) {
@@ -114,7 +115,7 @@ public class Tecnico extends Interno {
 
 	public void anadirOtroMaterialServicio(Servicio s, int q, ArticuloExtra ax)
 			throws AsignacionException, ServicioException {
-		String genExc = "No fue posible añadir articulo extra: ";
+		String genExc = "No fue posible aï¿½adir articulo extra: ";
 
 		if (s.getTecnicos().contains(this) == false) {
 			throw new AsignacionException(genExc + "No estas asignado a este servicio");
@@ -124,7 +125,7 @@ public class Tecnico extends Interno {
 		}
 		s.anadirOtroCostos(q, ax);
 	}
-	
+
 	public void iniciarServicio(Servicio s) throws AsignacionException, ServicioException {
 		String genExc = "No fue posible finalizar servicio: ";
 
