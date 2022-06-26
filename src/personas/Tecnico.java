@@ -1,21 +1,23 @@
 package personas;
 
 import java.util.ArrayList;
-import java.util.Date;
 
+import agenda.*;
 import comercial.*;
+import comercial.articulos.*;
 import empresa.Empresa;
 import excepciones.AsignacionException;
 import excepciones.ServicioException;
+import excepciones.StockException;
 
 public class Tecnico extends Interno {
 	private Seniority seniority;
-	private String AGENDA;
+	private Agenda agenda;
 
 	public Tecnico(String nombre, long dni, String direccion, String telefono, String contrasena, Seniority seniority) {
 		super(nombre, dni, direccion, telefono, contrasena);
 		this.seniority = seniority;
-		this.AGENDA = "XXXXXXXXX";
+		this.agenda = new Agenda(this);
 
 		Empresa.getInstance().agregarTecnico(this);
 	}
@@ -24,7 +26,7 @@ public class Tecnico extends Interno {
 	public Tecnico(String nombre, String contrasena, Seniority seniority) {
 		super(nombre, contrasena);
 		this.seniority = seniority;
-		this.AGENDA = "XXXXXXXXX";
+		this.agenda = new Agenda(this);
 
 		Empresa.getInstance().agregarTecnico(this);
 	}
@@ -37,15 +39,16 @@ public class Tecnico extends Interno {
 		this.seniority = seniority;
 	}
 
-	public String getAGENDA() {
-		return AGENDA;
+	public Agenda getAgenda() {
+		return agenda;
 	}
 
 	public ArrayList<Servicio> getServiciosAsignados() {
-		/*
-		 * Devuelve(devolvera) arraylist de servicios que estan asignados al tecnico
-		 */
-		// AGENDA.serviciosAsignados...
+		for (Dia d : agenda.getDias()) {
+			if (d.getFecha() != null) {
+
+			}
+		}
 
 		return new ArrayList<Servicio>();
 	}
@@ -83,20 +86,8 @@ public class Tecnico extends Interno {
 		return buscado;
 	}
 
-	public void editarTiempoServicio(Servicio s, double tiempoTrabajado) throws AsignacionException, ServicioException {
-		String genExc = "No fue a�adir editar tiempo de servicio: ";
-
-		if (s.getTecnicos().contains(this) == false) {
-			throw new AsignacionException(genExc + "No estas asignado a este servicio");
-		}
-		if (s.isFacturado()) {
-			throw new ServicioException(genExc + "El servicio ya fue facturado");
-		}
-		s.setTiempoTrabajado(tiempoTrabajado);
-	}
-
 	public void anadirMaterialServicio(Servicio s, int cantidad, Articulo a)
-			throws AsignacionException, ServicioException {
+			throws AsignacionException, ServicioException, StockException {
 		String genExc = "No fue posible a�adir articulo: ";
 
 		if (s.getTecnicos().contains(this) == false) {
@@ -106,7 +97,7 @@ public class Tecnico extends Interno {
 			throw new ServicioException(genExc + "El servicio ya fue facturado");
 		}
 
-		s.anadirArticulo(cantidad, a);
+		s.anadirArticulo(a, cantidad);
 	}
 
 	public ArticuloExtra crearArticuloExtra(String descripcion, double costo) {
@@ -123,7 +114,7 @@ public class Tecnico extends Interno {
 		if (s.isFacturado()) {
 			throw new ServicioException(genExc + "El servicio ya fue facturado");
 		}
-		s.anadirOtroCostos(q, ax);
+		s.anadirOtroCostos(ax, q);
 	}
 
 	public void iniciarServicio(Servicio s) throws AsignacionException, ServicioException {

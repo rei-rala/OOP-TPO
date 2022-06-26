@@ -44,7 +44,7 @@ public class Controller {
 			}
 		} while (usuario == null);
 
-		System.out.printf("Bienvenido %s «%s»", usuario.getNombre(), usuario.getClass().getSimpleName());
+		System.out.printf("Bienvenido %s ï¿½%sï¿½", usuario.getNombre(), usuario.getClass().getSimpleName());
 
 		menus(usuario);
 	}

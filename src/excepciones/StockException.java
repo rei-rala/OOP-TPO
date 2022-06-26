@@ -1,6 +1,6 @@
 package excepciones;
 
-public class StockException extends Exception {
+public class StockException extends ValorException {
 	/**
 	 * 
 	 */
@@ -19,10 +19,4 @@ public class StockException extends Exception {
 		super(message);
 		this.code = code;
 	}
-
-	public StockException(String code, String message, Throwable cause) {
-		super(message, cause);
-		this.code = code;
-	}
-
 }

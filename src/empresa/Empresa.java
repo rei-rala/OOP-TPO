@@ -2,8 +2,10 @@ package empresa;
 
 import java.util.ArrayList;
 
-import comercial.*;
 import personas.*;
+import comercial.*;
+import comercial.articulos.*;
+import excepciones.*;
 
 public class Empresa {
 	private static Empresa empresa;
@@ -14,8 +16,8 @@ public class Empresa {
 	static ArrayList<Tecnico> tecnicos = new ArrayList<Tecnico>();
 	static ArrayList<Servicio> servicios = new ArrayList<Servicio>();
 	static ArrayList<Factura> facturas = new ArrayList<Factura>();
-	static double costoCombustible;
-	static double costoViaje;
+	static double costoCombustible = 200;
+	static double costoViaje = 150;
 	static CostoHorasTecnico costoHorasTecnico = new CostoHorasTecnico();
 
 	private final double RENTABILIDAD = 0.3;
@@ -65,24 +67,36 @@ public class Empresa {
 				+ getClientes() + "]";
 	}
 
+	public double redondear(double valor) {
+		return (double) (Math.round(valor * 100.0) / 100.0);
+	}
+
 	public double getCostoCombustible() {
 		return costoCombustible;
 	}
 
-	public void setCostoCombustible(double nuevoCostoCombustible) {
-		if (nuevoCostoCombustible > 0) {
-			costoCombustible = nuevoCostoCombustible;
+	public void setCostoCombustible(double nuevoCostoCombustible) throws Exception {
+		double nuevoCC = redondear(nuevoCostoCombustible);
+
+		if (0 >= nuevoCC) {
+			throw new ValorException("Nuevo costo combustible debe ser mayor a 0");
 		}
+
+		costoCombustible = nuevoCC;
 	}
 
 	public double getCostoViaje() {
 		return costoViaje;
 	}
 
-	public void setCostoViaje(double nuevoCostoViaje) {
-		if (nuevoCostoViaje > 0) {
-			costoViaje = nuevoCostoViaje;
+	public void setCostoViaje(double nuevoCostoViaje) throws Exception {
+		double nuevoCV = redondear(nuevoCostoViaje);
+
+		if (0 >= nuevoCV) {
+			throw new ValorException("Nuevo costo viaje  debe ser mayor a 0");
 		}
+
+		costoViaje = nuevoCV;
 	}
 
 	public CostoHorasTecnico obtenerCostoHoraTecnico() {
@@ -93,8 +107,14 @@ public class Empresa {
 		return costoHorasTecnico.obtenerCHT(seniority);
 	}
 
-	public void setCostoHoraTecnico(Seniority seniority, double nuevoCHT) {
+	public void setCostoHoraTecnico(Seniority seniority, double nuevoCHT) throws ValorException {
 		costoHorasTecnico.editarCHT(seniority, nuevoCHT);
+	}
+
+	public void setCostoHoraTecnico(double jr, double ssr, double sr) throws ValorException {
+		costoHorasTecnico.setJunior(jr);
+		costoHorasTecnico.setSemiSenior(ssr);
+		costoHorasTecnico.setSenior(sr);
 	}
 
 	public void setCostoHoraTecnico(CostoHorasTecnico nuevoCHTObject) {
@@ -103,6 +123,24 @@ public class Empresa {
 	// FIN metodos EMPRESA
 
 	// Metodos: ARTICULOS
+
+	// PREVIO CREACION SERVICIO
+	public boolean verificarArticulosSuficientes(TipoServicio ts) {
+
+		if (ts == TipoServicio.INSTALACION) {
+			Articulo cable = Empresa.getInstance().getArticulo(Cable.class);
+			Articulo decoTV = Empresa.getInstance().getArticulo(DecodificadorTV.class);
+			Articulo modem = Empresa.getInstance().getArticulo(Modem.class);
+			Articulo divCoax = Empresa.getInstance().getArticulo(DivisorCoaxial.class);
+			Articulo conCoax = Empresa.getInstance().getArticulo(ConectorCoaxial.class);
+
+			return (cable.getStock() > 2 && decoTV.getStock() > 0 && modem.getStock() > 0 && divCoax.getStock() > 0
+					&& conCoax.getStock() > 5);
+		}
+
+		return true;
+	}
+
 	public ArrayList<Articulo> getArticulos() {
 		return articulos;
 	}
@@ -130,6 +168,18 @@ public class Empresa {
 		return articuloEncontrado;
 	}
 
+	public Articulo getArticulo(Class<? extends Articulo> claseArticulo) {
+		Articulo articuloEncontrado = null;
+
+		for (Articulo a : articulos) {
+			if (a.getClass() == claseArticulo) {
+				return a;
+			}
+		}
+
+		return articuloEncontrado;
+	}
+
 	public boolean agregarArticulo(Articulo a) {
 		if (a == null || articulos.contains(a)) {
 			return false;
@@ -138,7 +188,7 @@ public class Empresa {
 		return articulos.add(a);
 	}
 
-	public void editarArticulo(Articulo articuloAEditar, String descripcion, double stock, double costo) {
+	public void editarArticulo(Articulo articuloAEditar, String descripcion, int stock, double costo) {
 		Articulo articulo = getArticulos(articuloAEditar);
 
 		if (articulo != null) {
@@ -148,7 +198,7 @@ public class Empresa {
 		}
 	}
 
-	public void editarArticulo(int SKU, String descripcion, double stock, double costo) {
+	public void editarArticulo(int SKU, String descripcion, int stock, double costo) {
 		Articulo articulo = getArticulos(SKU);
 
 		if (articulo != null) {

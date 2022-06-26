@@ -1,4 +1,4 @@
-package comercial;
+package comercial.articulos;
 
 public enum TipoArticulo {
 	CABLE,

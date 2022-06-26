@@ -4,45 +4,52 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import empresa.Empresa;
-import excepciones.ServicioException;
-import personas.Cliente;
-import personas.Tecnico;
+import comercial.articulos.*;
+import personas.*;
+import excepciones.*;
 
 public class Servicio {
-	static ArrayList<Servicio> servicios = new ArrayList<Servicio>();
 	static int contadorServicios = 0;
 
 	public final int nro;
 	private Cliente cliente;
 	private Date fecha;
 
-	// TODO: Agenda!
-	private String TURNOS_TRABAJADOS;
 	private double tiempoTrabajado;
 	private TipoServicio tipoServicio;
-	private EstadoServicio estadoServicio = EstadoServicio.PROGRAMADO;
+	private EstadoServicio estadoServicio;
 	private ArrayList<Tecnico> tecnicosAsignados = new ArrayList<Tecnico>();
 	private ArrayList<Costo> articulosUtilizados = new ArrayList<Costo>();
 	private ArrayList<Costo> otrosCostos = new ArrayList<Costo>();
 	private final double costoViaje = Empresa.getInstance().getCostoViaje();
 	private boolean facturado = false;
 
-	public Servicio(Cliente cliente, Date fecha, TipoServicio tipoServicio) {
+	public Servicio(Cliente cliente, Date fecha, TipoServicio tipoServicio, int tiempoTrabajado) throws StockException {
 		this.nro = ++contadorServicios;
 		this.cliente = cliente;
 		this.fecha = fecha;
 		this.tipoServicio = tipoServicio;
+		this.tiempoTrabajado = tiempoTrabajado;
+		this.estadoServicio = EstadoServicio.PROGRAMADO;
+
+		preAnadirArticulos();
 		Empresa.getInstance().agregarServicio(this);
 	}
 
-	public Servicio(Cliente cliente, Date fecha, TipoServicio tipoServicio, EstadoServicio estadoServicio) {
-		this.nro = ++contadorServicios;
-		this.cliente = cliente;
-		this.fecha = fecha;
-		this.tipoServicio = tipoServicio;
-		this.estadoServicio = estadoServicio;
+	private void preAnadirArticulos() throws StockException {
+		if (tipoServicio == TipoServicio.INSTALACION) {
+			Articulo cable = Empresa.getInstance().getArticulo(Cable.class);
+			Articulo decoTV = Empresa.getInstance().getArticulo(DecodificadorTV.class);
+			Articulo modem = Empresa.getInstance().getArticulo(Modem.class);
+			Articulo divCoax = Empresa.getInstance().getArticulo(DivisorCoaxial.class);
+			Articulo conCoax = Empresa.getInstance().getArticulo(ConectorCoaxial.class);
 
-		Empresa.getInstance().agregarServicio(this);
+			anadirArticulo(cable, 3);
+			anadirArticulo(decoTV, 1);
+			anadirArticulo(modem, 1);
+			anadirArticulo(divCoax, 1);
+			anadirArticulo(conCoax, 6);
+		}
 	}
 
 	public Cliente getCliente() {
@@ -65,28 +72,16 @@ public class Servicio {
 		this.fecha = fecha;
 	}
 
-	public String getTURNOS_TRABAJADOS() {
-		return TURNOS_TRABAJADOS;
-	}
-
-	public void setTURNOS_TRABAJADOS(String tURNOS_TRABAJADOS) {
-		TURNOS_TRABAJADOS = tURNOS_TRABAJADOS;
-	}
-
-	public double getTiempoTrabajado() {
-		return tiempoTrabajado;
-	}
-
-	public void setTiempoTrabajado(double tiempoTrabajado) {
-		this.tiempoTrabajado = tiempoTrabajado;
-	}
-
 	public TipoServicio getTipoServicio() {
 		return tipoServicio;
 	}
 
 	public void setTipoServicio(TipoServicio tipoServicio) {
 		this.tipoServicio = tipoServicio;
+	}
+
+	public double getTiempoTrabajado() {
+		return tiempoTrabajado;
 	}
 
 	public EstadoServicio getEstadoServicio() {
@@ -133,7 +128,9 @@ public class Servicio {
 		return tecnicosAsignados.remove(t);
 	}
 
-	public boolean anadirArticulo(int cantidad, Articulo art) {
+	public boolean anadirArticulo(Articulo art, int cantidad) throws StockException {
+		art.consumirStock(cantidad);
+
 		Costo nuevoCosto = new Costo(cantidad, art);
 		return articulosUtilizados.add(nuevoCosto);
 	}
@@ -142,7 +139,7 @@ public class Servicio {
 		articulosUtilizados.add(costo);
 	}
 
-	public boolean anadirOtroCostos(int cantidad, ArticuloExtra extraArt) {
+	public boolean anadirOtroCostos(ArticuloExtra extraArt, int cantidad) {
 		Costo nuevoOtroCosto = new Costo(cantidad, extraArt);
 		return otrosCostos.add(nuevoOtroCosto);
 	}
@@ -167,11 +164,10 @@ public class Servicio {
 
 	@Override
 	public String toString() {
-		return "Servicio [nro=" + nro + ", cliente=" + cliente + ", fecha=" + fecha + ", TURNOS_TRABAJADOS="
-				+ TURNOS_TRABAJADOS + ", tiempoTrabajado=" + tiempoTrabajado + ", tipoServicio=" + tipoServicio
-				+ ", estadoServicio=" + estadoServicio + ", tecnicosAsignados=" + tecnicosAsignados
-				+ ", articulosUtilizados=" + articulosUtilizados + ", otrosCostos=" + otrosCostos + ", costoViaje="
-				+ costoViaje + ", facturado=" + facturado + "]";
+		return "Servicio [nro=" + nro + ", cliente=" + cliente + ", fecha=" + fecha + ", tiempoTrabajado="
+				+ tiempoTrabajado + ", tipoServicio=" + tipoServicio + ", estadoServicio=" + estadoServicio
+				+ ", tecnicosAsignados=" + tecnicosAsignados + ", articulosUtilizados=" + articulosUtilizados
+				+ ", otrosCostos=" + otrosCostos + ", costoViaje=" + costoViaje + ", facturado=" + facturado + "]";
 	}
 
 }

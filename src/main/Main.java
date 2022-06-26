@@ -2,28 +2,32 @@ package main;
 
 import empresa.Empresa;
 import comercial.*;
+import comercial.articulos.*;
 import personas.*;
-// import agenda --> LEONARDO
 import excepciones.*;
+import gui.Gui;
 import controlador.*;
 
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+
+import agenda.*;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
 		Empresa EMPRESA = new Empresa();
 
 		// VARIABLES ARTICULOS PRUEBA
-		Articulo cable = new Articulo("Cable x METRO", 50, TipoArticulo.CABLE, 0);
-		Articulo ccrg6 = new Articulo("Conectores coaxiales x unidad", 15, TipoArticulo.CONECTOR_COAXIAL_RG6, 40);
-		Articulo divc1a2 = new Articulo("Divisor coaxial de 1 a 2 x unidad", 15, TipoArticulo.CONECTOR_COAXIAL_RG6, 40);
-		Articulo modems = new Articulo("Modem internet x unidad", 200, TipoArticulo.MODEM_INTERNET, 40);
-		Articulo decoTv = new Articulo("Decodificador TV x unidad", 125, TipoArticulo.DECODIFICADOR_TV, 60);
+		Cable c = new Cable(30, 500);
+		ConectorCoaxial cc = new ConectorCoaxial(50, 100);
+		DivisorCoaxial dc = new DivisorCoaxial(50, 80);
+		Modem m = new Modem(200, 0);
+		DecodificadorTV dtv = new DecodificadorTV(40, 120);
 
 		// VARIABLES PERSONAS PRUEBA
-		Admin ADMIN = new Admin("Nombre de administrador", ".");
+		Admin ADMIN = new Admin("Nombre de administrador", "");
 		Administrativo adm1 = new Administrativo("Administrativo UNO", "passADM");
 		Tecnico tec1 = new Tecnico("tec Senior", "passTSR", Seniority.SENIOR);
 		Tecnico tec2 = new Tecnico("tec Junior", "passTJR", Seniority.JUNIOR);
@@ -41,10 +45,11 @@ public class Main {
 		Administrativo usuarioLogeado = (Administrativo) usuario;
 
 		Servicio serv1 = null, serv2 = null, serv3 = null, serv4 = null;
-		ArrayList<Articulo> articulosNoStock = null;
+		ArrayList<Articulo> articulosNoStock = cc1.buscarArticulosSinStock();
 		Articulo ejemploNoStock = null;
 		ArrayList<Tecnico> tecnicosDisponibles = null;
 
+		System.out.println("ARTICULOS =>" + EMPRESA.getArticulos());
 		// VARIABLES SERVICIO -> FACTURA
 		// creacion de servicios (callcenter)
 		try {
@@ -53,23 +58,23 @@ public class Main {
 
 			// Disponibilidad de tecnicos
 			tecnicosDisponibles = cc1.buscarTecnicosDisponibles(new Date());
-			tecnicosDisponibles = cc1.buscarTecnicosDisponibles(new Date(), 1);
+			tecnicosDisponibles = cc1.buscarTecnicosDisponibles(new Date(), Turno.MANANA, 1);
 
 			// Verificando stock de articulos
-			articulosNoStock = cc1.buscarArticulosSinStock();
-			ejemploNoStock = cc1.buscarArticulos(cable);
+			ejemploNoStock = cc1.buscarArticulos(articulosNoStock.get(0));
 			System.out.println("No tiene stock => " + ejemploNoStock);
-			cc1.anadirStock(ejemploNoStock, 50);
+			cc1.anadirStock(ejemploNoStock, 2);
 			System.out.println("Tras adicionar stock => " + ejemploNoStock);
 
 			// Tras verificar disponibilidad,
 			serv1 = cc1.crearNuevoServicioServicio(cl1, new Date(), TipoServicio.INSTALACION);
-			serv2 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.INSTALACION);
-			serv3 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.INSTALACION);
+			serv2 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.REPARACION);
+			serv3 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.REPARACION);
 			serv4 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.REPARACION);
 
-			cc1.asignarServicioATecnico(1, 3);
-			cc1.asignarServicioATecnico(4, 3);
+			cc1.asignarServicioATecnico(serv1, tec1);
+			cc1.asignarServicioATecnico(serv1, tec2);
+			cc1.asignarServicioATecnico(serv1, tec2);
 		} catch (AsignacionException e) {
 			System.out.print("Error en asignacion =>");
 			System.out.println(e);
@@ -81,14 +86,12 @@ public class Main {
 		// Tecnico asignado puede editar algunas propiedades del servicio y finalizarlo
 		// Tras finalizar un servicio, no pueden hacerse nuevas ediciones
 		try {
-			tec1.editarTiempoServicio(serv1, 500);
-
 			ArticuloExtra costoCreadoPorTecnico = tec1.crearArticuloExtra("Gastos varios", 500);
 			tec1.anadirOtroMaterialServicio(serv1, 1, costoCreadoPorTecnico);
 
 			System.out.println("Servicio finalizado:" + serv1);
 			tec1.finalizarServicio(serv1);
-			tec1.anadirMaterialServicio(serv1, 1, modems);
+			tec1.anadirMaterialServicio(serv1, 1, c);
 			tec1.finalizarServicio(serv1);
 
 		} catch (Exception e) {
@@ -107,8 +110,8 @@ public class Main {
 			nuevaFactura = usuarioLogeado.facturarServicio(servicioSeleccionado);
 
 			// ejemplo de tecnico editando el servicio tras ser facturado
-			tec1.anadirMaterialServicio(serv1, 1, modems);
-			
+			tec1.anadirMaterialServicio(serv1, 1, m);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -123,5 +126,18 @@ public class Main {
 		System.out.println("ARTICULOS =>" + EMPRESA.getArticulos());
 		System.out.println("SERVICIOS =>" + EMPRESA.getServicios());
 		System.out.println("FACTURAS =>" + EMPRESA.getFacturas());
+		System.out.println("-----------------------");
+		// ------------------------------
+
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Gui.getInstance().initialize();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
 	}
 }

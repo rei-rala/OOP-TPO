@@ -7,7 +7,6 @@ import personas.*;
 
 public class Factura {
 	static public int contadorFacturas = 0;
-	static public ArrayList<Factura> facturas = new ArrayList<Factura>();
 
 	private final int nro;
 	private final Servicio servicio;

@@ -1,32 +1,29 @@
-package comercial;
+package comercial.articulos;
 
-import java.util.ArrayList;
-
+import comercial.Recurso;
 import empresa.Empresa;
 import excepciones.StockException;
 
-public class Articulo extends Recurso {
-	public static ArrayList<Articulo> articulosBackup = new ArrayList<Articulo>();
+abstract public class Articulo extends Recurso {
 	public static int conteoArticulos = 0;
 
 	private final int SKU;
-	private final TipoArticulo tipoArticulo;
-	private double stock;
+	private int stock;
 
-	public Articulo(String descripcion, double costo, TipoArticulo tipoArticulo, double stock) {
+	public Articulo(String descripcion, double costo, int stock) {
 		super(descripcion, costo);
 		this.SKU = ++conteoArticulos;
-		this.tipoArticulo = tipoArticulo;
 		this.stock = stock;
 
 		Empresa.getInstance().agregarArticulo(this);
+
 	}
 
 	public double getStock() {
 		return stock;
 	}
 
-	public void setStock(double stock) {
+	public void setStock(int stock) {
 		this.stock = stock > 0 ? stock : 0;
 	}
 
@@ -51,13 +48,9 @@ public class Articulo extends Recurso {
 		return SKU;
 	}
 
-	public TipoArticulo getTipoArticulo() {
-		return tipoArticulo;
-	}
-
 	@Override
 	public String toString() {
-		return "Articulo [SKU=" + SKU + ", tipoArticulo=" + tipoArticulo + ", stock=" + stock + "]";
+		return "Articulo [SKU=" + SKU + ", stock=" + stock + "]";
 	}
 
 	@Override
@@ -65,7 +58,6 @@ public class Articulo extends Recurso {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + SKU;
-		result = prime * result + ((tipoArticulo == null) ? 0 : tipoArticulo.hashCode());
 		return result;
 	}
 
@@ -79,8 +71,6 @@ public class Articulo extends Recurso {
 			return false;
 		Articulo other = (Articulo) obj;
 		if (SKU != other.SKU)
-			return false;
-		if (tipoArticulo != other.tipoArticulo)
 			return false;
 		return true;
 	}

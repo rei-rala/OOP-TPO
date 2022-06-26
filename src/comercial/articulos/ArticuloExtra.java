@@ -1,4 +1,6 @@
-package comercial;
+package comercial.articulos;
+
+import comercial.Recurso;
 
 public class ArticuloExtra extends Recurso {
 
