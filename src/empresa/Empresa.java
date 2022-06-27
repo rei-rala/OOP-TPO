@@ -188,7 +188,7 @@ public class Empresa {
 		return articulos.add(a);
 	}
 
-	public void editarArticulo(Articulo articuloAEditar, String descripcion, int stock, double costo) {
+	public void editarArticulo(Articulo articuloAEditar, String descripcion, int stock, double costo) throws Exception {
 		Articulo articulo = getArticulos(articuloAEditar);
 
 		if (articulo != null) {
@@ -198,7 +198,7 @@ public class Empresa {
 		}
 	}
 
-	public void editarArticulo(int SKU, String descripcion, int stock, double costo) {
+	public void editarArticulo(int SKU, String descripcion, int stock, double costo) throws Exception {
 		Articulo articulo = getArticulos(SKU);
 
 		if (articulo != null) {

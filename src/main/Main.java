@@ -6,7 +6,6 @@ import comercial.articulos.*;
 import personas.*;
 import excepciones.*;
 import gui.Gui;
-import controlador.*;
 
 import java.awt.EventQueue;
 import java.io.IOException;
@@ -27,9 +26,9 @@ public class Main {
 		DecodificadorTV dtv = new DecodificadorTV(40, 120);
 
 		// VARIABLES PERSONAS PRUEBA
-		Admin ADMIN = new Admin("Nombre de administrador", "");
-		Administrativo adm1 = new Administrativo("Administrativo UNO", "passADM");
-		Tecnico tec1 = new Tecnico("tec Senior", "passTSR", Seniority.SENIOR);
+		Admin ADMIN = new Admin("Hector V.O.N.", "");
+		Administrativo adm1 = new Administrativo("Administrativo UNO", "");
+		Tecnico tec1 = new Tecnico("tec Senior", "", Seniority.SENIOR);
 		Tecnico tec2 = new Tecnico("tec Junior", "passTJR", Seniority.JUNIOR);
 		Callcenter cc1 = new Callcenter("Callcenter UNO", "passCC");
 		Cliente cl1 = new Cliente("Cliente UNO");
@@ -63,36 +62,44 @@ public class Main {
 			// Verificando stock de articulos
 			ejemploNoStock = cc1.buscarArticulos(articulosNoStock.get(0));
 			System.out.println("No tiene stock => " + ejemploNoStock);
-			cc1.anadirStock(ejemploNoStock, 2);
+			cc1.anadirStockArticulo(ejemploNoStock, 50);
 			System.out.println("Tras adicionar stock => " + ejemploNoStock);
 
 			// Tras verificar disponibilidad,
 			serv1 = cc1.crearNuevoServicioServicio(cl1, new Date(), TipoServicio.INSTALACION);
-			serv2 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.REPARACION);
+			serv2 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.INSTALACION);
 			serv3 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.REPARACION);
 			serv4 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.REPARACION);
 
 			cc1.asignarServicioATecnico(serv1, tec1);
-			cc1.asignarServicioATecnico(serv1, tec2);
-			cc1.asignarServicioATecnico(serv1, tec2);
-		} catch (AsignacionException e) {
-			System.out.print("Error en asignacion =>");
-			System.out.println(e);
-		} catch (StockException e) {
-			System.out.print("Error en edicion de stock =>");
+			cc1.asignarServicioATecnico(serv2, tec1);
+			cc1.asignarServicioATecnico(serv3, tec1);
+			cc1.asignarServicioATecnico(serv4, tec1);
+
+			// forzando una facturacion
+			tec2.finalizarServicio(serv2);
+		} catch (Exception e) {
 			System.out.println(e);
 		}
 
 		// Tecnico asignado puede editar algunas propiedades del servicio y finalizarlo
 		// Tras finalizar un servicio, no pueden hacerse nuevas ediciones
 		try {
-			ArticuloExtra costoCreadoPorTecnico = tec1.crearArticuloExtra("Gastos varios", 500);
-			tec1.anadirOtroMaterialServicio(serv1, 1, costoCreadoPorTecnico);
+			ArrayList<Servicio> serviciosTec1 = tec1.getServiciosAsignados();
 
-			System.out.println("Servicio finalizado:" + serv1);
-			tec1.finalizarServicio(serv1);
-			tec1.anadirMaterialServicio(serv1, 1, c);
-			tec1.finalizarServicio(serv1);
+			if (0 >= serviciosTec1.size()) {
+				throw new Exception("No posee asignaciones");
+			}
+
+			Servicio s1 = serviciosTec1.get(0);
+			tec1.ejecutarServicio(s1);
+			ArticuloExtra costoCreadoPorTecnico = tec1.crearArticuloExtra("Gastos varios", 500);
+			tec1.anadirOtroMaterialServicio(s1, 1, costoCreadoPorTecnico);
+
+			// tec1.finalizarServicio(s1);
+			tec1.anadirMaterialServicio(s1, 1, c);
+			// tec1.finalizarServicio(s1);
+			// System.out.println("Servicio finalizado:" + s1);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,9 +111,6 @@ public class Main {
 			ArrayList<Servicio> serviciosPendientes = usuarioLogeado.verServiciosAFacturar();
 			int seleccionNroServicio = 0;
 			Servicio servicioSeleccionado = serviciosPendientes.get(seleccionNroServicio);
-			// administrativo "vaciando" otros costos
-			ArrayList<Costo> costosVacios = new ArrayList<Costo>();
-			usuarioLogeado.editarOtrosCostosServicio(servicioSeleccionado, costosVacios);
 			nuevaFactura = usuarioLogeado.facturarServicio(servicioSeleccionado);
 
 			// ejemplo de tecnico editando el servicio tras ser facturado

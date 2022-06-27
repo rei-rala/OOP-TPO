@@ -29,14 +29,6 @@ public class Administrativo extends Interno {
 	public Servicio verServicio(int nroServicio) {
 		return Empresa.getInstance().getServicios(nroServicio);
 	}
-	
-	public void editarOtrosCostosServicio(Servicio s, ArrayList<Costo> otrosCostos) {
-		Empresa.getInstance().getServicios(s).setOtrosCostos(otrosCostos);
-	}
-
-	public void editarOtrosCostosServicio(int SKU, ArrayList<Costo> otrosCostos) {
-		Empresa.getInstance().getServicios(SKU).setOtrosCostos(otrosCostos);
-	}
 
 	public ArrayList<Servicio> verServiciosAFacturar() {
 		ArrayList<Servicio> listaServicios = Empresa.getInstance().getServicios();
@@ -54,19 +46,23 @@ public class Administrativo extends Interno {
 		return listaSinFacturar;
 	}
 
-	public Factura facturarServicio(Servicio s) throws ServicioException {
+	public Factura facturarServicio(Servicio s) throws Exception {
 		Servicio aFacturar = Empresa.getInstance().getServicios(s);
 		Factura nuevaFactura = null;
 
-		if (aFacturar != null) {
-			boolean exitoAlFacturar = aFacturar.facturarServicio();
+		if (aFacturar == null) {
+			throw new ServicioException("Servicio invalido");
+		}
 
-			if (exitoAlFacturar) {
-				nuevaFactura = new Factura(aFacturar);
-				Empresa.getInstance().agregarFactura(nuevaFactura);
-			}
+		boolean exitoAlFacturar = aFacturar.facturarServicio();
+
+		if (exitoAlFacturar) {
+			nuevaFactura = new Factura(aFacturar);
+		} else {
+			throw new ServicioException("Error desconocido al facturar");
 		}
 		return nuevaFactura;
+
 	}
 
 	// Metodos para FACTURAS (propios de administrativo)

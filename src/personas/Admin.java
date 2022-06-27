@@ -73,12 +73,16 @@ public class Admin extends Interno {
 		return articulosSinStock;
 	}
 
-	public void anadirStock(Articulo a, int cantidad) throws StockException {
+	public void anadirStockArticulo(Articulo a, int cantidad) throws Exception {
 		a.anadirStock(cantidad);
 	}
 
-	public void setStock(Articulo a, int stock) throws StockException {
+	public void setStockArticulo(Articulo a, int stock) throws Exception {
 		a.setStock(stock);
+	}
+
+	public void setCostoArticulo(Articulo a, double costo) throws Exception {
+		a.setCosto(costo);
 	}
 
 	public static boolean quitarArticulo(Articulo a) {

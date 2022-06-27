@@ -1,9 +1,8 @@
 package comercial;
 
-import java.util.ArrayList;
+import java.util.Date;
 
 import empresa.Empresa;
-import personas.*;
 
 public class Factura {
 	static public int contadorFacturas = 0;
@@ -14,12 +13,17 @@ public class Factura {
 	private final double iva;
 	private final double total;
 
+	private final Date fecha;
+
 	public Factura(Servicio servicio) {
 		this.nro = ++contadorFacturas;
+		this.fecha = new Date();
 		this.servicio = servicio;
 		this.subtotal = calcularSubTotal();
 		this.iva = calcularIVA();
 		this.total = calcularTotal();
+
+		Empresa.getInstance().agregarFactura(this);
 	}
 
 	@Override
@@ -37,16 +41,8 @@ public class Factura {
 	}
 
 	public double calcularSubTotal() {
-		double tiempoTrabajado = servicio.getTiempoTrabajado();
+		double subtotal = servicio.obtenerTotalServicio();
 
-		double stHorasTecnico = 0;
-		for (int i = 0; i < servicio.getTecnicos().size(); i++) {
-			Tecnico t = servicio.getTecnicos().get(i);
-
-			stHorasTecnico += tiempoTrabajado * Empresa.getInstance().obtenerCostoHoraTecnico(t.getSeniority());
-		}
-
-		double subtotal = stHorasTecnico;
 		return subtotal;
 	}
 
@@ -59,6 +55,24 @@ public class Factura {
 	}
 
 	public double calcularTotal() {
-		return calcularSubTotal() + calcularGanancias() + calcularIVA();
+		double total = calcularSubTotal() + calcularGanancias() + calcularIVA();
+
+		if (servicio.isIncluyeAlmuerzo()) {
+			total -= (servicio.obtenerValorHoraServicio() / 2);
+		}
+		return total;
+	}
+
+	public double calcularMargen() {
+		double total = calcularTotal();
+
+		if (total > 0) {
+			return calcularGanancias() / total;
+		}
+		return 0;
+	}
+
+	public Date getFecha() {
+		return fecha;
 	}
 }

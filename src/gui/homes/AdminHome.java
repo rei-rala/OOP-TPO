@@ -5,11 +5,12 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import empresa.*;
-import excepciones.ValorException;
 import gui.Gui;
+import gui.parciales.PanelEdicionArticulos;
 import personas.Admin;
 import personas.Seniority;
 
+@SuppressWarnings("serial")
 public class AdminHome extends JPanel implements ActionListener {
 	private final Gui gui = Gui.getInstance();
 	private final Admin adm = (Admin) gui.getUsuarioLogeado();
@@ -35,11 +36,10 @@ public class AdminHome extends JPanel implements ActionListener {
 	private JLabel lblSr;
 	private JLabel labelCC;
 	private JLabel labelCV;
+	private PanelEdicionArticulos panelEdicionArticulos;
+	private JLabel tituloPanel;
 
 	public AdminHome() {
-		double cv = gui.redondearDouble(empresa.getCostoViaje());
-		double cc = gui.redondearDouble(empresa.getCostoCombustible());
-
 		setLayout(new BorderLayout(0, 0));
 		String username = gui.getUsuarioLogeado().getClass().getSimpleName();
 
@@ -51,6 +51,11 @@ public class AdminHome extends JPanel implements ActionListener {
 		panel = new JPanel();
 		add(panel, BorderLayout.CENTER);
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		tituloPanel = new JLabel("Configuraciones de admin");
+		tituloPanel.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		tituloPanel.setHorizontalAlignment(SwingConstants.CENTER);
+		panel.add(tituloPanel);
 
 		pCC = new JPanel();
 		panel.add(pCC);
@@ -126,6 +131,9 @@ public class AdminHome extends JPanel implements ActionListener {
 		btnNuevoCHT = new JButton("Actualizar CHTs");
 		btnNuevoCHT.addActionListener(this);
 		pCHT.add(btnNuevoCHT);
+		
+		panelEdicionArticulos = new PanelEdicionArticulos();
+		panel.add(panelEdicionArticulos);
 
 		btnLogout = new JButton("Cerrar sesion");
 		btnLogout.addActionListener(this);
@@ -176,11 +184,7 @@ public class AdminHome extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnLogout) {
-			String usuarioLogeadoName = gui.getUsuarioLogeado().getNombre();
-			if (JOptionPane.showConfirmDialog(null, "Confirma cerrar sesion de " + usuarioLogeadoName) == 0) {
-				gui.setUsuarioLogeado(null);
-				gui.changePanel(new LogIn());
-			}
+			gui.logout();
 		}
 
 		if (e.getSource() == btnNuevoCC) {

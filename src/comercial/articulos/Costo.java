@@ -32,4 +32,7 @@ public class Costo {
 		this.articulo = articulo;
 	}
 
+	public double obtenerTotalCosto() {
+		return articulo.getCosto() * cantidad;
+	}
 }

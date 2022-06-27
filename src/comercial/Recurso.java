@@ -2,6 +2,8 @@ package comercial;
 
 import java.util.Objects;
 
+import excepciones.CostoException;
+
 public abstract class Recurso {
 
 	private String descripcion;
@@ -24,7 +26,10 @@ public abstract class Recurso {
 		return costo;
 	}
 
-	public void setCosto(double costo) {
+	public void setCosto(double costo) throws CostoException {
+		if (0 >= costo) {
+			throw new CostoException("Nuevo costo debe ser mayor a 0");
+		}
 		this.costo = costo > 0 ? costo : 0;
 	}
 

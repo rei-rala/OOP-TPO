@@ -44,13 +44,20 @@ public class Tecnico extends Interno {
 	}
 
 	public ArrayList<Servicio> getServiciosAsignados() {
-		for (Dia d : agenda.getDias()) {
-			if (d.getFecha() != null) {
+		ArrayList<Servicio> asignados = new ArrayList<Servicio>();
 
+		for (Servicio s : Empresa.getInstance().getServicios()) {
+			if (s.getTecnicos().contains(this) == false) {
+				continue;
 			}
+			if (s.isFacturado()) {
+				continue;
+			}
+
+			asignados.add(s);
 		}
 
-		return new ArrayList<Servicio>();
+		return asignados;
 	}
 
 	@Override
@@ -86,8 +93,7 @@ public class Tecnico extends Interno {
 		return buscado;
 	}
 
-	public void anadirMaterialServicio(Servicio s, int cantidad, Articulo a)
-			throws AsignacionException, ServicioException, StockException {
+	public void anadirMaterialServicio(Servicio s, int cantidad, Articulo a) throws Exception {
 		String genExc = "No fue posible a�adir articulo: ";
 
 		if (s.getTecnicos().contains(this) == false) {
@@ -117,7 +123,24 @@ public class Tecnico extends Interno {
 		s.anadirOtroCostos(ax, q);
 	}
 
-	public void iniciarServicio(Servicio s) throws AsignacionException, ServicioException {
+	public void toggleAlmuerzoServicio(Servicio s) throws Exception {
+		String genExc = "No fue posible modificar almuerzo ";
+
+		if (s.getTecnicos().contains(this) == false) {
+			throw new AsignacionException(genExc + "No estas asignado a este servicio");
+		}
+		if (s.isFacturado()) {
+			throw new ServicioException(genExc + "El servicio ya fue facturado");
+		}
+
+		if (s.getEstadoServicio() != EstadoServicio.EN_CURSO) {
+			throw new ServicioException(genExc + "El servicio no esta en curso");
+		}
+
+		s.toggleIncluyeAlmuerzo();
+	}
+
+	public void ejecutarServicio(Servicio s) throws Exception {
 		String genExc = "No fue posible finalizar servicio: ";
 
 		if (s.getTecnicos().contains(this) == false) {
@@ -129,12 +152,20 @@ public class Tecnico extends Interno {
 
 		if (s.getEstadoServicio() == EstadoServicio.FINALIZADO) {
 			throw new ServicioException(genExc + "El servicio ya fue finalizado");
+		}
+
+		if (s.getEstadoServicio() == EstadoServicio.CANCELADO) {
+			throw new ServicioException(genExc + "El servicio fue cancelado");
+		}
+
+		if (s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
+			throw new ServicioException(genExc + "El servicio ya se encuentra en curso");
 		}
 
 		s.setEstadoServicio(EstadoServicio.EN_CURSO);
 	}
 
-	public void finalizarServicio(Servicio s) throws AsignacionException, ServicioException {
+	public void finalizarServicio(Servicio s) throws Exception {
 		String genExc = "No fue posible finalizar servicio: ";
 
 		if (s.getTecnicos().contains(this) == false) {
@@ -146,6 +177,14 @@ public class Tecnico extends Interno {
 
 		if (s.getEstadoServicio() == EstadoServicio.FINALIZADO) {
 			throw new ServicioException(genExc + "El servicio ya fue finalizado");
+		}
+
+		if (s.getEstadoServicio() == EstadoServicio.CANCELADO) {
+			throw new ServicioException(genExc + "El servicio fue cancelado");
+		}
+
+		if (s.getEstadoServicio() == EstadoServicio.PROGRAMADO) {
+			throw new ServicioException(genExc + "Primero debe iniciarse el servicio");
 		}
 
 		s.setEstadoServicio(EstadoServicio.FINALIZADO);

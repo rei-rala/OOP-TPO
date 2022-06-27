@@ -16,15 +16,17 @@ abstract public class Articulo extends Recurso {
 		this.stock = stock;
 
 		Empresa.getInstance().agregarArticulo(this);
-
 	}
 
 	public double getStock() {
 		return stock;
 	}
 
-	public void setStock(int stock) {
-		this.stock = stock > 0 ? stock : 0;
+	public void setStock(int stock) throws StockException {
+		if (0 >= stock) {
+			throw new StockException("Stock debe ser mayor a 0");
+		}
+		this.stock = stock;
 	}
 
 	public void anadirStock(double stockAdicional) throws StockException {

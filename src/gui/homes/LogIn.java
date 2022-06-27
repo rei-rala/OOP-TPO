@@ -5,7 +5,10 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import empresa.Empresa;
+import excepciones.ValorException;
 import gui.Gui;
+import personas.Admin;
+import personas.Administrativo;
 import personas.Interno;
 
 public class LogIn extends JPanel implements ActionListener {
@@ -62,48 +65,39 @@ public class LogIn extends JPanel implements ActionListener {
 		add(btnLogin, BorderLayout.SOUTH);
 	}
 
-	// Create functions for login
+	private JPanel obtenerHome(Interno i) {
+		JPanel jp;
+		Class<? extends Interno> classI = i.getClass();
 
-	public String getLegajoField() {
-		return legajo.getText();
+		if (classI == Admin.class) {
+			jp = new AdminHome();
+		} else if (classI == Administrativo.class) {
+			jp = new AdministrativoHome();
+		} else {
+			jp = new TecnicoHome();
+		}
+
+		return jp;
 	}
 
-	public String getContrasenaField() {
-		return contrasena.getText();
-	}
+	public void login() throws Exception {
+		int legajoIngresado = gui.validarInt(legajo.getText());
+		Interno i = empresa.login(legajoIngresado, contrasena.getText());
 
-	public JButton getLoginButton() {
-		return btnLogin;
-	}
-
-
-	public boolean verificarFields() {
-		try {
-			Integer.parseInt(getLegajoField());
-			return true;
-		} catch (Exception e) {
-			return false;
+		if (i != null) {
+			gui.setUsuarioLogeado(i);
+			JPanel home = obtenerHome(i);
+			gui.changePanel(home);
+		} else {
+			throw new Exception("Legajo o contrasena no validos");
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
 		try {
-
 			if (ev.getSource() == btnLogin) {
-				if (verificarFields()) {
-					int legajo = Integer.parseInt(getLegajoField());
-					Interno i = empresa.login(legajo, getContrasenaField());
-
-					if (i != null) {
-						gui.setUsuarioLogeado(i);
-						gui.changePanel(new AdminHome());
-					} else {
-						throw new Exception("Legajo o contrasena no validos");
-					}
-				} else {
-					throw new Exception("Ingrese un numero para legajo");
-				}
+				login();
 			}
 		} catch (Exception exc) {
 			gui.setErrorMessage(exc);

@@ -22,21 +22,23 @@ public class Servicio {
 	private ArrayList<Costo> articulosUtilizados = new ArrayList<Costo>();
 	private ArrayList<Costo> otrosCostos = new ArrayList<Costo>();
 	private final double costoViaje = Empresa.getInstance().getCostoViaje();
+	private boolean almuerzo;
 	private boolean facturado = false;
 
-	public Servicio(Cliente cliente, Date fecha, TipoServicio tipoServicio, int tiempoTrabajado) throws StockException {
+	public Servicio(Cliente cliente, Date fecha, TipoServicio tipoServicio, int tiempoTrabajado) throws Exception {
 		this.nro = ++contadorServicios;
 		this.cliente = cliente;
 		this.fecha = fecha;
 		this.tipoServicio = tipoServicio;
 		this.tiempoTrabajado = tiempoTrabajado;
 		this.estadoServicio = EstadoServicio.PROGRAMADO;
+		this.almuerzo = false;
 
 		preAnadirArticulos();
 		Empresa.getInstance().agregarServicio(this);
 	}
 
-	private void preAnadirArticulos() throws StockException {
+	private void preAnadirArticulos() throws Exception {
 		if (tipoServicio == TipoServicio.INSTALACION) {
 			Articulo cable = Empresa.getInstance().getArticulo(Cable.class);
 			Articulo decoTV = Empresa.getInstance().getArticulo(DecodificadorTV.class);
@@ -96,7 +98,7 @@ public class Servicio {
 		return articulosUtilizados;
 	}
 
-	public void setArticulos(ArrayList<Costo> articulos) {
+	private void setArticulos(ArrayList<Costo> articulos) {
 		this.articulosUtilizados = articulos;
 	}
 
@@ -104,7 +106,7 @@ public class Servicio {
 		return otrosCostos;
 	}
 
-	public void setOtrosCostos(ArrayList<Costo> otrosCostos) {
+	private void setOtrosCostos(ArrayList<Costo> otrosCostos) {
 		this.otrosCostos = otrosCostos;
 	}
 
@@ -117,43 +119,111 @@ public class Servicio {
 	}
 
 	// EDICION DE SERVICIO
-	public boolean anadirTecnico(Tecnico t) {
+	public boolean anadirTecnico(Tecnico t) throws ServicioException {
+		if (isFacturado()) {
+			throw new ServicioException("Servicio ya facturado");
+		}
 		if (t == null || tecnicosAsignados.contains(t)) {
 			return false;
 		}
 		return tecnicosAsignados.add(t);
 	}
 
-	public boolean removerTecnico(Tecnico t) {
+	public boolean removerTecnico(Tecnico t) throws Exception {
+		if (isFacturado()) {
+			throw new ServicioException("Servicio ya facturado");
+		}
 		return tecnicosAsignados.remove(t);
 	}
 
-	public boolean anadirArticulo(Articulo art, int cantidad) throws StockException {
+	public boolean anadirArticulo(Articulo art, int cantidad) throws Exception {
+		if (isFacturado()) {
+			throw new ServicioException("Servicio ya facturado");
+		}
+
 		art.consumirStock(cantidad);
 
 		Costo nuevoCosto = new Costo(cantidad, art);
 		return articulosUtilizados.add(nuevoCosto);
 	}
 
-	public void removerArticulo(Costo costo) {
-		articulosUtilizados.add(costo);
+	public void removerArticulo(Articulo a) throws Exception {
+		if (isFacturado()) {
+			throw new ServicioException("Servicio ya facturado");
+		}
+
+		ArrayList<Costo> costos = new ArrayList<Costo>();
+
+		for (Costo c : articulosUtilizados) {
+			if (c.getArticulo().getClass() != a.getClass()) {
+				costos.add(c);
+			}
+		}
+
+		setArticulos(costos);
 	}
 
-	public boolean anadirOtroCostos(ArticuloExtra extraArt, int cantidad) {
+	public boolean anadirOtroCostos(ArticuloExtra extraArt, int cantidad) throws ServicioException {
+		if (isFacturado()) {
+			throw new ServicioException("Servicio ya facturado");
+		}
+
 		Costo nuevoOtroCosto = new Costo(cantidad, extraArt);
 		return otrosCostos.add(nuevoOtroCosto);
 	}
 
-	public void removerOtroCostos(Costo otrosGastos) {
-		otrosCostos.remove(otrosGastos);
+	public void removerOtroCostos(ArticuloExtra ae) throws Exception {
+		if (isFacturado()) {
+			throw new ServicioException("Servicio ya facturado");
+		}
+
+		ArrayList<Costo> costos = new ArrayList<Costo>();
+
+		for (Costo c : articulosUtilizados) {
+			if (c.getArticulo().getClass() != ae.getClass()) {
+				costos.add(c);
+			}
+		}
+
+		setOtrosCostos(costos);
+	}
+
+	public double obtenerValorHoraServicio() {
+		double aux = 0;
+
+		for (Tecnico t : getTecnicos()) {
+			aux += tiempoTrabajado * Empresa.getInstance().obtenerCostoHoraTecnico(t.getSeniority());
+		}
+		return aux;
+	}
+
+	public double obtenerTotalServicio() {
+		double tiempoTrabajado = getTiempoTrabajado();
+
+		double stHorasTecnico = obtenerValorHoraServicio() * tiempoTrabajado;
+		double stArtsUtilizados = 0;
+		double stOtrosArtsUtilizados = 0;
+
+		for (Costo ca : articulosUtilizados) {
+			stArtsUtilizados += ca.obtenerTotalCosto();
+		}
+
+		for (Costo co : otrosCostos) {
+			stOtrosArtsUtilizados += co.obtenerTotalCosto();
+		}
+
+		return stHorasTecnico + stArtsUtilizados + stOtrosArtsUtilizados + costoViaje;
 	}
 
 	public boolean facturarServicio() throws ServicioException {
-		boolean minHoras = tiempoTrabajado > 0;
-		boolean minTecnicos = tecnicosAsignados.size() > 0;
-		boolean minArticulos = articulosUtilizados.size() > 0;
+		if (isFacturado()) {
+			throw new ServicioException("Servicio ya facturado");
+		}
 
-		if (minHoras && minTecnicos && minArticulos) {
+		boolean minHoras = tiempoTrabajado >= 0.5;
+		boolean minTecnicos = tecnicosAsignados.size() > 0;
+
+		if (minHoras && minTecnicos) {
 			this.facturado = true;
 		} else {
 			throw new ServicioException("Verificar datos del servicio antes de facturar");
@@ -168,6 +238,18 @@ public class Servicio {
 				+ tiempoTrabajado + ", tipoServicio=" + tipoServicio + ", estadoServicio=" + estadoServicio
 				+ ", tecnicosAsignados=" + tecnicosAsignados + ", articulosUtilizados=" + articulosUtilizados
 				+ ", otrosCostos=" + otrosCostos + ", costoViaje=" + costoViaje + ", facturado=" + facturado + "]";
+	}
+
+	public boolean isIncluyeAlmuerzo() {
+		return almuerzo;
+	}
+
+	public void setIncluyeAlmuerzo(boolean almuerzo) {
+		this.almuerzo = almuerzo;
+	}
+
+	public void toggleIncluyeAlmuerzo() {
+		this.almuerzo = !almuerzo;
 	}
 
 }

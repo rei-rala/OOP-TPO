@@ -47,12 +47,16 @@ public class Callcenter extends Interno {
 		return articulosSinStock;
 	}
 
-	public void anadirStock(Articulo a, int cantidad) throws StockException {
+	public void anadirStockArticulo(Articulo a, int cantidad) throws Exception {
 		a.anadirStock(cantidad);
 	}
 
-	public void editarStock(Articulo a, int cantidad) throws StockException {
-		a.setStock(cantidad);
+	public void setStockArticulo(Articulo a, int stock) throws Exception {
+		a.setStock(stock);
+	}
+
+	public void setCostoArticulo(Articulo a, double costo) throws Exception {
+		a.setCosto(costo);
 	}
 
 	// TECNICOS
@@ -77,7 +81,7 @@ public class Callcenter extends Interno {
 
 	// SERVICIOS
 	public Servicio crearNuevoServicioServicio(Cliente cliente, Date fecha, TipoServicio tipoServicio)
-			throws StockException {
+			throws Exception {
 
 		if (Empresa.getInstance().verificarArticulosSuficientes(tipoServicio)) {
 			return new Servicio(cliente, fecha, tipoServicio, legajo);
@@ -86,7 +90,7 @@ public class Callcenter extends Interno {
 
 	}
 
-	public boolean asignarServicioATecnico(Servicio s, Tecnico t) throws AsignacionException {
+	public boolean asignarServicioATecnico(Servicio s, Tecnico t) throws Exception {
 
 		if (t == null || s == null) {
 			throw new AsignacionException("No existe servicio o legajo de tecnico");
@@ -103,7 +107,7 @@ public class Callcenter extends Interno {
 		return s.anadirTecnico(t);
 	}
 
-	public boolean asignarServicioATecnico(int nroServicio, int legajoTecnico) throws AsignacionException {
+	public boolean asignarServicioATecnico(int nroServicio, int legajoTecnico) throws Exception {
 		Servicio s = Empresa.getInstance().getServicios(nroServicio);
 		Tecnico t = Empresa.getInstance().getTecnicos(legajoTecnico);
 
@@ -122,7 +126,7 @@ public class Callcenter extends Interno {
 		return s.anadirTecnico(t);
 	}
 
-	public boolean asignarServicioATecnico(Servicio serv, int legajoTecnico) throws AsignacionException {
+	public boolean asignarServicioATecnico(Servicio serv, int legajoTecnico) throws Exception {
 		Servicio s = Empresa.getInstance().getServicios(serv);
 		Tecnico t = Empresa.getInstance().getTecnicos(legajoTecnico);
 
@@ -137,7 +141,7 @@ public class Callcenter extends Interno {
 		return s.anadirTecnico(t);
 	}
 
-	public boolean removerTecnicoAsignado(int nroServicio, int legajoTecnico) throws AsignacionException {
+	public boolean removerTecnicoAsignado(int nroServicio, int legajoTecnico) throws Exception {
 		Servicio s = Empresa.getInstance().getServicios(nroServicio);
 		Tecnico t = Empresa.getInstance().getTecnicos(legajoTecnico);
 
