@@ -6,9 +6,7 @@ import agenda.*;
 import comercial.*;
 import comercial.articulos.*;
 import empresa.Empresa;
-import excepciones.AsignacionException;
-import excepciones.ServicioException;
-import excepciones.StockException;
+import excepciones.*;
 
 public class Tecnico extends Interno {
 	private Seniority seniority;

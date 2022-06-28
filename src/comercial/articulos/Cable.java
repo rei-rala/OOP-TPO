@@ -1,7 +1,5 @@
 package comercial.articulos;
 
-import excepciones.StockException;
-
 public class Cable extends Articulo {
 
 	public Cable(double costo, int stock) {

@@ -2,8 +2,10 @@ package gui.homes;
 
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+
+import excepciones.CredencialException;
+
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,8 +14,15 @@ import gui.parciales.PanelListServiciosTecnico;
 import personas.*;
 
 import javax.swing.JButton;
+import javax.swing.border.EtchedBorder;
+import java.awt.Color;
 
 public class TecnicoHome extends JPanel implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private Gui g = Gui.getInstance();
 	private Interno i = g.getUsuarioLogeado();
 	private PanelListServiciosTecnico panelListServiciosTecnico;
@@ -23,7 +32,9 @@ public class TecnicoHome extends JPanel implements ActionListener {
 	 * Create the panel.
 	 */
 	public TecnicoHome() {
-		setBorder(new TitledBorder(null, "Menu de tecnico", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
+				"MENU TECNICO", TitledBorder.CENTER, TitledBorder.TOP, null, Color.GRAY));
 		setLayout(new BorderLayout(0, 0));
 
 		panelListServiciosTecnico = new PanelListServiciosTecnico();
@@ -37,8 +48,17 @@ public class TecnicoHome extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == btnLogout) {
-			g.logout();
+		try {
+			if (i.getClass() != Tecnico.class) {
+				throw new CredencialException("Permisos insuficientes");
+			}
+
+			if (e.getSource() == btnLogout) {
+				g.logout();
+			}
+
+		} catch (Exception exception) {
+			g.errorHandler(exception);
 		}
 
 	}

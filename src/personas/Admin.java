@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import comercial.articulos.*;
 import empresa.CostoHorasTecnico;
 import empresa.Empresa;
-import excepciones.StockException;
-import excepciones.ValorException;
+import excepciones.*;
 
 public class Admin extends Interno {
 	private static Empresa empresa = Empresa.getInstance();

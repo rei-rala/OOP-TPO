@@ -5,13 +5,17 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import empresa.Empresa;
-import excepciones.ValorException;
+import excepciones.*;
+
 import gui.Gui;
-import personas.Admin;
-import personas.Administrativo;
-import personas.Interno;
+import personas.*;
 
 public class LogIn extends JPanel implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private JLabel lblNewLabel;
 	private JPanel panel;
 	private JLabel lblNewLabel_1;
@@ -36,12 +40,18 @@ public class LogIn extends JPanel implements ActionListener {
 
 		panel = new JPanel();
 		add(panel, BorderLayout.CENTER);
-		panel.setLayout(new GridLayout(0, 2, 0, 0));
+		panel.setLayout(new GridLayout(0, 7, 0, 0));
+
+		for (int i = 0; i < 16; i++) {
+			panel.add(new JLabel(""));
+		}
 
 		lblNewLabel_1 = new JLabel("Numero legajo");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblNewLabel_1);
+
+		panel.add(new JLabel(""));
 
 		legajo = new JTextField();
 		legajo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -49,10 +59,16 @@ public class LogIn extends JPanel implements ActionListener {
 		panel.add(legajo);
 		legajo.setColumns(10);
 
+		for (int i = 0; i < 4; i++) {
+			panel.add(new JLabel(""));
+		}
+
 		lblNewLabel_2 = new JLabel("Contrase\u00F1a");
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblNewLabel_2);
+
+		panel.add(new JLabel(""));
 
 		contrasena = new JTextField();
 		contrasena.setHorizontalAlignment(SwingConstants.CENTER);
@@ -60,12 +76,20 @@ public class LogIn extends JPanel implements ActionListener {
 		panel.add(contrasena);
 		contrasena.setColumns(10);
 
-		btnLogin = new JButton("INICIAR SESION");
+		for (int i = 0; i < 5; i++) {
+			panel.add(new JLabel(""));
+		}
+
+		btnLogin = new JButton("LOG IN");
 		btnLogin.addActionListener(this);
-		add(btnLogin, BorderLayout.SOUTH);
+		panel.add(btnLogin);
+
+		for (int i = 0; i < 16; i++) {
+			panel.add(new JLabel(""));
+		}
 	}
 
-	private JPanel obtenerHome(Interno i) {
+	private JPanel obtenerHome(Interno i) throws Exception {
 		JPanel jp;
 		Class<? extends Interno> classI = i.getClass();
 
@@ -73,8 +97,12 @@ public class LogIn extends JPanel implements ActionListener {
 			jp = new AdminHome();
 		} else if (classI == Administrativo.class) {
 			jp = new AdministrativoHome();
-		} else {
+		} else if (classI == Tecnico.class) {
 			jp = new TecnicoHome();
+		} else if (classI == Callcenter.class) {
+			jp = new CallcenterHome();
+		} else {
+			throw new CredencialException("USUARIO NO AUTORIZADO");
 		}
 
 		return jp;
@@ -89,7 +117,7 @@ public class LogIn extends JPanel implements ActionListener {
 			JPanel home = obtenerHome(i);
 			gui.changePanel(home);
 		} else {
-			throw new Exception("Legajo o contrasena no validos");
+			throw new CredencialException("Legajo o contrasena no validos");
 		}
 	}
 

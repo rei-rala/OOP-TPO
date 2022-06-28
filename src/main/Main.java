@@ -4,7 +4,6 @@ import empresa.Empresa;
 import comercial.*;
 import comercial.articulos.*;
 import personas.*;
-import excepciones.*;
 import gui.Gui;
 
 import java.awt.EventQueue;
@@ -29,10 +28,11 @@ public class Main {
 		Admin ADMIN = new Admin("Hector V.O.N.", "");
 		Administrativo adm1 = new Administrativo("Administrativo UNO", "");
 		Tecnico tec1 = new Tecnico("tec Senior", "", Seniority.SENIOR);
+		Callcenter cc1 = new Callcenter("Callcenter UNO", "");
 		Tecnico tec2 = new Tecnico("tec Junior", "passTJR", Seniority.JUNIOR);
-		Callcenter cc1 = new Callcenter("Callcenter UNO", "passCC");
 		Cliente cl1 = new Cliente("Cliente UNO");
 		Cliente cl2 = new Cliente("Cliente DOS");
+		Cliente cl3 = new Cliente("Cliente TRES");
 
 		// LOG IN y PRUEBA ADMINISTRATIVO
 		Interno usuario = EMPRESA.login(2, "passADM");
@@ -43,7 +43,7 @@ public class Main {
 		// Casteando usuario manualmente para ejemplo
 		Administrativo usuarioLogeado = (Administrativo) usuario;
 
-		Servicio serv1 = null, serv2 = null, serv3 = null, serv4 = null;
+		Servicio serv1 = null, serv2 = null, serv3 = null, serv4 = null, serv5 = null;
 		ArrayList<Articulo> articulosNoStock = cc1.buscarArticulosSinStock();
 		Articulo ejemploNoStock = null;
 		ArrayList<Tecnico> tecnicosDisponibles = null;
@@ -66,10 +66,12 @@ public class Main {
 			System.out.println("Tras adicionar stock => " + ejemploNoStock);
 
 			// Tras verificar disponibilidad,
-			serv1 = cc1.crearNuevoServicioServicio(cl1, new Date(), TipoServicio.INSTALACION);
-			serv2 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.INSTALACION);
-			serv3 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.REPARACION);
-			serv4 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.REPARACION);
+			Date f1 = new Date(2022, 1, 1), f2 = new Date(2022, 6, 27), f3 = new Date(2022, 6, 15);
+			serv1 = cc1.crearNuevoServicioServicio(cl1, f1, TipoServicio.INSTALACION, null, 0, 0);
+			serv2 = cc1.crearNuevoServicioServicio(cl2, f2, TipoServicio.INSTALACION, null, 0, 0);
+			serv3 = cc1.crearNuevoServicioServicio(cl2, f3, TipoServicio.REPARACION, null, 0, 0);
+			serv4 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.REPARACION, null, 0, 0);
+			serv5 = cc1.crearNuevoServicioServicio(cl2, new Date(), TipoServicio.INSTALACION, null, 0, 0);
 
 			cc1.asignarServicioATecnico(serv1, tec1);
 			cc1.asignarServicioATecnico(serv2, tec1);

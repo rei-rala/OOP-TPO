@@ -3,10 +3,10 @@ package personas;
 import java.util.ArrayList;
 import java.util.Date;
 
-import agenda.Turno;
+import agenda.*;
 import empresa.Empresa;
 import comercial.*;
-import comercial.articulos.Articulo;
+import comercial.articulos.*;
 import excepciones.*;
 
 public class Callcenter extends Interno {
@@ -80,17 +80,41 @@ public class Callcenter extends Interno {
 	}
 
 	// SERVICIOS
-	public Servicio crearNuevoServicioServicio(Cliente cliente, Date fecha, TipoServicio tipoServicio)
+	public void asignarServicioACliente(Cliente c, Servicio s, Date fecha, Turno t, int desde, int hasta)
 			throws Exception {
 
-		if (Empresa.getInstance().verificarArticulosSuficientes(tipoServicio)) {
-			return new Servicio(cliente, fecha, tipoServicio, legajo);
+		if (c == null || s == null) {
+			throw new AsignacionException("No existe servicio o legajo de tecnico");
 		}
-		throw new StockException("Faltan articulos necesarios para crear nuevo servicio");
 
+		if (s.isFacturado()) {
+			throw new AsignacionException("El servicio se encuentra facturado");
+		}
+
+		c.asignarServicio(s, fecha, t, desde, hasta);
 	}
 
-	public boolean asignarServicioATecnico(Servicio s, Tecnico t) throws Exception {
+	public void asignarServicioACliente(Cliente c, Servicio s, Date fecha, Turno t, int nroTurno) throws Exception {
+		asignarServicioACliente(c, s, fecha, t, nroTurno, nroTurno);
+	}
+
+	public Servicio crearNuevoServicioServicio(Cliente cliente, Date fecha, TipoServicio ts, Turno t, int desde,
+			int hasta) throws Exception {
+
+		if (Empresa.getInstance().verificarArticulosSuficientes(ts) == false) {
+			throw new StockException("Faltan articulos necesarios para crear nuevo servicio");
+		}
+		double duracionServInicial = DateAux.calcularHoras(desde, hasta);
+		if (0 > duracionServInicial) {
+			throw new ServicioException("Duracion de servicio no valida");
+		}
+		cliente.verificarDisponibilidad(fecha, t, desde, hasta);
+		Servicio s = new Servicio(cliente, fecha, ts, duracionServInicial);
+		asignarServicioACliente(cliente, s, fecha, t, desde, hasta);
+		return s;
+	}
+
+	public void asignarServicioATecnico(Servicio s, Tecnico t) throws Exception {
 
 		if (t == null || s == null) {
 			throw new AsignacionException("No existe servicio o legajo de tecnico");
@@ -104,59 +128,21 @@ public class Callcenter extends Interno {
 			throw new AsignacionException("El servicio se encuentra facturado");
 		}
 
-		return s.anadirTecnico(t);
+		s.anadirTecnico(t);
 	}
 
-	public boolean asignarServicioATecnico(int nroServicio, int legajoTecnico) throws Exception {
+	public void asignarServicioATecnico(int nroServicio, int legajoTecnico) throws Exception {
 		Servicio s = Empresa.getInstance().getServicios(nroServicio);
 		Tecnico t = Empresa.getInstance().getTecnicos(legajoTecnico);
 
-		if (t == null || s == null) {
-			throw new AsignacionException("No existe servicio o legajo de tecnico");
-		}
-
-		if (s.getTecnicos().contains(t)) {
-			throw new AsignacionException("El tecnico ya se encuentra asignado a este servicio");
-		}
-
-		if (s.isFacturado()) {
-			throw new AsignacionException("El servicio se encuentra facturado");
-		}
-
-		return s.anadirTecnico(t);
+		asignarServicioATecnico(s, t);
 	}
 
-	public boolean asignarServicioATecnico(Servicio serv, int legajoTecnico) throws Exception {
+	public void asignarServicioATecnico(Servicio serv, int legajoTecnico) throws Exception {
 		Servicio s = Empresa.getInstance().getServicios(serv);
 		Tecnico t = Empresa.getInstance().getTecnicos(legajoTecnico);
 
-		if (t == null || s == null) {
-			throw new AsignacionException("No existe servicio o legajo de tecnico");
-		}
-
-		if (s.isFacturado()) {
-			throw new AsignacionException("El servicio se encuentra facturado");
-		}
-
-		return s.anadirTecnico(t);
+		asignarServicioATecnico(s, t);
 	}
 
-	public boolean removerTecnicoAsignado(int nroServicio, int legajoTecnico) throws Exception {
-		Servicio s = Empresa.getInstance().getServicios(nroServicio);
-		Tecnico t = Empresa.getInstance().getTecnicos(legajoTecnico);
-
-		if (t == null || s == null) {
-			throw new AsignacionException("No existe servicio o legajo de tecnico");
-		}
-
-		if (s.isFacturado()) {
-			throw new AsignacionException("El servicio se encuentra facturado");
-		}
-
-		if (s.getTecnicos().contains(t) == false) {
-			throw new AsignacionException("El tecnico no esta asignado a este servicio");
-		}
-
-		return s.anadirTecnico(t);
-	}
 }

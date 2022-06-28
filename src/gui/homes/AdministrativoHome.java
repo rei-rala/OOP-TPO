@@ -14,8 +14,17 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JButton;
+import javax.swing.border.TitledBorder;
+import javax.swing.border.EtchedBorder;
+import java.awt.Color;
 
 public class AdministrativoHome extends JPanel implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
 	private JMenuBar mbAdministrativo;
 	private JMenu mnNewMenu;
 	private JMenuItem mitemServ;
@@ -36,7 +45,7 @@ public class AdministrativoHome extends JPanel implements ActionListener {
 		mbAdministrativo.setToolTipText("");
 		add(mbAdministrativo, BorderLayout.NORTH);
 
-		mnNewMenu = new JMenu("Menu Administrativo");
+		mnNewMenu = new JMenu("Administrativo");
 		mbAdministrativo.add(mnNewMenu);
 
 		mitemServ = new JMenuItem("Servicios");
@@ -48,6 +57,7 @@ public class AdministrativoHome extends JPanel implements ActionListener {
 		mnNewMenu.add(mitemFact);
 
 		pContenedor = new JPanel();
+		pContenedor.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "MENU ADMINISTRATIVO", TitledBorder.CENTER, TitledBorder.TOP, null, Color.GRAY));
 		add(pContenedor, BorderLayout.CENTER);
 		pContenedor.setLayout(new BorderLayout(0, 0));
 
@@ -74,15 +84,20 @@ public class AdministrativoHome extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		Object src = e.getSource();
 
-		if (e.getSource() == mitemServ) {
-			switchMenuAdministrativo(new PanelListServicios());
-		}
-		if (e.getSource() == mitemFact) {
-			switchMenuAdministrativo(new PanelListFacturas());
-		}
-		if (e.getSource() == btnLogout) {
-			g.logout();
+		try {
+			if (src == mitemServ) {
+				switchMenuAdministrativo(new PanelListServicios());
+			}
+			if (src == mitemFact) {
+				switchMenuAdministrativo(new PanelListFacturas());
+			}
+			if (src == btnLogout) {
+				g.logout();
+			}
+		} catch (Exception exception) {
+			g.errorHandler(exception);
 		}
 	}
 }

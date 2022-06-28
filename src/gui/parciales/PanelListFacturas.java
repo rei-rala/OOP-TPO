@@ -1,7 +1,6 @@
 package gui.parciales;
 
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,13 +8,9 @@ import java.util.ArrayList;
 
 import javax.swing.border.TitledBorder;
 
-import comercial.Factura;
-import comercial.Servicio;
-import comercial.articulos.Costo;
+import comercial.*;
 import empresa.Empresa;
 import gui.Gui;
-import personas.Cliente;
-import personas.Tecnico;
 
 import javax.swing.border.EtchedBorder;
 import java.awt.Color;
@@ -28,6 +23,12 @@ import javax.swing.JButton;
 import java.awt.FlowLayout;
 
 public class PanelListFacturas extends JPanel implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
 	private JPanel pListadoFacturas;
 	private JPanel pFacturaDetalle;
 
@@ -135,19 +136,11 @@ public class PanelListFacturas extends JPanel implements ActionListener {
 		poblarFacturas();
 	}
 
-	private String obtenerTituloFactura(Factura f) {
-		String nro = "" + f.getNro();
-		String fecha = "" + f.getFecha();
-		String total = "$ " + f.calcularTotal();
-
-		return nro + " - " + fecha + " - " + total;
-	}
-
 	private void poblarFacturas() {
 		pListadoFacturas.removeAll();
 
 		for (Factura f : fs) {
-			JButton btnFactura = new JButton(obtenerTituloFactura(f));
+			JButton btnFactura = new JButton(g.obtenerTituloFactura(f));
 			btnFactura.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -159,93 +152,37 @@ public class PanelListFacturas extends JPanel implements ActionListener {
 		}
 	}
 
-	private String getNroStr() {
-		return "" + currentFactura.getNro();
-	}
-
-	private String getClienteStr() {
-		Cliente c = currentFactura.getServicio().getCliente();
-
-		String nroCliente = "ID: " + c.getNro();
-		String nombre = "Nombre: " + c.getNombre();
-		String direccion = "Direccion: " + c.getDireccion();
-		String telefono = "Telefono: " + c.getTelefono();
-
-		return nroCliente + " - " + nombre + ":\n" + direccion + "\n" + telefono;
-	}
-
-	private String limpiarTecnicos(ArrayList<Tecnico> alT) {
-		String tecnicos = "Cantidad " + alT.size();
-		for (Tecnico t : alT) {
-			tecnicos += "\n\t" + t.getNombre() + " (" + t.getLegajo() + " | " + t.getSeniority() + ")";
-		}
-		return tecnicos;
-	}
-
-	private String limpiarArticulos(ArrayList<Costo> alC) {
-		String costos = "Cantidad " + alC.size();
-		for (Costo c : alC) {
-			costos += "\n\t" + c.getCantidad() + "x" + c.getArticulo().getDescripcion();
-		}
-		return costos;
-	}
-
-	private String getServicioStr() {
-		Servicio s = currentFactura.getServicio();
-
-		String nro = "Servcio numero: " + s.nro + "\n";
-		String fecha = "Fecha: " + s.getFecha() + "\n";
-		String tipo = "Tipo: " + s.getTipoServicio() + "\n";
-		String tecnicos = "Tecnicos: " + limpiarTecnicos(s.getTecnicos()) + "\n";
-		String articulos = "Articulos: " + limpiarArticulos(s.getArticulos()) + "\n";
-		String otrosArts = "Extras: " + limpiarArticulos(s.getOtrosCostos()) + "\n";
-		String tiempoTrabajado = "Tiempo: " + s.getTiempoTrabajado() + "\n";
-		String costoViaje = "Viaticos: " + s.getCostoViaje() + "\n";
-		String costoTotal = "Total servicio: " + s.obtenerTotalServicio();
-
-		return nro + fecha + tipo + tecnicos + articulos + otrosArts + tiempoTrabajado + costoViaje + costoTotal;
-	}
-
-	private String getSubtotal() {
-		return "$ " + e.redondear(currentFactura.calcularSubTotal());
-	}
-
-	private String getIVA() {
-		return "$ " + e.redondear(currentFactura.calcularIVA());
-	}
-
-	private String getTotal() {
-		return "$ " + e.redondear(currentFactura.calcularTotal());
-	}
-
-	private String getGanancia() {
-		return "$ " + e.redondear(currentFactura.calcularGanancias());
-	}
-
-	private String getMargen() {
-		return e.redondear(currentFactura.calcularMargen() * 100) + "%";
-	}
-
 	private void llenarFormulario() {
 		if (currentFactura == null) {
+			tfNroFactura.setText("");
+			tfSubtotal.setText("");
+			tfIVA.setText("");
+			tfTotal.setText("");
+			tfGanancia.setText("");
+			tfMargenFactura.setText("");
+
+			tfClienteFactura.setEnabled(false);
+			tfServicioAsociado.setEnabled(false);
 			return;
 		}
 
-		tfNroFactura.setText(getNroStr());
-		tfSubtotal.setText(getSubtotal());
-		tfIVA.setText(getIVA());
-		tfTotal.setText(getTotal());
-		tfGanancia.setText(getGanancia());
-		tfMargenFactura.setText(getMargen());
+		tfNroFactura.setText(g.getNro(currentFactura));
+		tfSubtotal.setText(g.getSubtotal(currentFactura));
+		tfIVA.setText(g.getIVA(currentFactura));
+		tfTotal.setText(g.getTotal(currentFactura));
+		tfGanancia.setText(g.getGanancia(currentFactura));
+		tfMargenFactura.setText(g.getMargen(currentFactura));
 
 		tfClienteFactura.setEnabled(true);
 		tfServicioAsociado.setEnabled(true);
 	}
 
-	public void mostrarMensaje(String mensaje) {
-		if (currentFactura == null || mensaje.isBlank()) {
-			g.setErrorMessage(new Exception("Factura incorrecta"));
-			return;
+	public void mostrarMensaje(String mensaje) throws Exception {
+		if (currentFactura == null) {
+			g.errorHandler(new Exception("Factura no valida"));
+		}
+		if (mensaje.isBlank()) {
+			g.errorHandler(new Exception("Error desconocido"));
 		}
 
 		JOptionPane.showMessageDialog(null, mensaje);
@@ -255,12 +192,16 @@ public class PanelListFacturas extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
 
-		if (src == tfClienteFactura) {
-			mostrarMensaje(getClienteStr());
-		}
+		try {
+			if (src == tfClienteFactura) {
+				mostrarMensaje(g.getCliente(currentFactura));
+			}
 
-		if (src == tfServicioAsociado) {
-			mostrarMensaje(getServicioStr());
+			if (src == tfServicioAsociado) {
+				mostrarMensaje(g.getServicioStr(currentFactura));
+			}
+		} catch (Exception exception) {
+			g.errorHandler(exception);
 		}
 	}
 

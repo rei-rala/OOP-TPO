@@ -1,10 +1,8 @@
 package personas;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import comercial.*;
-import comercial.articulos.Costo;
 import empresa.Empresa;
 import excepciones.ServicioException;
 

@@ -3,6 +3,7 @@ package comercial;
 import java.util.ArrayList;
 import java.util.Date;
 
+import agenda.Turno;
 import empresa.Empresa;
 import comercial.articulos.*;
 import personas.*;
@@ -12,7 +13,7 @@ public class Servicio {
 	static int contadorServicios = 0;
 
 	public final int nro;
-	private Cliente cliente;
+	private final Cliente cliente;
 	private Date fecha;
 
 	private double tiempoTrabajado;
@@ -23,9 +24,16 @@ public class Servicio {
 	private ArrayList<Costo> otrosCostos = new ArrayList<Costo>();
 	private final double costoViaje = Empresa.getInstance().getCostoViaje();
 	private boolean almuerzo;
-	private boolean facturado = false;
+	private boolean enPoderTecnico;
+	private boolean facturado;
 
-	public Servicio(Cliente cliente, Date fecha, TipoServicio tipoServicio, int tiempoTrabajado) throws Exception {
+	private Turno turno;
+	private int tnoInicio = -1;
+	private int tnoFin = -1;
+
+	public Servicio(Cliente cliente, Date fecha, TipoServicio tipoServicio, double tiempoTrabajado) throws Exception {
+		preVerificarTiempoTrabajado(tiempoTrabajado);
+
 		this.nro = ++contadorServicios;
 		this.cliente = cliente;
 		this.fecha = fecha;
@@ -33,9 +41,24 @@ public class Servicio {
 		this.tiempoTrabajado = tiempoTrabajado;
 		this.estadoServicio = EstadoServicio.PROGRAMADO;
 		this.almuerzo = false;
+		this.enPoderTecnico = false;
+		this.facturado = false;
 
 		preAnadirArticulos();
 		Empresa.getInstance().agregarServicio(this);
+	}
+
+	private void preVerificarTiempoTrabajado(double tiempoTrabajado) throws Exception {
+		if (tipoServicio == TipoServicio.REPARACION) {
+			if (0.5 > tiempoTrabajado) {
+				throw new ServicioException("El tiempo de reparacion debe ser de al menos media hora.");
+			}
+			return;
+		}
+
+		if (1 > tiempoTrabajado) {
+			throw new ServicioException("El tiempo de instalacion debe ser de al menos una hora.");
+		}
 	}
 
 	private void preAnadirArticulos() throws Exception {
@@ -56,10 +79,6 @@ public class Servicio {
 
 	public Cliente getCliente() {
 		return cliente;
-	}
-
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
 	}
 
 	public ArrayList<Tecnico> getTecnicos() {
@@ -98,16 +117,8 @@ public class Servicio {
 		return articulosUtilizados;
 	}
 
-	private void setArticulos(ArrayList<Costo> articulos) {
-		this.articulosUtilizados = articulos;
-	}
-
 	public ArrayList<Costo> getOtrosCostos() {
 		return otrosCostos;
-	}
-
-	private void setOtrosCostos(ArrayList<Costo> otrosCostos) {
-		this.otrosCostos = otrosCostos;
 	}
 
 	public double getCostoViaje() {
@@ -119,21 +130,19 @@ public class Servicio {
 	}
 
 	// EDICION DE SERVICIO
-	public boolean anadirTecnico(Tecnico t) throws ServicioException {
+	public void anadirTecnico(Tecnico t) throws Exception {
+		if (isEnPoderTecnico()) {
+			throw new ServicioException("El servicio se encuentra en poder de lo/s tecnico/s");
+		}
 		if (isFacturado()) {
 			throw new ServicioException("Servicio ya facturado");
 		}
 		if (t == null || tecnicosAsignados.contains(t)) {
-			return false;
+			throw new AsignacionException("Tecnico ya asignado a este servicio");
 		}
-		return tecnicosAsignados.add(t);
-	}
 
-	public boolean removerTecnico(Tecnico t) throws Exception {
-		if (isFacturado()) {
-			throw new ServicioException("Servicio ya facturado");
-		}
-		return tecnicosAsignados.remove(t);
+		t.getAgenda().verificarDisponibilidad(fecha, turno, tnoInicio, tnoFin);
+		tecnicosAsignados.add(t);
 	}
 
 	public boolean anadirArticulo(Articulo art, int cantidad) throws Exception {
@@ -147,22 +156,6 @@ public class Servicio {
 		return articulosUtilizados.add(nuevoCosto);
 	}
 
-	public void removerArticulo(Articulo a) throws Exception {
-		if (isFacturado()) {
-			throw new ServicioException("Servicio ya facturado");
-		}
-
-		ArrayList<Costo> costos = new ArrayList<Costo>();
-
-		for (Costo c : articulosUtilizados) {
-			if (c.getArticulo().getClass() != a.getClass()) {
-				costos.add(c);
-			}
-		}
-
-		setArticulos(costos);
-	}
-
 	public boolean anadirOtroCostos(ArticuloExtra extraArt, int cantidad) throws ServicioException {
 		if (isFacturado()) {
 			throw new ServicioException("Servicio ya facturado");
@@ -170,22 +163,6 @@ public class Servicio {
 
 		Costo nuevoOtroCosto = new Costo(cantidad, extraArt);
 		return otrosCostos.add(nuevoOtroCosto);
-	}
-
-	public void removerOtroCostos(ArticuloExtra ae) throws Exception {
-		if (isFacturado()) {
-			throw new ServicioException("Servicio ya facturado");
-		}
-
-		ArrayList<Costo> costos = new ArrayList<Costo>();
-
-		for (Costo c : articulosUtilizados) {
-			if (c.getArticulo().getClass() != ae.getClass()) {
-				costos.add(c);
-			}
-		}
-
-		setOtrosCostos(costos);
 	}
 
 	public double obtenerValorHoraServicio() {
@@ -215,6 +192,33 @@ public class Servicio {
 		return stHorasTecnico + stArtsUtilizados + stOtrosArtsUtilizados + costoViaje;
 	}
 
+	public boolean isEnPoderTecnico() {
+		return enPoderTecnico;
+	}
+
+	public boolean isIncluyeAlmuerzo() {
+		return almuerzo;
+	}
+
+	public void setIncluyeAlmuerzo(boolean almuerzo) {
+		this.almuerzo = almuerzo;
+	}
+
+	public void toggleIncluyeAlmuerzo() {
+		this.almuerzo = !almuerzo;
+	}
+
+	public void liberarDesdeCallcenter() throws ServicioException {
+		if (this.enPoderTecnico) {
+			throw new ServicioException("El servicio se encuentra en poder de lo/s tecnico/s.");
+		}
+		if (0 >= this.tecnicosAsignados.size()) {
+			throw new ServicioException("El servicio debe contar con al menos 1 (un) tecnico");
+		}
+
+		enPoderTecnico = true;
+	}
+
 	public boolean facturarServicio() throws ServicioException {
 		if (isFacturado()) {
 			throw new ServicioException("Servicio ya facturado");
@@ -240,16 +244,34 @@ public class Servicio {
 				+ ", otrosCostos=" + otrosCostos + ", costoViaje=" + costoViaje + ", facturado=" + facturado + "]";
 	}
 
-	public boolean isIncluyeAlmuerzo() {
-		return almuerzo;
+	public Turno getTurno() {
+		return turno;
 	}
 
-	public void setIncluyeAlmuerzo(boolean almuerzo) {
-		this.almuerzo = almuerzo;
+	public void setTurno(Turno turno) {
+		if (this.turno == null) {
+			this.turno = turno;
+		}
 	}
 
-	public void toggleIncluyeAlmuerzo() {
-		this.almuerzo = !almuerzo;
+	public int getTnoInicio() {
+		return tnoInicio;
+	}
+
+	public void setTnoInicio(int tnoInicio) {
+		if (this.tnoInicio == -1) {
+			this.tnoInicio = tnoInicio;
+		}
+	}
+
+	public int getTnoFin() {
+		return tnoFin;
+	}
+
+	public void setTnoFin(int tnoFin) {
+		if (this.tnoFin == -1) {
+			this.tnoFin = tnoFin;
+		}
 	}
 
 }

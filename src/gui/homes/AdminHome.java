@@ -9,6 +9,7 @@ import gui.Gui;
 import gui.parciales.PanelEdicionArticulos;
 import personas.Admin;
 import personas.Seniority;
+import javax.swing.border.TitledBorder;
 
 @SuppressWarnings("serial")
 public class AdminHome extends JPanel implements ActionListener {
@@ -40,6 +41,7 @@ public class AdminHome extends JPanel implements ActionListener {
 	private JLabel tituloPanel;
 
 	public AdminHome() {
+		setBorder(new TitledBorder(null, "MENU ADMIN", TitledBorder.CENTER, TitledBorder.TOP, null, Color.GRAY));
 		setLayout(new BorderLayout(0, 0));
 		String username = gui.getUsuarioLogeado().getClass().getSimpleName();
 

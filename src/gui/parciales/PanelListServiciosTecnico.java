@@ -1,17 +1,13 @@
 package gui.parciales;
 
-import javax.security.auth.login.CredentialException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import empresa.Empresa;
-import excepciones.ServicioException;
 import gui.Gui;
+import excepciones.*;
 import personas.*;
+import comercial.*;
 import javax.swing.border.TitledBorder;
-
-import comercial.EstadoServicio;
-import comercial.Servicio;
 
 import javax.swing.border.EtchedBorder;
 import java.awt.Color;
@@ -20,19 +16,20 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.JSeparator;
-import javax.swing.JToggleButton;
+
 import java.awt.FlowLayout;
 
 public class PanelListServiciosTecnico extends JPanel implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private Gui g = Gui.getInstance();
-	private Empresa e = Empresa.getInstance();
 	private Tecnico i = (Tecnico) g.getUsuarioLogeado();
 	private Servicio currentServicio;
 
@@ -58,6 +55,8 @@ public class PanelListServiciosTecnico extends JPanel implements ActionListener 
 	private JLabel lblNewLabel_6;
 	private JLabel lblAlmuerzo;
 	private JButton btnToggleAlmuerzo;
+	private JLabel lblNewLabel_5;
+	private JTextField tfFecha;
 
 	/**
 	 * Create the panel.
@@ -86,6 +85,16 @@ public class PanelListServiciosTecnico extends JPanel implements ActionListener 
 		tfNroServicio.setEditable(false);
 		pEdicionServicio.add(tfNroServicio);
 		tfNroServicio.setColumns(10);
+
+		lblNewLabel_5 = new JLabel("Fecha");
+		pEdicionServicio.add(lblNewLabel_5);
+
+		tfFecha = new JTextField();
+		tfFecha.setEnabled(false);
+		tfFecha.setEditable(false);
+		tfFecha.setText("");
+		pEdicionServicio.add(tfFecha);
+		tfFecha.setColumns(10);
 
 		lblNewLabel_1 = new JLabel("Cliente");
 		pEdicionServicio.add(lblNewLabel_1);
@@ -171,6 +180,9 @@ public class PanelListServiciosTecnico extends JPanel implements ActionListener 
 		pListadoServicios.removeAll();
 
 		for (Servicio s : i.getServiciosAsignados()) {
+			if (s.isEnPoderTecnico() == false) {
+				continue;
+			}
 			if (s.getEstadoServicio() == EstadoServicio.CANCELADO
 					|| s.getEstadoServicio() == EstadoServicio.FINALIZADO) {
 				continue;
@@ -202,11 +214,13 @@ public class PanelListServiciosTecnico extends JPanel implements ActionListener 
 			tfNroServicio.setText("");
 			lblEstadoServicio.setText("");
 			lblAlmuerzo.setText("");
+			tfFecha.setText("");
 			return;
 		}
-		tfNroServicio.setText("" + currentServicio.nro);
-		lblEstadoServicio.setText("" + currentServicio.getEstadoServicio());
-		lblAlmuerzo.setText(currentServicio.isIncluyeAlmuerzo() ? "Incluido" : "No");
+		tfNroServicio.setText(g.getNro(currentServicio));
+		tfFecha.setText(g.getFecha(currentServicio));
+		lblEstadoServicio.setText(g.getEstadoServicio(currentServicio));
+		lblAlmuerzo.setText(g.getIncluyeAlmuerzo(currentServicio));
 	}
 
 	public void avanzarEstado(Tecnico t) throws Exception {
@@ -227,31 +241,64 @@ public class PanelListServiciosTecnico extends JPanel implements ActionListener 
 				JOptionPane.showMessageDialog(null, "Cancelado por usuario");
 			}
 		} else {
-			g.errorHandler(new CredentialException("Permisos insuficientes"));
+			g.errorHandler(new CredencialException("Permisos insuficientes"));
 		}
+	}
+
+	public void mostrarClienteServicio(Servicio s) {
+		String c = g.getCliente(s);
+		JOptionPane.showMessageDialog(null, c, "Cliente de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public void mostrarArticulosServicio(Servicio s) {
+		String artsStr = g.limpiarStrArticulos(s);
+		JOptionPane.showMessageDialog(null, artsStr, "Articulos de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public void mostrarOtrosArticulosServicio(Servicio s) {
+		String artsStr = g.limpiarStrOtrosArticulos(s);
+		JOptionPane.showMessageDialog(null, artsStr, "Extras de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (i.getClass() != Tecnico.class) {
-			g.errorHandler(new CredentialException("Permisos insuficientes"));
-			return;
-		}
-
-		if (currentServicio == null) {
-			g.errorHandler(new ServicioException("Primero seleccione un servicio"));
-			return;
-		}
-
 		try {
+			if (i.getClass() != Tecnico.class) {
+				throw new CredencialException("Permisos insuficientes");
+			}
+
+			if (currentServicio == null) {
+				throw new ServicioException("Primero seleccione un servicio");
+			}
 
 			Tecnico t = (Tecnico) i;
+			Object src = e.getSource();
 
-			if (e.getSource() == btnAvanzarEstado) {
+			if (src == btnVerCliente) {
+				mostrarClienteServicio(currentServicio);
+			}
+
+			if (src == btnVerArticulos) {
+				mostrarArticulosServicio(currentServicio);
+			}
+
+			if (src == btnAgregarArticulo) {
+				g.adicionarCosto(t, currentServicio);
+			}
+
+			if (src == btnVerOtrosArts) {
+				mostrarOtrosArticulosServicio(currentServicio);
+			}
+
+			if (src == btnAgregarOtroArt) {
+				g.adicionarOtroCosto(t, currentServicio);
+			}
+
+			if (src == btnAvanzarEstado) {
 				avanzarEstado(t);
 			}
 
-			if (e.getSource() == btnToggleAlmuerzo) {
+			if (src == btnToggleAlmuerzo) {
 				t.toggleAlmuerzoServicio(currentServicio);
 			}
 

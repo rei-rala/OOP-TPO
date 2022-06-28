@@ -157,6 +157,18 @@ public class Empresa {
 		return articuloEncontrado;
 	}
 
+	public Articulo getArticulos(Class<Articulo> classArticulo) {
+		Articulo articuloEncontrado = null;
+
+		for (Articulo a : articulos) {
+			if (a.getClass() == classArticulo) {
+				articuloEncontrado = a;
+				break;
+			}
+		}
+		return articuloEncontrado;
+	}
+
 	public Articulo getArticulos(Articulo articulo) {
 		Articulo articuloEncontrado = null;
 		boolean empresaContieneArt = articulos.contains(articulo);
