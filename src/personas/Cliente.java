@@ -38,22 +38,12 @@ public class Cliente extends Persona {
 		return agenda;
 	}
 
-	public void asignarServicio(Servicio s, Date fecha, Turno t, int desde, int hasta) throws Exception {
-		if (verificarServicioVigente()) {
-			throw new AsignacionException("El cliente ya tiene agendado un servicio");
-		}
-
-		verificarDisponibilidad(fecha, t, desde, hasta);
-		agenda.asignarServicio(s, fecha, t, desde, hasta);
+	public boolean verificarDisponibilidad(Date fecha, Turno turno, int desde, int hasta) throws Exception {
+		return agenda.verificarDisponibilidad(fecha, turno, desde, hasta);
 	}
 
-	public void asignarServicio(Servicio s, Date fecha, Turno t, int nroTurno) throws Exception {
-		if (verificarServicioVigente()) {
-			throw new AsignacionException("El cliente ya tiene agendado un servicio");
-		}
-		verificarDisponibilidad(fecha, t, nroTurno);
-
-		agenda.asignarServicio(s, fecha, t, nroTurno);
+	public void asignarServicio(Servicio s, Date fecha, Turno t, int desde, int hasta) throws Exception {
+		agenda.asignarServicio(s, fecha, t, desde, hasta);
 	}
 
 	public ArrayList<FraccionTurno> verTurnosDisponibles(Turno t) {
@@ -66,14 +56,6 @@ public class Cliente extends Persona {
 
 	public boolean verificarServicioVigente() {
 		return agenda.verificarServicioVigente();
-	}
-
-	public void verificarDisponibilidad(Date fecha, Turno turno, int nroTurno) throws Exception {
-		agenda.verificarDisponibilidad(fecha, turno, nroTurno);
-	}
-
-	public void verificarDisponibilidad(Date fecha, Turno turno, int desde, int hasta) throws Exception {
-		agenda.verificarDisponibilidad(fecha, turno, desde, hasta);
 	}
 
 	@Override

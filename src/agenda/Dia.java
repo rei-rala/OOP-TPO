@@ -6,7 +6,9 @@ import java.util.Date;
 import comercial.Servicio;
 import excepciones.AgendaException;
 import excepciones.AsignacionException;
+import main.DateAux;
 
+@SuppressWarnings("deprecation")
 public class Dia {
 	private final Date fecha;
 	private final String diaSemana;
@@ -17,33 +19,23 @@ public class Dia {
 		this.diaSemana = getNombreDiaSemana();
 		this.turnos = new ArrayList<FraccionTurno>();
 
-		if (fecha.getDay() != 0 && 7 > fecha.getDay()) {
-			inicializarManana();
-			inicializarTarde();
-		}
+		inicializarTurnos();
 	}
 
-	private void inicializarManana() {
+	private void inicializarTurnos() {
+		if (0 >= fecha.getDay() || fecha.getDay() > 6) {
+			return;
+		}
+
 		for (int i = 0; i < 12; i++) {
 			FraccionTurno nvoManana = new FraccionTurno(this, Turno.MANANA, i);
 			this.turnos.add(nvoManana);
-		}
-
-	}
-
-	// Antes habia una propeidad "turnoTarde"
-	// Java me duplicaba FraccionesTurno en turnoTarde, no logro identificar por que
-	// Cambie varias veces los metodos, la propiedad de Dia
-	// Parece que esto funciona, pero quedo medio raro...
-	private void inicializarTarde() {
-		if (fecha.getDay() == 6) {
-			return;
-		}
-		for (int i = 0; i < 13; i++) {
+			if (fecha.getDay() == 6) {
+				continue;
+			}
 			FraccionTurno nvoTarde = new FraccionTurno(this, Turno.TARDE, i);
 			this.turnos.add(nvoTarde);
 		}
-
 	}
 
 	public Date getFecha() {
@@ -117,6 +109,24 @@ public class Dia {
 		return diaOcupado;
 	}
 
+	public boolean validarTurnos(Turno t, int desde, int hasta) {
+		if (desde > hasta || 0 > desde || 0 > hasta) {
+			return false;
+		}
+
+		if (t == Turno.MANANA) {
+			if (desde > turnos.size() || hasta > turnos.size()) {
+				return false;
+			}
+		} else {
+			if (desde > turnos.size() || hasta > turnos.size()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public FraccionTurno obtenerTurnoDisponible(Turno t) {
 		ArrayList<FraccionTurno> turnosDia = obtenerFraccionesTurno(t);
 		return obtenerTurnoDisponible(turnosDia);
@@ -140,45 +150,26 @@ public class Dia {
 	}
 
 	public String getNombreDiaSemana() {
-		@SuppressWarnings("deprecation")
 		int nroDia = fecha.getDay();
 
 		switch (nroDia) {
-		case 0:
-			return "DOMINGO";
-		case 1:
-			return "LUNES";
-		case 2:
-			return "MARTES";
-		case 3:
-			return "MIERCOLES";
-		case 4:
-			return "JUEVES";
-		case 5:
-			return "VIERNES";
-		case 6:
-			return "SABADO";
-		default:
-			return "error";
+			case 0:
+				return "DOMINGO";
+			case 1:
+				return "LUNES";
+			case 2:
+				return "MARTES";
+			case 3:
+				return "MIERCOLES";
+			case 4:
+				return "JUEVES";
+			case 5:
+				return "VIERNES";
+			case 6:
+				return "SABADO";
+			default:
+				return "error";
 		}
-	}
-
-	private boolean validarSeleccionTurnos(Turno t, int desde, int hasta) {
-		if (desde > hasta || 0 > desde || 0 > hasta) {
-			return false;
-		}
-
-		if (t == Turno.MANANA) {
-			if (desde > turnos.size() || hasta > turnos.size()) {
-				return false;
-			}
-		} else {
-			if (desde > turnos.size() || hasta > turnos.size()) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	public boolean estanTurnosOcupados(Turno t, int desde, int hasta) throws Exception {
@@ -220,18 +211,19 @@ public class Dia {
 		}
 	}
 
-	public void verificarPreAsignacion(Turno turno, int desde, int hasta) throws Exception {
-		if (validarSeleccionTurnos(turno, desde, hasta) == false) {
-			throw new AgendaException("Verifique valores de turno ingresados");
+	public boolean verificarDisponibilidad(Turno turno, int desde, int hasta) throws Exception {
+		if (validarTurnos(turno, desde, hasta) == false) {
+			throw new AgendaException("Turno no validos");
 		}
 		if (estanTurnosOcupados(turno, desde, hasta)) {
 			throw new AgendaException("Turno/s ya ocupado/s");
 		}
+		return true;
 	}
 
 	public void asignarFraccionesTurnos(Servicio s, Turno turno, int desde, int hasta) throws Exception {
 		try {
-			verificarPreAsignacion(turno, desde, hasta);
+			verificarDisponibilidad(turno, desde, hasta);
 			asignarServicioTurnos(s, turno, desde, hasta);
 		} catch (AgendaException e) {
 			throw e;

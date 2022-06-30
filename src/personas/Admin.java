@@ -8,8 +8,6 @@ import empresa.Empresa;
 import excepciones.*;
 
 public class Admin extends Interno {
-	private static Empresa empresa = Empresa.getInstance();
-
 	public Admin(String nombre, long dni, String direccion, String telefono, String contrasena) {
 		super(nombre, dni, direccion, telefono, contrasena);
 	}
@@ -26,36 +24,40 @@ public class Admin extends Interno {
 	}
 
 	public void modificarCostoCombustible(double nvoCostoCombustible) throws ValorException, Exception {
-		empresa.setCostoCombustible(nvoCostoCombustible);
+		Empresa.getInstance().setCostoCombustible(nvoCostoCombustible);
 	}
 
 	public void modificarCostoViaje(double nvoCostoViaje) throws ValorException, Exception {
-		empresa.setCostoViaje(nvoCostoViaje);
+		Empresa.getInstance().setCostoViaje(nvoCostoViaje);
 	}
 
 	public void modificarCostoHoraTecnico(CostoHorasTecnico nuevoCHTObject) throws ValorException {
-		empresa.setCostoHoraTecnico(nuevoCHTObject);
+		Empresa.getInstance().setCostoHoraTecnico(nuevoCHTObject);
 	}
 
-	public void modificarCostoHoraTecnico(Seniority seniority, double nuevoCHT) throws ValorException {
-		empresa.setCostoHoraTecnico(seniority, nuevoCHT);
+	public void setCostoHoraTecnico(Seniority seniority, double nuevoCHT) throws ValorException {
+		Empresa.getInstance().setCostoHoraTecnico(seniority, nuevoCHT);
 	}
 
 	public void modificarCostoHoraTecnico(double jr, double ssr, double sr) throws ValorException {
-		empresa.setCostoHoraTecnico(jr, ssr, sr);
+		Empresa.getInstance().setCostoHoraTecnico(jr, ssr, sr);
+	}
+
+	public CostoHorasTecnico getCostoHoraTecnico() {
+		return Empresa.getInstance().getCostoHoraTecnico();
 	}
 
 	// METODOS ARTICULOS
 	public Articulo buscarArticulos(int SKU) {
-		return empresa.getArticulos(SKU);
+		return Empresa.getInstance().getArticulos(SKU);
 	}
 
 	public Articulo buscarArticulos(Articulo a) {
-		return empresa.getArticulos(a);
+		return Empresa.getInstance().getArticulos(a);
 	}
 
 	public ArrayList<Articulo> buscarArticulos() {
-		return empresa.getArticulos();
+		return Empresa.getInstance().getArticulos();
 	}
 
 	public ArrayList<Articulo> buscarArticulosSinStock() {
@@ -76,6 +78,11 @@ public class Admin extends Interno {
 		a.anadirStock(cantidad);
 	}
 
+	public void setStockArticulo(int sku, int stock) throws Exception {
+		Articulo a = buscarArticulos(sku);
+		a.setStock(stock);
+	}
+
 	public void setStockArticulo(Articulo a, int stock) throws Exception {
 		a.setStock(stock);
 	}
@@ -84,7 +91,8 @@ public class Admin extends Interno {
 		a.setCosto(costo);
 	}
 
-	public static boolean quitarArticulo(Articulo a) {
-		return empresa.removerArticulo(a);
+	public void editarCifrasArticulo(Articulo a, int stock, double costo) throws Exception {
+		a.setStock(stock);
+		a.setCosto(costo);
 	}
 }

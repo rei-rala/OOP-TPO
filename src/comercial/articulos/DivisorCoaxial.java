@@ -8,7 +8,7 @@ public class DivisorCoaxial extends Articulo {
 
 	@Override
 	public String toString() {
-		return "DivisorCoaxial " + "[Desc=" + getDescripcion() + ", SKU=" + getSKU() + " Stock" + getStock()
+		return "DivisorCoaxial " + "[Desc=" + getDescripcion() + ", SKU=" + getSKU() + ", Stock=" + getStock()
 				+ ", Costo=" + getCosto() + "]";
 	}
 

@@ -58,19 +58,6 @@ public class Gui {
 		this.usuarioLogeado = usuarioLogeado;
 	}
 
-	public void logout() {
-		String usuarioLogeadoName = getUsuarioLogeado().getNombre();
-		if (JOptionPane.showConfirmDialog(null, "Confirma cerrar sesion de " + usuarioLogeadoName) == 0) {
-			setUsuarioLogeado(null);
-			changePanel(new LogIn());
-		}
-	}
-
-	public void setErrorMessage(Exception e) {
-		JOptionPane.showMessageDialog(null, e.getMessage());
-		System.out.println(e);
-	}
-
 	public double redondearDouble(Double d) {
 		return Empresa.getInstance().redondear(d);
 	}
@@ -92,6 +79,14 @@ public class Gui {
 
 	}
 
+	public void logout() {
+		String usuarioLogeadoName = getUsuarioLogeado().getNombre();
+		if (JOptionPane.showConfirmDialog(null, "Confirma cerrar sesion de " + usuarioLogeadoName) == 0) {
+			setUsuarioLogeado(null);
+			changePanel(new LogIn());
+		}
+	}
+
 	public void removerActionListeners(JButton jb) {
 		for (ActionListener al : jb.getActionListeners()) {
 			jb.removeActionListener(al);
@@ -104,6 +99,7 @@ public class Gui {
 		String message = e.getMessage();
 		int icon = JOptionPane.WARNING_MESSAGE;
 
+		e.printStackTrace();
 		if (eCls == GuiException.class) {
 			title = "Informacion";
 			icon = JOptionPane.INFORMATION_MESSAGE;
@@ -120,7 +116,6 @@ public class Gui {
 			message = "Error de asignacion: " + message;
 		} else {
 			message = "Error inesperado";
-			System.out.println(e);
 		}
 		JOptionPane.showMessageDialog(null, message, title, icon);
 	}

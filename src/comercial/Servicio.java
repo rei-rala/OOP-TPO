@@ -8,13 +8,14 @@ import empresa.Empresa;
 import comercial.articulos.*;
 import personas.*;
 import excepciones.*;
+import main.DateAux;
 
 public class Servicio {
 	static int contadorServicios = 0;
 
 	public final int nro;
-	private final Cliente cliente;
-	private Date fecha;
+	private Cliente cliente;
+	private final Date fecha;
 
 	private double tiempoTrabajado;
 	private TipoServicio tipoServicio;
@@ -28,17 +29,17 @@ public class Servicio {
 	private boolean facturado;
 
 	private Turno turno;
-	private int tnoInicio = -1;
-	private int tnoFin = -1;
+	private int turnoInicio = -1;
+	private int turnoFin = -1;
 
-	public Servicio(Cliente cliente, Date fecha, TipoServicio tipoServicio, double tiempoTrabajado) throws Exception {
-		preVerificarTiempoTrabajado(tiempoTrabajado);
-
+	public Servicio(Date fecha, TipoServicio tipoServicio, Turno turno, int turnoInicio, int turnoFin) throws Exception {
 		this.nro = ++contadorServicios;
-		this.cliente = cliente;
 		this.fecha = fecha;
 		this.tipoServicio = tipoServicio;
-		this.tiempoTrabajado = tiempoTrabajado;
+		this.turno = turno;
+		this.turnoInicio = turnoInicio;
+		this.turnoFin = turnoFin;
+		this.tiempoTrabajado = DateAux.calcularHoras(turnoInicio, turnoFin);
 		this.estadoServicio = EstadoServicio.PROGRAMADO;
 		this.almuerzo = false;
 		this.enPoderTecnico = false;
@@ -46,19 +47,6 @@ public class Servicio {
 
 		preAnadirArticulos();
 		Empresa.getInstance().agregarServicio(this);
-	}
-
-	private void preVerificarTiempoTrabajado(double tiempoTrabajado) throws Exception {
-		if (tipoServicio == TipoServicio.REPARACION) {
-			if (0.5 > tiempoTrabajado) {
-				throw new ServicioException("El tiempo de reparacion debe ser de al menos media hora.");
-			}
-			return;
-		}
-
-		if (1 > tiempoTrabajado) {
-			throw new ServicioException("El tiempo de instalacion debe ser de al menos una hora.");
-		}
 	}
 
 	private void preAnadirArticulos() throws Exception {
@@ -77,6 +65,10 @@ public class Servicio {
 		}
 	}
 
+	public int getNro() {
+		return nro;
+	}
+
 	public Cliente getCliente() {
 		return cliente;
 	}
@@ -89,15 +81,14 @@ public class Servicio {
 		return fecha;
 	}
 
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
-	}
-
 	public TipoServicio getTipoServicio() {
 		return tipoServicio;
 	}
 
-	public void setTipoServicio(TipoServicio tipoServicio) {
+	public void setTipoServicio(TipoServicio tipoServicio) throws ServicioException {
+		if (facturado || enPoderTecnico) {
+			throw new ServicioException("No se puede cambiar el tipo de servicio una vez facturado o en poder del tecnico");
+		}
 		this.tipoServicio = tipoServicio;
 	}
 
@@ -129,19 +120,56 @@ public class Servicio {
 		return facturado;
 	}
 
+	public boolean isEnPoderTecnico() {
+		return enPoderTecnico;
+	}
+
+	public boolean isIncluyeAlmuerzo() {
+		return almuerzo;
+	}
+
+	public void setIncluyeAlmuerzo(boolean almuerzo) {
+		this.almuerzo = almuerzo;
+	}
+
+	public void toggleIncluyeAlmuerzo() {
+		this.almuerzo = !almuerzo;
+	}
+
+	public Turno getTurno() {
+		return turno;
+	}
+
+	public void setTurno(Turno turno) {
+		this.turno = turno;
+	}
+
+	public int getturnoInicio() {
+		return turnoInicio;
+	}
+
+	public void setturnoInicio(int turnoInicio) {
+		this.turnoInicio = turnoInicio;
+	}
+
+	public int getturnoFin() {
+		return turnoFin;
+	}
+
+	public void setturnoFin(int turnoFin) {
+		this.turnoFin = turnoFin;
+	}
+
 	// EDICION DE SERVICIO
 	public void anadirTecnico(Tecnico t) throws Exception {
-		if (isEnPoderTecnico()) {
-			throw new ServicioException("El servicio se encuentra en poder de lo/s tecnico/s");
-		}
-		if (isFacturado()) {
-			throw new ServicioException("Servicio ya facturado");
+		if (facturado || enPoderTecnico) {
+			throw new ServicioException(
+					"No se puede cambiar añadir tecnico una vez facturado o estando el servicio en poder del tecnico");
 		}
 		if (t == null || tecnicosAsignados.contains(t)) {
 			throw new AsignacionException("Tecnico ya asignado a este servicio");
 		}
 
-		t.getAgenda().verificarDisponibilidad(fecha, turno, tnoInicio, tnoFin);
 		tecnicosAsignados.add(t);
 	}
 
@@ -165,11 +193,22 @@ public class Servicio {
 		return otrosCostos.add(nuevoOtroCosto);
 	}
 
+	public void liberarDesdeCallcenter() throws ServicioException {
+		if (this.enPoderTecnico) {
+			throw new ServicioException("El servicio se encuentra en poder de lo/s tecnico/s.");
+		}
+		if (0 >= this.tecnicosAsignados.size()) {
+			throw new ServicioException("El servicio debe contar con al menos 1 (un) tecnico");
+		}
+
+		enPoderTecnico = true;
+	}
+
 	public double obtenerValorHoraServicio() {
 		double aux = 0;
 
 		for (Tecnico t : getTecnicos()) {
-			aux += tiempoTrabajado * Empresa.getInstance().obtenerCostoHoraTecnico(t.getSeniority());
+			aux += tiempoTrabajado * Empresa.getInstance().getCostoHoraTecnico(t.getSeniority());
 		}
 		return aux;
 	}
@@ -190,33 +229,6 @@ public class Servicio {
 		}
 
 		return stHorasTecnico + stArtsUtilizados + stOtrosArtsUtilizados + costoViaje;
-	}
-
-	public boolean isEnPoderTecnico() {
-		return enPoderTecnico;
-	}
-
-	public boolean isIncluyeAlmuerzo() {
-		return almuerzo;
-	}
-
-	public void setIncluyeAlmuerzo(boolean almuerzo) {
-		this.almuerzo = almuerzo;
-	}
-
-	public void toggleIncluyeAlmuerzo() {
-		this.almuerzo = !almuerzo;
-	}
-
-	public void liberarDesdeCallcenter() throws ServicioException {
-		if (this.enPoderTecnico) {
-			throw new ServicioException("El servicio se encuentra en poder de lo/s tecnico/s.");
-		}
-		if (0 >= this.tecnicosAsignados.size()) {
-			throw new ServicioException("El servicio debe contar con al menos 1 (un) tecnico");
-		}
-
-		enPoderTecnico = true;
 	}
 
 	public boolean facturarServicio() throws ServicioException {
@@ -243,35 +255,4 @@ public class Servicio {
 				+ ", tecnicosAsignados=" + tecnicosAsignados + ", articulosUtilizados=" + articulosUtilizados
 				+ ", otrosCostos=" + otrosCostos + ", costoViaje=" + costoViaje + ", facturado=" + facturado + "]";
 	}
-
-	public Turno getTurno() {
-		return turno;
-	}
-
-	public void setTurno(Turno turno) {
-		if (this.turno == null) {
-			this.turno = turno;
-		}
-	}
-
-	public int getTnoInicio() {
-		return tnoInicio;
-	}
-
-	public void setTnoInicio(int tnoInicio) {
-		if (this.tnoInicio == -1) {
-			this.tnoInicio = tnoInicio;
-		}
-	}
-
-	public int getTnoFin() {
-		return tnoFin;
-	}
-
-	public void setTnoFin(int tnoFin) {
-		if (this.tnoFin == -1) {
-			this.tnoFin = tnoFin;
-		}
-	}
-
 }

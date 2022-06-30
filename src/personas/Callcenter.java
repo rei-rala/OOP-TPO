@@ -8,6 +8,7 @@ import empresa.Empresa;
 import comercial.*;
 import comercial.articulos.*;
 import excepciones.*;
+import main.DateAux;
 
 public class Callcenter extends Interno {
 
@@ -47,16 +48,20 @@ public class Callcenter extends Interno {
 		return articulosSinStock;
 	}
 
+	public Cliente getCliente(int numeroCliente) {
+		return Empresa.getInstance().getClientes(numeroCliente);
+	}
+
+	public Tecnico getTecnicos(int numeroLegajo) {
+		return Empresa.getInstance().getTecnicos(numeroLegajo);
+	}
+
 	public void anadirStockArticulo(Articulo a, int cantidad) throws Exception {
 		a.anadirStock(cantidad);
 	}
 
 	public void setStockArticulo(Articulo a, int stock) throws Exception {
 		a.setStock(stock);
-	}
-
-	public void setCostoArticulo(Articulo a, double costo) throws Exception {
-		a.setCosto(costo);
 	}
 
 	// TECNICOS
@@ -66,12 +71,12 @@ public class Callcenter extends Interno {
 	}
 
 	// TODO: Merge con la agenda
-	public ArrayList<Tecnico> buscarTecnicosDisponibles(Date fecha, Turno turno, int nroTurno) {
+	public ArrayList<Tecnico> buscarTecnicosDisponibles(Date fecha, Turno turno, int desde, int hasta) {
 		ArrayList<Tecnico> tecnicosDisponibles = new ArrayList<Tecnico>();
 
 		for (Tecnico t : Empresa.getInstance().getTecnicos()) {
 			try {
-				t.getAgenda().verificarDisponibilidad(fecha, turno, nroTurno);
+				t.getAgenda().verificarDisponibilidad(fecha, turno, desde, hasta);
 				tecnicosDisponibles.add(t);
 			} catch (Exception e) {
 			}
@@ -94,24 +99,47 @@ public class Callcenter extends Interno {
 		c.asignarServicio(s, fecha, t, desde, hasta);
 	}
 
-	public void asignarServicioACliente(Cliente c, Servicio s, Date fecha, Turno t, int nroTurno) throws Exception {
-		asignarServicioACliente(c, s, fecha, t, nroTurno, nroTurno);
+	public boolean verificarDisponibilidadCliente(Cliente c, Date fecha, Turno t, int desde, int hasta) throws Exception {
+		return c.verificarDisponibilidad(fecha, t, desde, hasta);
 	}
 
-	public Servicio crearNuevoServicioServicio(Cliente cliente, Date fecha, TipoServicio ts, Turno t, int desde,
+	public Servicio crearNuevoServicioServicio(Date fecha, TipoServicio ts, Turno t, int desde,
 			int hasta) throws Exception {
+		double duracionServInicial = DateAux.calcularHoras(desde, hasta);
+
+		if (fecha == null || ts == null || t == null) {
+			throw new ServicioException("Verificar datos ingresados");
+		}
+
+		if (fecha.before(new Date())) {
+			throw new Exception("La fecha no debe ser anterior a la actual");
+		}
+
+		if (0 >= fecha.getDay() || fecha.getDay() > 6) {
+			throw new Exception("Dia no valido");
+		} else if (desde >= 12 || hasta >= 12) {
+			throw new Exception("El numero de turno es incorrecto");
+		} else if (desde > hasta) {
+			throw new Exception("La hora de inicio no puede ser mayor a la hora de fin");
+		} else if (fecha.getDay() == 6 && t == Turno.TARDE) {
+			throw new Exception("No se puede asignar un servicio a sabado a la tarde");
+		}
 
 		if (Empresa.getInstance().verificarArticulosSuficientes(ts) == false) {
 			throw new StockException("Faltan articulos necesarios para crear nuevo servicio");
 		}
-		double duracionServInicial = DateAux.calcularHoras(desde, hasta);
-		if (0 > duracionServInicial) {
+
+		if (ts == TipoServicio.INSTALACION && 1 > duracionServInicial) {
+			throw new ServicioException("Una reparacion debe durar al menos 1 hora");
+		} else if (0 > duracionServInicial) {
 			throw new ServicioException("Duracion de servicio no valida");
 		}
-		cliente.verificarDisponibilidad(fecha, t, desde, hasta);
-		Servicio s = new Servicio(cliente, fecha, ts, duracionServInicial);
-		asignarServicioACliente(cliente, s, fecha, t, desde, hasta);
-		return s;
+
+		return new Servicio(fecha, ts, t, desde, hasta);
+	}
+
+	public boolean validarAgenda(Tecnico t, Date fecha, Turno turno, int desde, int hasta) throws Exception {
+		return t.getAgenda().verificarDisponibilidad(fecha, turno, desde, hasta);
 	}
 
 	public void asignarServicioATecnico(Servicio s, Tecnico t) throws Exception {

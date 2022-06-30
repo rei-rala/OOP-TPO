@@ -8,7 +8,7 @@ public class Cable extends Articulo {
 
 	@Override
 	public String toString() {
-		return "Cable " + "[Desc=" + getDescripcion() + ", SKU=" + getSKU() + " Stock" + getStock() + ", Costo="
+		return "Cable " + "[Desc=" + getDescripcion() + ", SKU=" + getSKU() + ", Stock=" + getStock() + ", Costo="
 				+ getCosto() + "]";
 	}
 

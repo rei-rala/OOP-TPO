@@ -10,6 +10,7 @@ import agenda.*;
 import comercial.*;
 import excepciones.*;
 import gui.Gui;
+import main.DateAux;
 import personas.*;
 
 import java.awt.GridLayout;
@@ -461,7 +462,7 @@ public class PanelCreacionServicio extends JPanel {
 
 			c.getAgenda().verificarDisponibilidad(turnoDesde.getDia().getFecha(), turnoDesde.getTurno(),
 					turnoDesde.getNro(), turnoHasta.getNro());
-			nuevoServicio = cc.crearNuevoServicioServicio(c, DateAux.getToday(), ts, turnoDesde.getTurno(),
+			nuevoServicio = cc.crearNuevoServicioServicio(DateAux.getToday(), ts, turnoDesde.getTurno(),
 					turnoDesde.getNro(), turnoHasta.getNro());
 
 			JOptionPane.showMessageDialog(null, "Servicio creado con Numero " + nuevoServicio.nro);

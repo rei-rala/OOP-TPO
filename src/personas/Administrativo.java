@@ -28,7 +28,7 @@ public class Administrativo extends Interno {
 		return Empresa.getInstance().getServicios(nroServicio);
 	}
 
-	public ArrayList<Servicio> verServiciosAFacturar() {
+	public ArrayList<Servicio> getServiciosAFacturar() {
 		ArrayList<Servicio> listaServicios = Empresa.getInstance().getServicios();
 		ArrayList<Servicio> listaSinFacturar = new ArrayList<Servicio>();
 

@@ -15,7 +15,7 @@ import javax.swing.border.TitledBorder;
 public class AdminHome extends JPanel implements ActionListener {
 	private final Gui gui = Gui.getInstance();
 	private final Admin adm = (Admin) gui.getUsuarioLogeado();
-	private final Empresa empresa = Empresa.getInstance();
+	private final Empresa e = Empresa.getInstance();
 
 	private JLabel lblNewLabel;
 	private JPanel panel;
@@ -45,7 +45,7 @@ public class AdminHome extends JPanel implements ActionListener {
 		setLayout(new BorderLayout(0, 0));
 		String username = gui.getUsuarioLogeado().getClass().getSimpleName();
 
-		lblNewLabel = new JLabel("Bienvenido «%s»".formatted(username));
+		lblNewLabel = new JLabel("Bienvenido ï¿½%sï¿½".formatted(username));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		add(lblNewLabel, BorderLayout.NORTH);
@@ -53,7 +53,7 @@ public class AdminHome extends JPanel implements ActionListener {
 		panel = new JPanel();
 		add(panel, BorderLayout.CENTER);
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
-		
+
 		tituloPanel = new JLabel("Configuraciones de admin");
 		tituloPanel.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		tituloPanel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -63,10 +63,10 @@ public class AdminHome extends JPanel implements ActionListener {
 		panel.add(pCC);
 		pCC.setLayout(new BoxLayout(pCC, BoxLayout.X_AXIS));
 
-		labelCC = new JLabel("(Actual: " + empresa.getCostoCombustible() + ") Nuevo costo combustible");
+		labelCC = new JLabel("(Actual: " + e.getCostoCombustible() + ") Nuevo costo combustible");
 		pCC.add(labelCC);
 
-		tfNuevoCC = new JTextField("" + empresa.getCostoCombustible());
+		tfNuevoCC = new JTextField("" + e.getCostoCombustible());
 		tfNuevoCC.setColumns(10);
 		pCC.add(tfNuevoCC);
 
@@ -78,10 +78,10 @@ public class AdminHome extends JPanel implements ActionListener {
 		panel.add(pCV);
 		pCV.setLayout(new BoxLayout(pCV, BoxLayout.X_AXIS));
 
-		labelCV = new JLabel("(Actual: " + empresa.getCostoViaje() + ") Nuevo costo viaje");
+		labelCV = new JLabel("(Actual: " + e.getCostoViaje() + ") Nuevo costo viaje");
 		pCV.add(labelCV);
 
-		tfNuevoCV = new JTextField("" + empresa.getCostoViaje());
+		tfNuevoCV = new JTextField("" + e.getCostoViaje());
 		pCV.add(tfNuevoCV);
 		tfNuevoCV.setColumns(10);
 
@@ -113,17 +113,17 @@ public class AdminHome extends JPanel implements ActionListener {
 		lblSr.setHorizontalAlignment(SwingConstants.CENTER);
 		pCHT.add(lblSr);
 
-		tfCHTJr = new JTextField("" + empresa.obtenerCostoHoraTecnico(Seniority.JUNIOR));
+		tfCHTJr = new JTextField("" + e.getCostoHoraTecnico(Seniority.JUNIOR));
 		tfCHTJr.setHorizontalAlignment(SwingConstants.CENTER);
 		pCHT.add(tfCHTJr);
 		tfCHTJr.setColumns(10);
 
-		tfCHTSsr = new JTextField("" + empresa.obtenerCostoHoraTecnico(Seniority.SEMI_SENIOR));
+		tfCHTSsr = new JTextField("" + e.getCostoHoraTecnico(Seniority.SEMI_SENIOR));
 		tfCHTSsr.setHorizontalAlignment(SwingConstants.CENTER);
 		pCHT.add(tfCHTSsr);
 		tfCHTSsr.setColumns(10);
 
-		tfCHTSr = new JTextField("" + empresa.obtenerCostoHoraTecnico(Seniority.SENIOR));
+		tfCHTSr = new JTextField("" + e.getCostoHoraTecnico(Seniority.SENIOR));
 		tfCHTSr.setHorizontalAlignment(SwingConstants.CENTER);
 		pCHT.add(tfCHTSr);
 		tfCHTSr.setColumns(10);
@@ -133,7 +133,7 @@ public class AdminHome extends JPanel implements ActionListener {
 		btnNuevoCHT = new JButton("Actualizar CHTs");
 		btnNuevoCHT.addActionListener(this);
 		pCHT.add(btnNuevoCHT);
-		
+
 		panelEdicionArticulos = new PanelEdicionArticulos();
 		panel.add(panelEdicionArticulos);
 
@@ -148,10 +148,10 @@ public class AdminHome extends JPanel implements ActionListener {
 			if (confirm == 0) {
 				double nuevoCC = gui.validarDouble(tfNuevoCC.getText());
 				adm.modificarCostoCombustible(nuevoCC);
-				labelCC.setText("(Actual: " + empresa.getCostoCombustible() + ") Nuevo costo combustible");
+				labelCC.setText("(Actual: " + e.getCostoCombustible() + ") Nuevo costo combustible");
 			}
 		} catch (Exception e) {
-			gui.setErrorMessage(e);
+			gui.errorHandler(e);
 		}
 	}
 
@@ -161,10 +161,10 @@ public class AdminHome extends JPanel implements ActionListener {
 			if (confirm == 0) {
 				double nuevoCV = gui.validarDouble(tfNuevoCV.getText());
 				adm.modificarCostoViaje(nuevoCV);
-				labelCV.setText("(Actual: " + empresa.getCostoViaje() + ") Nuevo costo viaje");
+				labelCV.setText("(Actual: " + e.getCostoViaje() + ") Nuevo costo viaje");
 			}
 		} catch (Exception e) {
-			gui.setErrorMessage(e);
+			gui.errorHandler(e);
 		}
 	}
 
@@ -179,7 +179,7 @@ public class AdminHome extends JPanel implements ActionListener {
 				JOptionPane.showMessageDialog(null, "Valores actualizados con exito");
 			}
 		} catch (Exception e) {
-			gui.setErrorMessage(e);
+			gui.errorHandler(e);
 		}
 	}
 

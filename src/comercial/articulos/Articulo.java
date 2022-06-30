@@ -18,7 +18,7 @@ abstract public class Articulo extends Recurso {
 		Empresa.getInstance().agregarArticulo(this);
 	}
 
-	public double getStock() {
+	public int getStock() {
 		return stock;
 	}
 
@@ -29,19 +29,19 @@ abstract public class Articulo extends Recurso {
 		this.stock = stock;
 	}
 
-	public void anadirStock(double stockAdicional) throws StockException {
+	public void anadirStock(int stockAdicional) throws StockException {
 		if (0 > stockAdicional) {
 			throw new StockException("Stock debe ser mayor a 0");
 		}
 		stock += stockAdicional;
 	}
 
-	public void consumirStock(double stockAUtilizar) throws StockException {
+	public void consumirStock(int stockAUtilizar) throws StockException {
 		if (stockAUtilizar > stock) {
 			throw new StockException("Stock insuficiente");
 		}
-		if (0 > stockAUtilizar) {
-			throw new StockException("Stock a consumir invalido");
+		if (0 >= stockAUtilizar) {
+			throw new StockException("Stock a consumir no valido");
 		}
 		stock -= stockAUtilizar;
 	}

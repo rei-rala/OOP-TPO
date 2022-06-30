@@ -8,7 +8,7 @@ public class ConectorCoaxial extends Articulo {
 
 	@Override
 	public String toString() {
-		return "ConectorCoaxial " + "[Desc=" + getDescripcion() + ", SKU=" + getSKU() + " Stock" + getStock() + ", Costo="
+		return "ConectorCoaxial " + "[Desc=" + getDescripcion() + ", SKU=" + getSKU() + ", Stock=" + getStock() + ", Costo="
 				+ getCosto() + "]";
 	}
 }

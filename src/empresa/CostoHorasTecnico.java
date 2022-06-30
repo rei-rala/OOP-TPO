@@ -68,41 +68,41 @@ public class CostoHorasTecnico {
 		this.senior = senior;
 	}
 
-	public double obtenerCHT(Seniority seniority) {
+	public double getCHT(Seniority seniority) {
 		double costeObtenido = -1;
 
 		switch (seniority) {
-		case JUNIOR:
-			costeObtenido = getJunior();
-			break;
-		case SEMI_SENIOR:
-			costeObtenido = getSemiSenior();
-			break;
-		case SENIOR:
-			costeObtenido = getSenior();
-			break;
-		default:
-			break;
+			case JUNIOR:
+				costeObtenido = getJunior();
+				break;
+			case SEMI_SENIOR:
+				costeObtenido = getSemiSenior();
+				break;
+			case SENIOR:
+				costeObtenido = getSenior();
+				break;
+			default:
+				break;
 		}
 
 		return costeObtenido;
 	}
 
-	public void editarCHT(Seniority seniority, double nuevoCHT) throws ValorException {
+	public void setCHT(Seniority seniority, double nuevoCHT) throws ValorException {
 
 		switch (seniority) {
-		case JUNIOR:
-			setJunior(nuevoCHT);
-			break;
-		case SEMI_SENIOR:
-			setSemiSenior(nuevoCHT);
-			break;
-		case SENIOR:
-			setSenior(nuevoCHT);
-			break;
-		default:
-			break;
+			case JUNIOR:
+				setJunior(nuevoCHT);
+				break;
+			case SEMI_SENIOR:
+				setSemiSenior(nuevoCHT);
+				break;
+			case SENIOR:
+				setSenior(nuevoCHT);
+				break;
+			default:
+				break;
 		}
-
 	}
+
 }

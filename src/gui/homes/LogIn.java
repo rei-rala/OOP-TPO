@@ -108,6 +108,7 @@ public class LogIn extends JPanel implements ActionListener {
 		return jp;
 	}
 
+
 	public void login() throws Exception {
 		int legajoIngresado = gui.validarInt(legajo.getText());
 		Interno i = empresa.login(legajoIngresado, contrasena.getText());
@@ -128,7 +129,7 @@ public class LogIn extends JPanel implements ActionListener {
 				login();
 			}
 		} catch (Exception exc) {
-			gui.setErrorMessage(exc);
+			gui.errorHandler(exc);
 		}
 
 	}

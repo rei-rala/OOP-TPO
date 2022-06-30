@@ -97,11 +97,6 @@ public class PanelEdicionArticulos extends JPanel {
 			Admin adm = (Admin) interno;
 			adm.setCostoArticulo(a, nuevoCosto);
 		}
-
-		if (interno.getClass() == Callcenter.class) {
-			Callcenter cc = (Callcenter) interno;
-			cc.setCostoArticulo(a, nuevoCosto);
-		}
 	}
 
 	public boolean editarStockExitoso(Articulo a, String nvoStockIngresado) {

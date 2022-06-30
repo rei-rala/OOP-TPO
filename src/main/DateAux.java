@@ -1,9 +1,8 @@
-package agenda;
+package main;
 
 import java.util.Date;
 
-import empresa.Empresa;
-
+@SuppressWarnings("deprecation")
 public class DateAux {
 
 	public static Date getNow() {
@@ -29,6 +28,6 @@ public class DateAux {
 	}
 
 	public static double calcularHoras(int turnoDesde, int turnoHasta) {
-		return (turnoHasta - turnoDesde) / 2;
+		return (1 + turnoHasta - turnoDesde) / 2;
 	}
 }

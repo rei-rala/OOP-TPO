@@ -298,7 +298,7 @@ public class PanelListServicios extends JPanel implements ActionListener {
 				rellenarDatos();
 			}
 		} catch (Exception exception) {
-			g.setErrorMessage(exception);
+			g.errorHandler(exception);
 		}
 	}
 }

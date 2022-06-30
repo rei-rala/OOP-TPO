@@ -62,7 +62,7 @@ public class Empresa {
 	@Override
 	public String toString() {
 		return "Empresa [getCostoCombustible()=" + getCostoCombustible() + ", getCostoViaje()=" + getCostoViaje()
-				+ ", obtenerCostoHoraTecnico()=" + obtenerCostoHoraTecnico() + ", getArticulos()=" + getArticulos()
+				+ ", getCostoHoraTecnico()=" + getCostoHoraTecnico() + ", getArticulos()=" + getArticulos()
 				+ ", getInternos()=" + getInternos() + ", getTecnicos()=" + getTecnicos() + ", getClientes()="
 				+ getClientes() + "]";
 	}
@@ -99,16 +99,16 @@ public class Empresa {
 		costoViaje = nuevoCV;
 	}
 
-	public CostoHorasTecnico obtenerCostoHoraTecnico() {
+	public CostoHorasTecnico getCostoHoraTecnico() {
 		return costoHorasTecnico;
 	}
 
-	public double obtenerCostoHoraTecnico(Seniority seniority) {
-		return costoHorasTecnico.obtenerCHT(seniority);
+	public double getCostoHoraTecnico(Seniority seniority) {
+		return costoHorasTecnico.getCHT(seniority);
 	}
 
 	public void setCostoHoraTecnico(Seniority seniority, double nuevoCHT) throws ValorException {
-		costoHorasTecnico.editarCHT(seniority, nuevoCHT);
+		costoHorasTecnico.setCHT(seniority, nuevoCHT);
 	}
 
 	public void setCostoHoraTecnico(double jr, double ssr, double sr) throws ValorException {

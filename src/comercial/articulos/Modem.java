@@ -8,7 +8,7 @@ public class Modem extends Articulo {
 
 	@Override
 	public String toString() {
-		return "Modem " + "[Desc=" + getDescripcion() + ", SKU=" + getSKU() + " Stock" + getStock()
+		return "Modem " + "[Desc=" + getDescripcion() + ", SKU=" + getSKU() + ", Stock=" + getStock()
 				+ ", Costo=" + getCosto() + "]";
 	}
 

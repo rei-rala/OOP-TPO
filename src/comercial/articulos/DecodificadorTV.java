@@ -8,7 +8,7 @@ public class DecodificadorTV extends Articulo {
 
 	@Override
 	public String toString() {
-		return "DecodificadorTV " + "[Desc=" + getDescripcion() + ", SKU=" + getSKU() + " Stock" + getStock()
+		return "DecodificadorTV " + "[Desc=" + getDescripcion() + ", SKU=" + getSKU() + ", Stock=" + getStock()
 				+ ", Costo=" + getCosto() + "]";
 	}
 }
