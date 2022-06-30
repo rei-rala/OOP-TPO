@@ -9,183 +9,232 @@ import empresa.Empresa;
 import excepciones.*;
 
 public class Tecnico extends Interno {
-	private Seniority seniority;
-	private Agenda agenda;
+  private Seniority seniority;
+  private Agenda agenda;
 
-	public Tecnico(String nombre, long dni, String direccion, String telefono, String contrasena, Seniority seniority) {
-		super(nombre, dni, direccion, telefono, contrasena);
-		this.seniority = seniority;
-		this.agenda = new Agenda(this);
+  public Tecnico(String nombre, long dni, String direccion, String telefono, String contrasena, Seniority seniority) {
+    super(nombre, dni, direccion, telefono, contrasena);
+    this.seniority = seniority;
+    this.agenda = new Agenda(this);
 
-		Empresa.getInstance().agregarTecnico(this);
-	}
+    Empresa.getInstance().agregarTecnico(this);
+  }
 
-	// ALTERNATIVO SIN DATOS
-	public Tecnico(String nombre, String contrasena, Seniority seniority) {
-		super(nombre, contrasena);
-		this.seniority = seniority;
-		this.agenda = new Agenda(this);
+  // ALTERNATIVO SIN DATOS
+  public Tecnico(String nombre, String contrasena, Seniority seniority) {
+    super(nombre, contrasena);
+    this.seniority = seniority;
+    this.agenda = new Agenda(this);
 
-		Empresa.getInstance().agregarTecnico(this);
-	}
+    Empresa.getInstance().agregarTecnico(this);
+  }
 
-	public Seniority getSeniority() {
-		return seniority;
-	}
+  public Seniority getSeniority() {
+    return seniority;
+  }
 
-	public void setSeniority(Seniority seniority) {
-		this.seniority = seniority;
-	}
+  public void setSeniority(Seniority seniority) {
+    this.seniority = seniority;
+  }
 
-	public Agenda getAgenda() {
-		return agenda;
-	}
+  public Agenda getAgenda() {
+    return agenda;
+  }
 
-	public ArrayList<Servicio> getServiciosAsignados() {
-		ArrayList<Servicio> asignados = new ArrayList<Servicio>();
+  public boolean verificarDisponibilidad(Servicio s) throws Exception {
+    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getturnoInicio(), s.getturnoFin());
+  }
 
-		for (Servicio s : Empresa.getInstance().getServicios()) {
-			if (s.getTecnicos().contains(this) == false) {
-				continue;
-			}
-			if (s.isFacturado()) {
-				continue;
-			}
+  public ArrayList<Servicio> getServiciosAsignados() {
+    ArrayList<Servicio> asignados = new ArrayList<Servicio>();
 
-			asignados.add(s);
-		}
+    for (Servicio s : Empresa.getInstance().getServicios()) {
+      if (s.getTecnicos().contains(this) == false) {
+        continue;
+      }
+      if (s.isFacturado()) {
+        continue;
+      }
+      if (s.isEnPoderTecnico() == false) {
+        continue;
+      }
 
-		return asignados;
-	}
+      if (s.getEstadoServicio() == EstadoServicio.PROGRAMADO || s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
+        asignados.add(s);
+      }
 
-	@Override
-	public String toString() {
-		return "Tecnico [seniority=" + seniority + ", legajo=" + legajo + ", nombre=" + nombre + ", dni=" + dni
-				+ ", direccion=" + direccion + ", telefono=" + telefono + "]";
-	}
+    }
 
-	// METODOS TECNICO -> SERVICIO
-	public ArrayList<Servicio> verServiciosAsignados() {
-		ArrayList<Servicio> asignados = new ArrayList<Servicio>();
+    return asignados;
+  }
 
-		for (Servicio s : Empresa.getInstance().getServicios()) {
-			if (s.getTecnicos().contains(this)) {
-				asignados.add(s);
-			}
-		}
+  @Override
+  public String toString() {
+    return "Tecnico [seniority=" + seniority + ", legajo=" + legajo + ", nombre=" + nombre + ", dni=" + dni
+        + ", direccion=" + direccion + ", telefono=" + telefono + "]";
+  }
 
-		return asignados;
-	}
+  // METODOS TECNICO -> SERVICIO
+  public ArrayList<Servicio> verServiciosAsignados() {
+    ArrayList<Servicio> asignados = new ArrayList<Servicio>();
 
-	public Servicio verServiciosAsignados(int nroServicio) {
-		ArrayList<Servicio> asignados = verServiciosAsignados();
-		Servicio buscado = null;
+    for (Servicio s : Empresa.getInstance().getServicios()) {
+      if (s.getTecnicos().contains(this)) {
+        asignados.add(s);
+      }
+    }
 
-		for (Servicio s : asignados) {
-			if (s.nro == nroServicio) {
-				buscado = s;
-				break;
-			}
-		}
+    return asignados;
+  }
 
-		return buscado;
-	}
+  public Servicio verServiciosAsignados(int nroServicio) {
+    ArrayList<Servicio> asignados = verServiciosAsignados();
+    Servicio buscado = null;
 
-	public void anadirMaterialServicio(Servicio s, int cantidad, Articulo a) throws Exception {
-		String genExc = "No fue posible a�adir articulo: ";
+    for (Servicio s : asignados) {
+      if (s.nro == nroServicio) {
+        buscado = s;
+        break;
+      }
+    }
 
-		if (s.getTecnicos().contains(this) == false) {
-			throw new AsignacionException(genExc + "No estas asignado a este servicio");
-		}
-		if (s.isFacturado()) {
-			throw new ServicioException(genExc + "El servicio ya fue facturado");
-		}
+    return buscado;
+  }
 
-		s.anadirArticulo(a, cantidad);
-	}
+  public void asignarServicio(Servicio s) throws Exception {
+    if (s.getTecnicos().contains(this)) {
+      throw new AsignacionException("El servicio ya esta asignado a este tecnico");
+    }
+    agenda.asignarServicio(s);
+    s.asignarTecnico(this);
+  }
 
-	public ArticuloExtra crearArticuloExtra(String descripcion, double costo) {
-		return new ArticuloExtra(descripcion, costo);
-	}
+  public void preValidarEdicionServicio(Servicio s) throws Exception {
+    if (s.getTecnicos().contains(this) == false) {
+      throw new AsignacionException("No estas asignado a este servicio");
+    }
+    if (s.isFacturado()) {
+      throw new ServicioException("El servicio ya fue facturado");
+    }
+    if (s.isEnPoderTecnico() == false) {
+      throw new ServicioException("El servicio no fue liberado");
+    }
+    if (s.getEstadoServicio() != EstadoServicio.EN_CURSO && s.getEstadoServicio() != EstadoServicio.PROGRAMADO) {
+      throw new ServicioException("El servicio debe estar PROGRAMADO o EN_CURSO");
+    }
+  }
 
-	public void anadirOtroMaterialServicio(Servicio s, int q, ArticuloExtra ax)
-			throws AsignacionException, ServicioException {
-		String genExc = "No fue posible a�adir articulo extra: ";
+  public Articulo getArticulos(int sku) {
+    return Empresa.getInstance().getArticulos(sku);
+  }
 
-		if (s.getTecnicos().contains(this) == false) {
-			throw new AsignacionException(genExc + "No estas asignado a este servicio");
-		}
-		if (s.isFacturado()) {
-			throw new ServicioException(genExc + "El servicio ya fue facturado");
-		}
-		s.anadirOtroCostos(ax, q);
-	}
+  public Articulo getArticulos(Articulo a) {
+    return Empresa.getInstance().getArticulos(a);
+  }
 
-	public void toggleAlmuerzoServicio(Servicio s) throws Exception {
-		String genExc = "No fue posible modificar almuerzo ";
+  public ArrayList<Articulo> getArticulos() {
+    return Empresa.getInstance().getArticulos();
+  }
 
-		if (s.getTecnicos().contains(this) == false) {
-			throw new AsignacionException(genExc + "No estas asignado a este servicio");
-		}
-		if (s.isFacturado()) {
-			throw new ServicioException(genExc + "El servicio ya fue facturado");
-		}
+  public void anadirMaterialServicio(Servicio s, int cantidad, Articulo a) throws Exception {
+    String genExc = "No fue posible anadir articulo: ";
 
-		if (s.getEstadoServicio() != EstadoServicio.EN_CURSO) {
-			throw new ServicioException(genExc + "El servicio no esta en curso");
-		}
+    try {
+      preValidarEdicionServicio(s);
+      if (s.getEstadoServicio() == EstadoServicio.PROGRAMADO) {
+        throw new ServicioException("Primero debe iniciar la ejecucion del servicio");
+      }
+    } catch (Exception e) {
+      if (e instanceof ServicioException || e instanceof AsignacionException) {
+        throw new ServicioException(genExc + e.getMessage());
+      }
+      throw new Exception(genExc + "NOT HANDLED ERROR");
+    }
 
-		s.toggleIncluyeAlmuerzo();
-	}
+    s.anadirArticulo(a, cantidad);
+  }
 
-	public void ejecutarServicio(Servicio s) throws Exception {
-		String genExc = "No fue posible finalizar servicio: ";
+  public ArticuloExtra crearArticuloExtra(String descripcion, double costo) {
+    return new ArticuloExtra(descripcion, costo);
+  }
 
-		if (s.getTecnicos().contains(this) == false) {
-			throw new AsignacionException(genExc + "No estas asignado a este servicio");
-		}
-		if (s.isFacturado()) {
-			throw new ServicioException(genExc + "El servicio ya fue facturado");
-		}
+  public void anadirOtroMaterialServicio(Servicio s, int q, ArticuloExtra ax)
+      throws Exception {
+    String genExc = "No fue posible a�adir articulo extra: ";
 
-		if (s.getEstadoServicio() == EstadoServicio.FINALIZADO) {
-			throw new ServicioException(genExc + "El servicio ya fue finalizado");
-		}
+    try {
+      preValidarEdicionServicio(s);
+      if (s.getEstadoServicio() == EstadoServicio.PROGRAMADO) {
+        throw new ServicioException("Primero debe iniciar la ejecucion del servicio");
+      }
+    } catch (Exception e) {
+      if (e instanceof ServicioException || e instanceof AsignacionException) {
+        throw new ServicioException(genExc + e.getMessage());
+      }
+      throw new Exception(genExc + "NOT HANDLED ERROR");
+    }
 
-		if (s.getEstadoServicio() == EstadoServicio.CANCELADO) {
-			throw new ServicioException(genExc + "El servicio fue cancelado");
-		}
+    s.anadirOtroCostos(ax, q);
+  }
 
-		if (s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
-			throw new ServicioException(genExc + "El servicio ya se encuentra en curso");
-		}
+  public void toggleAlmuerzoServicio(Servicio s) throws Exception {
+    String genExc = "No fue posible modificar almuerzo: ";
 
-		s.setEstadoServicio(EstadoServicio.EN_CURSO);
-	}
+    if (s.getTecnicos().contains(this) == false) {
+      throw new AsignacionException(genExc + "No estas asignado a este servicio");
+    }
+    if (s.isFacturado()) {
+      throw new ServicioException(genExc + "El servicio ya fue facturado");
+    }
 
-	public void finalizarServicio(Servicio s) throws Exception {
-		String genExc = "No fue posible finalizar servicio: ";
+    if (s.getEstadoServicio() != EstadoServicio.EN_CURSO) {
+      throw new ServicioException(genExc + "El servicio no esta en curso");
+    }
 
-		if (s.getTecnicos().contains(this) == false) {
-			throw new AsignacionException(genExc + "No estas asignado a este servicio");
-		}
-		if (s.isFacturado()) {
-			throw new ServicioException(genExc + "El servicio ya fue facturado");
-		}
+    s.toggleIncluyeAlmuerzo();
+  }
 
-		if (s.getEstadoServicio() == EstadoServicio.FINALIZADO) {
-			throw new ServicioException(genExc + "El servicio ya fue finalizado");
-		}
+  public void ejecutarServicio(Servicio s) throws Exception {
+    String genExc = "No fue posible finalizar servicio: ";
 
-		if (s.getEstadoServicio() == EstadoServicio.CANCELADO) {
-			throw new ServicioException(genExc + "El servicio fue cancelado");
-		}
+    if (s.getTecnicos().contains(this) == false) {
+      throw new AsignacionException(genExc + "No estas asignado a este servicio");
+    }
+    if (s.isFacturado()) {
+      throw new ServicioException(genExc + "El servicio ya fue facturado");
+    }
 
-		if (s.getEstadoServicio() == EstadoServicio.PROGRAMADO) {
-			throw new ServicioException(genExc + "Primero debe iniciarse el servicio");
-		}
+    if (s.getEstadoServicio() == EstadoServicio.FINALIZADO) {
+      throw new ServicioException(genExc + "El servicio ya fue finalizado");
+    }
 
-		s.setEstadoServicio(EstadoServicio.FINALIZADO);
-	}
+    if (s.getEstadoServicio() == EstadoServicio.CANCELADO) {
+      throw new ServicioException(genExc + "El servicio fue cancelado");
+    }
+
+    if (s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
+      throw new ServicioException(genExc + "El servicio ya se encuentra en curso");
+    }
+    try {
+      preValidarEdicionServicio(s);
+    } catch (Exception e) {
+      throw new ServicioException("No fue posible ejecutar servicio: " + e.getMessage());
+    }
+
+    s.setEstadoServicio(EstadoServicio.EN_CURSO);
+  }
+
+  public void finalizarServicio(Servicio s) throws Exception {
+    try {
+      preValidarEdicionServicio(s);
+      if (s.getEstadoServicio() == EstadoServicio.PROGRAMADO) {
+        throw new ServicioException("Primero debe inicializar el servicio");
+      }
+    } catch (Exception e) {
+      throw new ServicioException("No fue posible finalizar servicio: " + e.getMessage());
+    }
+
+    s.setEstadoServicio(EstadoServicio.FINALIZADO);
+  }
 
 }

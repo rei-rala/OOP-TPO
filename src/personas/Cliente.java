@@ -6,62 +6,91 @@ import java.util.Date;
 import agenda.*;
 import comercial.Servicio;
 import empresa.Empresa;
-import excepciones.AsignacionException;
+import excepciones.*;
+import main.DateAux;
 
 public class Cliente extends Persona {
-	static int contadorClientes = 0;
+  static int contadorClientes = 0;
 
-	private final int nro;
-	private final Agenda agenda;
+  private final int nro;
+  private final Agenda agenda;
 
-	public Cliente(String nombre, long dni, String direccion, String telefono) {
-		super(nombre, dni, direccion, telefono);
-		this.nro = ++contadorClientes;
-		this.agenda = new Agenda(this);
+  public Cliente(String nombre, long dni, String direccion, String telefono) {
+    super(nombre, dni, direccion, telefono);
+    this.nro = ++contadorClientes;
+    this.agenda = new Agenda(this);
 
-		Empresa.getInstance().agregarCliente(this);
-	}
+    Empresa.getInstance().agregarCliente(this);
+  }
 
-	public Cliente(String nombre) {
-		super(nombre);
-		this.nro = ++contadorClientes;
-		this.agenda = new Agenda(this);
+  public Cliente(String nombre) {
+    super(nombre);
+    this.nro = ++contadorClientes;
+    this.agenda = new Agenda(this);
 
-		Empresa.getInstance().agregarCliente(this);
-	}
+    Empresa.getInstance().agregarCliente(this);
+  }
 
-	public int getNro() {
-		return nro;
-	}
+  public int getNro() {
+    return nro;
+  }
 
-	public Agenda getAgenda() {
-		return agenda;
-	}
+  public Agenda getAgenda() {
+    return agenda;
+  }
 
-	public boolean verificarDisponibilidad(Date fecha, Turno turno, int desde, int hasta) throws Exception {
-		return agenda.verificarDisponibilidad(fecha, turno, desde, hasta);
-	}
+  public boolean verificarServicioVigente() {
+    Date today = DateAux.getToday();
+    Agenda agendaCliente = this.getAgenda();
+    boolean tieneServicioVigente = false;
 
-	public void asignarServicio(Servicio s, Date fecha, Turno t, int desde, int hasta) throws Exception {
-		agenda.asignarServicio(s, fecha, t, desde, hasta);
-	}
+    for (Dia d : agendaCliente.getDias()) {
+      Date fechaDia = d.getFecha();
+      if (today.after(fechaDia)) {
+        continue;
+      }
 
-	public ArrayList<FraccionTurno> verTurnosDisponibles(Turno t) {
-		return agenda.obtenerTodosTurnosDisponible(t);
-	}
+      if (d.verificarDiaOcupado()) {
+        tieneServicioVigente = true;
+        break;
+      }
+    }
+    return tieneServicioVigente;
+  }
 
-	public ArrayList<FraccionTurno> verTurnosDisponibles() {
-		return agenda.obtenerTodosTurnosDisponible();
-	}
+  public boolean verificarDisponibilidad(Servicio s) throws Exception {
+    if (verificarServicioVigente()) {
+      throw new AgendaException("El cliente ya tiene un servicio vigente");
+    }
 
-	public boolean verificarServicioVigente() {
-		return agenda.verificarServicioVigente();
-	}
+    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getturnoInicio(), s.getturnoFin());
+  }
 
-	@Override
-	public String toString() {
-		return "Cliente [nro=" + nro + ", agenda=" + agenda + ", nombre=" + nombre + ", dni=" + dni + ", direccion="
-				+ direccion + ", telefono=" + telefono + "]";
-	}
+  public void asignarServicio(Servicio s) throws Exception {
+    if (s.getCliente() == this) {
+      throw new AsignacionException("El servicio ya se encuentra asignado a este cliente");
+    }
+
+    if (!verificarDisponibilidad(s)) {
+      throw new AgendaException("El cliente ya tiene un servicio vigente");
+    }
+
+    agenda.asignarServicio(s);
+    s.setCliente(this);
+  }
+
+  public ArrayList<FraccionTurno> verTurnosDisponibles(Turno t) {
+    return agenda.obtenerTodosTurnosDisponible(t);
+  }
+
+  public ArrayList<FraccionTurno> verTurnosDisponibles() {
+    return agenda.obtenerTodosTurnosDisponible();
+  }
+
+  @Override
+  public String toString() {
+    return "Cliente [nro=" + nro + ", agenda=" + agenda + ", nombre=" + nombre + ", dni=" + dni + ", direccion="
+        + direccion + ", telefono=" + telefono + "]";
+  }
 
 }

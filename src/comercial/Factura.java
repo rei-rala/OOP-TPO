@@ -5,74 +5,81 @@ import java.util.Date;
 import empresa.Empresa;
 
 public class Factura {
-	static public int contadorFacturas = 0;
+  static public int contadorFacturas = 0;
 
-	private final int nro;
-	private final Servicio servicio;
-	private final double subtotal;
-	private final double iva;
-	private final double total;
+  private final int nro;
+  private final Servicio servicio;
+  private final double subtotal;
+  private final double iva;
+  private final double total;
 
-	private final Date fecha;
+  private final Date fecha;
 
-	public Factura(Servicio servicio) {
-		this.nro = ++contadorFacturas;
-		this.fecha = new Date();
-		this.servicio = servicio;
-		this.subtotal = calcularSubTotal();
-		this.iva = calcularIVA();
-		this.total = calcularTotal();
+  public Factura(Servicio servicio) {
+    this.nro = ++contadorFacturas;
+    this.fecha = new Date();
+    this.servicio = servicio;
+    this.subtotal = calcularSubTotal();
+    this.iva = calcularIVA();
+    this.total = calcularTotal();
 
-		Empresa.getInstance().agregarFactura(this);
-	}
+    Empresa.getInstance().agregarFactura(this);
+  }
 
-	@Override
-	public String toString() {
-		return "Factura [nro=" + nro + ", servicio=" + servicio + ", subtotal=" + subtotal + ", iva=" + iva + ", total="
-				+ total + "]";
-	}
+  @Override
+  public String toString() {
+    return "Factura [nro=" + nro + ", servicio=" + servicio + ", subtotal=" + subtotal + ", iva=" + iva + ", total="
+        + total + "]";
+  }
 
-	public int getNro() {
-		return nro;
-	}
+  public int getNro() {
+    return nro;
+  }
 
-	public Servicio getServicio() {
-		return servicio;
-	}
+  public Servicio getServicio() {
+    return servicio;
+  }
 
-	public double calcularSubTotal() {
-		double subtotal = servicio.obtenerTotalServicio();
+  public double calcularSubTotal() {
+    double subtotal = servicio.obtenerTotalServicio();
 
-		return subtotal;
-	}
+    return Empresa.getInstance().redondear(subtotal);
+  }
 
-	public double calcularGanancias() {
-		return calcularSubTotal() * Empresa.getInstance().getRENTABILIDAD();
-	}
+  public double calcularGanancias() {
+    double costoACargo = 0;
 
-	public double calcularIVA() {
-		return calcularGanancias() * Empresa.getInstance().getIVA();
-	}
+    if (servicio.isIncluyeAlmuerzo()) {
+      costoACargo = servicio.obtenerValorHoraServicio() / 2;
+    }
 
-	public double calcularTotal() {
-		double total = calcularSubTotal() + calcularGanancias() + calcularIVA();
+    return Empresa.getInstance().redondear(
+        calcularSubTotal() * Empresa.getInstance().getRENTABILIDAD() - costoACargo - servicio.getCostoViaje());
+  }
 
-		if (servicio.isIncluyeAlmuerzo()) {
-			total -= (servicio.obtenerValorHoraServicio() / 2);
-		}
-		return total;
-	}
+  public double calcularTotal() {
+    double total = calcularSubTotal() + calcularGanancias();
 
-	public double calcularMargen() {
-		double total = calcularTotal();
+    if (servicio.isIncluyeAlmuerzo()) {
+      total -= (servicio.obtenerValorHoraServicio() / 2);
+    }
+    return Empresa.getInstance().redondear(total);
+  }
 
-		if (total > 0) {
-			return calcularGanancias() / total;
-		}
-		return 0;
-	}
+  public double calcularIVA() {
+    return Empresa.getInstance().redondear(calcularTotal() * Empresa.getInstance().getIVA());
+  }
 
-	public Date getFecha() {
-		return fecha;
-	}
+  public double calcularMargen() {
+    double total = Empresa.getInstance().redondear(calcularTotal());
+
+    if (total > 0) {
+      return calcularGanancias() / total;
+    }
+    return 0;
+  }
+
+  public Date getFecha() {
+    return fecha;
+  }
 }

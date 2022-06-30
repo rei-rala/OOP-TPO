@@ -12,165 +12,214 @@ import main.DateAux;
 
 public class Callcenter extends Interno {
 
-	public Callcenter(String nombre, long dni, String direccion, String telefono, String contrasena) {
-		super(nombre, dni, direccion, telefono, contrasena);
-	}
+  public Callcenter(String nombre, long dni, String direccion, String telefono, String contrasena) {
+    super(nombre, dni, direccion, telefono, contrasena);
+  }
 
-	// ALTERNATIVO SIN DATOS
-	public Callcenter(String nombre, String contrasena) {
-		super(nombre, contrasena);
-	}
+  // ALTERNATIVO SIN DATOS
+  public Callcenter(String nombre, String contrasena) {
+    super(nombre, contrasena);
+  }
 
-	// ARTICULOS
-	public Articulo buscarArticulos(int SKU) {
-		return Empresa.getInstance().getArticulos(SKU);
-	}
+  @Override
+  public String toString() {
+    return "Callcenter [legajo=" + legajo + ", nombre=" + nombre + ", dni=" + dni + ", direccion=" + direccion
+        + ", telefono=" + telefono + "]";
+  }
 
-	public Articulo buscarArticulos(Articulo a) {
-		return Empresa.getInstance().getArticulos(a);
-	}
+  // ARTICULOS
+  public Articulo buscarArticulos(int SKU) {
+    return Empresa.getInstance().getArticulos(SKU);
+  }
 
-	public ArrayList<Articulo> buscarArticulos() {
-		return Empresa.getInstance().getArticulos();
-	}
+  public Articulo buscarArticulos(Articulo a) {
+    return Empresa.getInstance().getArticulos(a);
+  }
 
-	public ArrayList<Articulo> buscarArticulosSinStock() {
-		ArrayList<Articulo> articulos = buscarArticulos();
-		ArrayList<Articulo> articulosSinStock = new ArrayList<Articulo>();
+  public ArrayList<Articulo> buscarArticulos() {
+    return Empresa.getInstance().getArticulos();
+  }
 
-		for (int i = 0; i < articulos.size(); i++) {
-			Articulo current = articulos.get(i);
-			if (current.getStock() == 0) {
-				articulosSinStock.add(current);
-			}
-		}
+  public ArrayList<Articulo> buscarArticulosSinStock() {
+    ArrayList<Articulo> articulos = buscarArticulos();
+    ArrayList<Articulo> articulosSinStock = new ArrayList<Articulo>();
 
-		return articulosSinStock;
-	}
+    for (int i = 0; i < articulos.size(); i++) {
+      Articulo current = articulos.get(i);
+      if (current.getStock() == 0) {
+        articulosSinStock.add(current);
+      }
+    }
 
-	public Cliente getCliente(int numeroCliente) {
-		return Empresa.getInstance().getClientes(numeroCliente);
-	}
+    return articulosSinStock;
+  }
 
-	public Tecnico getTecnicos(int numeroLegajo) {
-		return Empresa.getInstance().getTecnicos(numeroLegajo);
-	}
+  public Cliente getClientes(int numeroCliente) {
+    return Empresa.getInstance().getClientes(numeroCliente);
+  }
 
-	public void anadirStockArticulo(Articulo a, int cantidad) throws Exception {
-		a.anadirStock(cantidad);
-	}
+  public Cliente getClientes(Cliente c) {
+    return Empresa.getInstance().getClientes(c);
+  }
 
-	public void setStockArticulo(Articulo a, int stock) throws Exception {
-		a.setStock(stock);
-	}
+  public Tecnico getTecnicos(int numeroLegajo) {
+    return Empresa.getInstance().getTecnicos(numeroLegajo);
+  }
 
-	// TECNICOS
-	// TODO: Merge con la agenda
-	public ArrayList<Tecnico> buscarTecnicosDisponibles(Date fecha) {
-		return Empresa.getInstance().getTecnicos();
-	}
+  public Tecnico getTecnicos(Tecnico t) {
+    return Empresa.getInstance().getTecnicos(t);
+  }
 
-	// TODO: Merge con la agenda
-	public ArrayList<Tecnico> buscarTecnicosDisponibles(Date fecha, Turno turno, int desde, int hasta) {
-		ArrayList<Tecnico> tecnicosDisponibles = new ArrayList<Tecnico>();
+  public ArrayList<Tecnico> getTecnicos() {
+    return Empresa.getInstance().getTecnicos();
+  }
 
-		for (Tecnico t : Empresa.getInstance().getTecnicos()) {
-			try {
-				t.getAgenda().verificarDisponibilidad(fecha, turno, desde, hasta);
-				tecnicosDisponibles.add(t);
-			} catch (Exception e) {
-			}
-		}
-		return tecnicosDisponibles;
-	}
+  public void anadirStockArticulo(Articulo a, int cantidad) throws Exception {
+    a.anadirStock(cantidad);
+  }
 
-	// SERVICIOS
-	public void asignarServicioACliente(Cliente c, Servicio s, Date fecha, Turno t, int desde, int hasta)
-			throws Exception {
+  public void setStockArticulo(Articulo a, int stock) throws Exception {
+    a.setStock(stock);
+  }
 
-		if (c == null || s == null) {
-			throw new AsignacionException("No existe servicio o legajo de tecnico");
-		}
+  // TECNICOS
+  // TODO: Merge con la agenda
+  public ArrayList<Tecnico> buscarTecnicosDisponibles(Date fecha) {
+    return Empresa.getInstance().getTecnicos();
+  }
 
-		if (s.isFacturado()) {
-			throw new AsignacionException("El servicio se encuentra facturado");
-		}
+  // TODO: Merge con la agenda
+  public ArrayList<Tecnico> buscarTecnicosDisponibles(Date fecha, Turno turno, int desde, int hasta) {
+    ArrayList<Tecnico> tecnicosDisponibles = new ArrayList<Tecnico>();
 
-		c.asignarServicio(s, fecha, t, desde, hasta);
-	}
+    for (Tecnico t : Empresa.getInstance().getTecnicos()) {
+      try {
+        t.getAgenda().verificarDisponibilidad(fecha, turno, desde, hasta);
+        tecnicosDisponibles.add(t);
+      } catch (Exception e) {
+      }
+    }
+    return tecnicosDisponibles;
+  }
 
-	public boolean verificarDisponibilidadCliente(Cliente c, Date fecha, Turno t, int desde, int hasta) throws Exception {
-		return c.verificarDisponibilidad(fecha, t, desde, hasta);
-	}
+  // Auxiliares para servicio
+  private void preValidarCliente(Cliente c) throws Exception {
+    if (c == null) {
+      throw new AsignacionException("No existe cliente");
+    }
+  }
 
-	public Servicio crearNuevoServicioServicio(Date fecha, TipoServicio ts, Turno t, int desde,
-			int hasta) throws Exception {
-		double duracionServInicial = DateAux.calcularHoras(desde, hasta);
+  private void preValidarTecnico(Tecnico t) throws Exception {
+    if (t == null) {
+      throw new AsignacionException("No existe tecnico");
+    }
+  }
 
-		if (fecha == null || ts == null || t == null) {
-			throw new ServicioException("Verificar datos ingresados");
-		}
+  private void preValidarEdicionServicio(Servicio s) throws Exception {
+    if (s == null) {
+      throw new AsignacionException("No existe servicio");
+    }
+    if (s.isFacturado()) {
+      throw new AsignacionException("El servicio se encuentra facturado");
+    }
+  }
 
-		if (fecha.before(new Date())) {
-			throw new Exception("La fecha no debe ser anterior a la actual");
-		}
+  private void preValidarLiberacion(Servicio s) throws Exception {
+    preValidarEdicionServicio(s);
 
-		if (0 >= fecha.getDay() || fecha.getDay() > 6) {
-			throw new Exception("Dia no valido");
-		} else if (desde >= 12 || hasta >= 12) {
-			throw new Exception("El numero de turno es incorrecto");
-		} else if (desde > hasta) {
-			throw new Exception("La hora de inicio no puede ser mayor a la hora de fin");
-		} else if (fecha.getDay() == 6 && t == Turno.TARDE) {
-			throw new Exception("No se puede asignar un servicio a sabado a la tarde");
-		}
+    if (s.getCliente() == null) {
+      throw new AsignacionException("Primero debe asignarse cliente");
+    }
 
-		if (Empresa.getInstance().verificarArticulosSuficientes(ts) == false) {
-			throw new StockException("Faltan articulos necesarios para crear nuevo servicio");
-		}
+    preValidarCliente(s.getCliente());
 
-		if (ts == TipoServicio.INSTALACION && 1 > duracionServInicial) {
-			throw new ServicioException("Una reparacion debe durar al menos 1 hora");
-		} else if (0 > duracionServInicial) {
-			throw new ServicioException("Duracion de servicio no valida");
-		}
+    if (s.getTecnicos().isEmpty()) {
+      throw new AsignacionException("El servicio no tiene tecnicos asignados");
+    }
 
-		return new Servicio(fecha, ts, t, desde, hasta);
-	}
+    for (Tecnico t : s.getTecnicos()) {
+      preValidarTecnico(t);
+    }
+  }
 
-	public boolean validarAgenda(Tecnico t, Date fecha, Turno turno, int desde, int hasta) throws Exception {
-		return t.getAgenda().verificarDisponibilidad(fecha, turno, desde, hasta);
-	}
+  // SERVICIOS
+  public boolean verificarDisponibilidadCliente(Cliente c, Servicio s) throws Exception {
+    preValidarCliente(c);
+    return c.verificarDisponibilidad(s);
+  }
 
-	public void asignarServicioATecnico(Servicio s, Tecnico t) throws Exception {
+  public boolean verificarDisponibilidadTecnico(Tecnico t, Servicio s)
+      throws Exception {
+    preValidarTecnico(t);
 
-		if (t == null || s == null) {
-			throw new AsignacionException("No existe servicio o legajo de tecnico");
-		}
+    return t.verificarDisponibilidad(s);
+  }
 
-		if (s.getTecnicos().contains(t)) {
-			throw new AsignacionException("El tecnico ya se encuentra asignado a este servicio");
-		}
+  public Servicio crearNuevoServicioServicio(Date fechaServicio, TipoServicio ts, Turno t, int desde,
+      int hasta) throws Exception {
+    double duracionServInicial = DateAux.calcularHoras(desde, hasta);
+    Date today = DateAux.getToday();
 
-		if (s.isFacturado()) {
-			throw new AsignacionException("El servicio se encuentra facturado");
-		}
+    if (fechaServicio == null || ts == null || t == null) {
+      throw new ServicioException("Verificar datos ingresados");
+    }
+    if (fechaServicio.before(today) && fechaServicio.compareTo(today) > 0) {
+      System.out.println("Fecha anterior a la actual");
+      System.out.println("Fecha actual: " + today);
+      System.out.println("Fecha servicio: " + fechaServicio);
+      System.out.println("fs before today: " + fechaServicio.before(today));
+      System.out.println("fs compare today: " + fechaServicio.compareTo(today));
 
-		s.anadirTecnico(t);
-	}
+      throw new ServicioException("La fecha no debe ser anterior a la actual");
+    }
+    if (0 >= fechaServicio.getDay() || fechaServicio.getDay() > 6) {
+      throw new Exception("Dia no valido");
+    }
+    if (desde >= 12 || hasta >= 12) {
+      throw new Exception("El numero de turno es incorrecto");
+    }
+    if (desde > hasta) {
+      throw new Exception("La hora de inicio no puede ser mayor a la hora de fin");
+    }
+    if (fechaServicio.getDay() == 6 && t == Turno.TARDE) {
+      throw new Exception("No se puede asignar un servicio a sabado a la tarde");
+    }
 
-	public void asignarServicioATecnico(int nroServicio, int legajoTecnico) throws Exception {
-		Servicio s = Empresa.getInstance().getServicios(nroServicio);
-		Tecnico t = Empresa.getInstance().getTecnicos(legajoTecnico);
+    if (Empresa.getInstance().verificarArticulosSuficientes(ts) == false) {
+      throw new StockException("Faltan articulos necesarios para crear nuevo servicio");
+    }
 
-		asignarServicioATecnico(s, t);
-	}
+    if (ts == TipoServicio.INSTALACION && 1 > duracionServInicial) {
+      throw new ServicioException("Una reparacion debe durar al menos 1 hora");
+    } else if (0 > duracionServInicial) {
+      throw new ServicioException("Duracion de servicio no valida");
+    }
 
-	public void asignarServicioATecnico(Servicio serv, int legajoTecnico) throws Exception {
-		Servicio s = Empresa.getInstance().getServicios(serv);
-		Tecnico t = Empresa.getInstance().getTecnicos(legajoTecnico);
+    return new Servicio(fechaServicio, ts, t, desde, hasta);
+  }
 
-		asignarServicioATecnico(s, t);
-	}
+  public void asignarServicio(Servicio s, Cliente c)
+      throws Exception {
+    preValidarCliente(c);
+    preValidarEdicionServicio(s);
 
+    c.asignarServicio(s);
+  }
+
+  public void asignarServicio(Servicio s, Tecnico t) throws Exception {
+    preValidarTecnico(t);
+    preValidarEdicionServicio(s);
+
+    t.asignarServicio(s);
+  }
+
+  public void cancelarServicio(Servicio s) throws Exception {
+    preValidarEdicionServicio(s);
+    s.cancelarServicio();
+  }
+
+  public void liberarServicioCallcenter(Servicio s) throws Exception {
+    preValidarLiberacion(s);
+    s.liberarDesdeCallcenter();
+  }
 }

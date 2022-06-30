@@ -4,158 +4,137 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import comercial.Servicio;
-import excepciones.AsignacionException;
+import excepciones.*;
 import main.DateAux;
 import personas.*;
 
 @SuppressWarnings("deprecation")
 public class Agenda {
-	private final ArrayList<Dia> dias;
-	private final Persona propietario;
-	private int cantDias = 0;
+  private final ArrayList<Dia> dias;
+  private final Persona propietario;
+  private int cantDias = 0;
+  private final int cantDiasGeneradosXDefecto = 30;
 
-	public Agenda(Persona propietario) {
-		this.dias = new ArrayList<Dia>();
-		this.propietario = propietario;
-		Date currentDate = DateAux.getToday();
+  public Agenda(Persona propietario) {
+    this.dias = new ArrayList<Dia>();
+    this.propietario = propietario;
+    
+    
+    // Creacion inicial de objetos Dia
+    Date currentDate = DateAux.getToday();
 
-		final long DAY_IN_MS = 1000 * 60 * 60 * 24;
+    final long DAY_IN_MS = 1000 * 60 * 60 * 24;
 
-		for (int i = 0; i < 30; i++) {
-			// si es domingo lo omitimos
-			if (currentDate.getDay() == 0) {
-				continue;
-			}
-			dias.add(new Dia(currentDate));
-			currentDate = new Date(currentDate.getTime() + DAY_IN_MS);
-		}
+    for (int i = 0; i < cantDiasGeneradosXDefecto; i++) {
+      // si es domingo lo omitimos
+      if (currentDate.getDay() == 0) {
+        continue;
+      }
+      dias.add(new Dia(currentDate));
+      currentDate = new Date(currentDate.getTime() + DAY_IN_MS);
+    }
+    this.cantDias = dias.size();
+  }
 
-		this.cantDias = dias.size();
-	}
+  public int getCantDias() {
+    return cantDias;
+  }
 
-	public int getCantDias() {
-		return cantDias;
-	}
+  public ArrayList<Dia> getDias() {
+    return dias;
+  }
 
-	public ArrayList<Dia> getDias() {
-		return dias;
-	}
+  public Persona getPropietario() {
+    return propietario;
+  }
 
-	public Persona getPropietario() {
-		return propietario;
-	}
+  public Dia obtenerDiaAgenda(Date fecha) {
+    Date f = DateAux.getStartDay(fecha);
+    Dia encontrado = null;
 
-	public Dia obtenerDiaAgenda(Date fecha) {
-		Date f = DateAux.getStartDay(fecha);
-		Dia encontrado = null;
+    for (Dia d : dias) {
+      if (d.getFecha() == fecha) {
+        encontrado = d;
+        break;
+      }
+    }
 
-		for (Dia d : dias) {
-			if (d.getFecha() == fecha) {
-				encontrado = d;
-				break;
-			}
-		}
+    if (encontrado == null && f.getDay() != 0) {
+      Dia nuevoDia = new Dia(f);
+      dias.add(nuevoDia);
+      return nuevoDia;
+    }
 
-		if (encontrado == null && f.getDay() != 0) {
-			Dia nuevoDia = new Dia(f);
-			dias.add(nuevoDia);
-			return nuevoDia;
-		}
+    return encontrado;
+  }
 
-		return encontrado;
-	}
+  public void asignarServicio(Servicio s) throws Exception {
+    Dia aAsignar = obtenerDiaAgenda(s.getFecha());
+    Turno turno = s.getTurno();
+    int desde = s.getturnoInicio();
+    int hasta = s.getturnoFin();
 
-	public void asignarServicio(Servicio s, Date fecha, Turno t, int desde, int hasta) throws Exception {
-		Dia aAsignar = obtenerDiaAgenda(fecha);
+    if (aAsignar.verificarDisponibilidad(turno, desde, hasta)) {
+      aAsignar.asignarServicioDia(s);
+    } else {
+      throw new AsignacionException("No se puede asignar el servicio");
+    }
+  }
 
-		for (int i = desde; i <= hasta; i++) {
-			FraccionTurno ft = aAsignar.obtenerFraccionesTurno(i, t);
-			if (ft == null) {
-				throw new AsignacionException("Verifique datos de turno");
-			}
+  public boolean verificarDisponibilidad(Date fecha, Turno turno, int desde, int hasta) {
+    try {
+      Dia d = obtenerDiaAgenda(fecha);
+      if (d == null) {
+        throw new AgendaException("Dia no valido");
+      }
+      return d.verificarDisponibilidad(turno, desde, hasta);
+    } catch (Exception e) {
+      return false;
+    }
+  }
 
-			if (ft.getEstaOcupado()) {
-				throw new AsignacionException("El turno se encuentra ocupado");
-			}
-		}
+  public FraccionTurno obtenerTurnoDisponible() {
+    FraccionTurno disponible = null;
 
-		for (int i = desde; i <= hasta; i++) {
-			FraccionTurno ft = aAsignar.obtenerFraccionesTurno(i, t);
-			ft.asignarServicio(s);
-		}
-	}
+    for (Dia d : dias) {
+      FraccionTurno turnoDiaDisponible = d.obtenerSiguienteFraccionDisponible();
 
-	public boolean verificarDisponibilidad(Date fecha, Turno turno, int desde, int hasta) {
-		try {
-			Dia d = obtenerDiaAgenda(fecha);
-			if (d == null) {
-				throw new Exception("Dia no valido");
-			}
-			return d.verificarDisponibilidad(turno, desde, hasta);
-		} catch (Exception e) {
-			return false;
-		}
-	}
+      if (turnoDiaDisponible == null) {
+        continue;
+      }
+      disponible = turnoDiaDisponible;
+    }
 
-	public FraccionTurno obtenerTurnoDisponible() {
-		FraccionTurno disponible = null;
+    return disponible;
+  }
 
-		for (Dia d : dias) {
-			FraccionTurno turnoDiaDisponible = d.obtenerSiguienteFraccionDisponible();
+  public ArrayList<FraccionTurno> obtenerTodosTurnosDisponible(Turno t) {
+    ArrayList<FraccionTurno> disponibles = new ArrayList<FraccionTurno>();
 
-			if (turnoDiaDisponible == null) {
-				continue;
-			}
-			disponible = turnoDiaDisponible;
-		}
+    for (Dia d : dias) {
+      for (FraccionTurno ft : d.obtenerTodosTurnoDisponibles(t)) {
+        disponibles.add(ft);
+      }
+    }
 
-		return disponible;
-	}
+    return disponibles;
+  }
 
-	public ArrayList<FraccionTurno> obtenerTodosTurnosDisponible(Turno t) {
-		ArrayList<FraccionTurno> disponibles = new ArrayList<FraccionTurno>();
+  public ArrayList<FraccionTurno> obtenerTodosTurnosDisponible() {
+    ArrayList<FraccionTurno> disponibles = new ArrayList<FraccionTurno>();
 
-		for (Dia d : dias) {
-			for (FraccionTurno ft : d.obtenerTodosTurnoDisponibles(t)) {
-				disponibles.add(ft);
-			}
-		}
+    for (Dia d : dias) {
+      for (FraccionTurno ft : d.obtenerTodosTurnoDisponibles()) {
+        disponibles.add(ft);
+      }
+    }
 
-		return disponibles;
-	}
+    return disponibles;
+  }
 
-	public ArrayList<FraccionTurno> obtenerTodosTurnosDisponible() {
-		ArrayList<FraccionTurno> disponibles = new ArrayList<FraccionTurno>();
-
-		for (Dia d : dias) {
-			for (FraccionTurno ft : d.obtenerTodosTurnoDisponibles()) {
-				disponibles.add(ft);
-			}
-		}
-
-		return disponibles;
-	}
-
-	public boolean verificarServicioVigente() {
-		Date today = DateAux.getToday();
-		boolean ocupado = false;
-
-		for (Dia d : getDias()) {
-			if (today.after(d.getFecha())) {
-				continue;
-			}
-
-			if (d.verificarDiaOcupado()) {
-				ocupado = true;
-				break;
-			}
-		}
-		return ocupado;
-	}
-
-	@Override
-	public String toString() {
-		return "Agenda [propietario=" + propietario.getNombre() + ", cantDias=" + cantDias + "]";
-	}
+  @Override
+  public String toString() {
+    return "Agenda [propietario=" + propietario.getNombre() + ", cantDias=" + cantDias + "]";
+  }
 
 }
