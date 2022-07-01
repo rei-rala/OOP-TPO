@@ -48,10 +48,12 @@ public class Agenda {
 
   public Dia obtenerDiaAgenda(Date fecha) {
     Date f = DateAux.getStartDay(fecha);
+
     Dia encontrado = null;
 
     for (Dia d : dias) {
-      if (d.getFecha() == fecha) {
+
+      if (DateAux.getDateString(d.getFecha()).equalsIgnoreCase(DateAux.getDateString(f))) {
         encontrado = d;
         break;
       }
@@ -59,6 +61,7 @@ public class Agenda {
 
     if (encontrado == null && f.getDay() != 0) {
       Dia nuevoDia = new Dia(f);
+
       dias.add(nuevoDia);
       return nuevoDia;
     }

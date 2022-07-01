@@ -65,10 +65,12 @@ public class Dia {
   }
 
   public ArrayList<FraccionTurno> obtenerFraccionesTurno(Turno t) {
+    String turnoString = t.toString();
     ArrayList<FraccionTurno> seleccion = new ArrayList<FraccionTurno>();
 
     for (FraccionTurno ft : turnos) {
-      if (ft.getTurno() == t) {
+      String ftTurnoString = ft.getTurno().toString();
+      if (turnoString.contains(ftTurnoString)) {
         seleccion.add(ft);
       }
     }
@@ -260,9 +262,8 @@ public class Dia {
 
     for (FraccionTurno fr : obtenerFraccionesTurno()) {
       Date fechaFT = fr.getDia().getFecha();
-      System.out.println("fechaFT: " + fechaFT);
-      System.out.println("today: " + today);
-      if (today.toString() != fechaFT.toString() && today.after(fechaFT)) {
+
+      if (DateAux.getDateString(fechaFT).equalsIgnoreCase(DateAux.getDateString(today)) && today.after(fechaFT)) {
         continue;
       }
       if (fr.getEstaOcupado()) {

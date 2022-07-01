@@ -48,7 +48,6 @@ public class Empresa {
     if (i != null && (i.getContrasena() == contrasena || i.getContrasena().equals(contrasena))) {
       return i;
     }
-    System.out.println(i + " " + contrasena);
 
     return null;
   }

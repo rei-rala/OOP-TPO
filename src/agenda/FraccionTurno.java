@@ -39,8 +39,13 @@ public class FraccionTurno {
     if (servicioAsignado == null) {
       estaOcupado = false;
     } else {
+      String programado = EstadoServicio.PROGRAMADO.toString();
+      String asignado = EstadoServicio.EN_CURSO.toString();
       String es = servicioAsignado.getEstadoServicio().toString();
-      estaOcupado = (es == EstadoServicio.PROGRAMADO.toString() || es == EstadoServicio.EN_CURSO.toString());
+      boolean esProgramado = es.contains(programado);
+      boolean esAsignado = es.contains(asignado);
+
+      estaOcupado = (esProgramado || esAsignado);
     }
 
     return estaOcupado;

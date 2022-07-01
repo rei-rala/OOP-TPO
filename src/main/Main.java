@@ -24,13 +24,8 @@ public class Main {
   public static void main(String[] args) throws Exception {
 
     instanciarObjectosInicialesEmpresa();
-
-    new Cliente("qwe");
-    new Cliente("rty");
-    new Cliente("asd");
-    new Cliente("zxc");
-    // instanciarObjectosAdicionalesEmpresa();
-    // testWorkflowInicial();
+    instanciarObjectosAdicionalesEmpresa();
+    testWorkflowInicial();
 
     // GUI
     EventQueue.invokeLater(new Runnable() {
@@ -43,13 +38,12 @@ public class Main {
       }
     });
 
-    new ConsolaCallcenter(new Callcenter("TESTING", ""), scanner).iniciar();
-    ;
-    /*
-     * while (isRunning) {
-     * pantallaPrincipal();
-     * }
-     */
+    
+     
+     while (isRunning) {
+      pantallaPrincipal();
+      }
+     
 
     close();
   }

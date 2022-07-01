@@ -153,11 +153,6 @@ public class Callcenter extends Interno {
       throw new ServicioException("Verificar datos ingresados");
     }
     if (fechaServicio.before(today) && fechaServicio.compareTo(today) > 0) {
-      System.out.println("Fecha anterior a la actual");
-      System.out.println("Fecha actual: " + today);
-      System.out.println("Fecha servicio: " + fechaServicio);
-      System.out.println("fs before today: " + fechaServicio.before(today));
-      System.out.println("fs compare today: " + fechaServicio.compareTo(today));
 
       throw new ServicioException("La fecha no debe ser anterior a la actual");
     }
