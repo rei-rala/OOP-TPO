@@ -143,7 +143,7 @@ public class Gui {
   }
 
   public String getServicioTitle(Servicio s) {
-    String id = "Nro: " + s.nro;
+    String id = "Nro: " + s.getNro();
     String datoServicio;
     if (s.isFacturado()) {
       datoServicio = "FACTURADO";
@@ -168,7 +168,7 @@ public class Gui {
   }
 
   public String getHorarioTurnos(Servicio s) {
-    return DateAux.getHorarioCompleto(s.getTurno(), s.getTurnoInicio(), s.getturnoFin());
+    return DateAux.getHorarioCompleto(s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
   }
 
   public String getTipoServicio(Servicio s) {
@@ -292,7 +292,7 @@ public class Gui {
     String nro = "Servicio numero: " + getNro(s) + "\n";
     String fecha = "Fecha: " + getFecha(s) + "\n";
     String tipo = "Tipo: " + getTipoServicio(s) + "\n";
-    String turno = "Turno " + s.getTurno() + " [" + DateAux.getHorarioCompleto(s.getTurno(), s.getTurnoInicio(), s.getturnoFin())+ "]\n";
+    String turno = "Turno " + s.getTurno() + " [" + DateAux.getHorarioCompleto(s.getTurno(), s.getTurnoInicio(), s.getTurnoFin())+ "]\n";
     String tecnicos = "Tecnicos: " + limpiarStrTecnicos(s.getTecnicos()) + "\n";
     String articulos = "\nArticulos: " + limpiarStrArticulos(s.getArticulos()) + "\n";
     String otrosArts = "Extras: " + limpiarStrArticulos(s.getArticulosExtra()) + "\n";
@@ -356,7 +356,7 @@ public class Gui {
       String op5 = "5. " + modem.getDescripcion() + " (Stock " + modem.getStock() + ")\n";
 
       String mensajeOpcion = "Opciones:\n" + op1 + op2 + op3 + op4 + op5;
-      String opcion = JOptionPane.showInputDialog(null, mensajeOpcion, "Nuevo articulo - servicio " + s.nro,
+      String opcion = JOptionPane.showInputDialog(null, mensajeOpcion, "Nuevo articulo - servicio " + s.getNro(),
           JOptionPane.INFORMATION_MESSAGE);
 
       if (opcion == null) {

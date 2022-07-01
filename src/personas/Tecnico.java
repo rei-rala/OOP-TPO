@@ -42,7 +42,7 @@ public class Tecnico extends Interno {
   }
 
   public boolean verificarDisponibilidad(Servicio s) throws Exception {
-    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getTurnoInicio(), s.getturnoFin());
+    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
   }
 
   public ArrayList<Servicio> getServiciosPendientes() {
@@ -92,7 +92,7 @@ public class Tecnico extends Interno {
     Servicio buscado = null;
 
     for (Servicio s : asignados) {
-      if (s.nro == nroServicio) {
+      if (s.getNro() == nroServicio) {
         buscado = s;
         break;
       }
@@ -136,7 +136,7 @@ public class Tecnico extends Interno {
     return Empresa.getInstance().getArticulos();
   }
 
-  public void anadirMaterialServicio(Servicio s, int cantidad, Articulo a) throws Exception {
+  public void anadirArticuloServicio(Servicio s, int cantidad, Articulo a) throws Exception {
     String genExc = "No fue posible anadir articulo: ";
 
     try {
@@ -158,7 +158,7 @@ public class Tecnico extends Interno {
     return new ArticuloExtra(descripcion, costo);
   }
 
-  public void anadirOtroMaterialServicio(Servicio s, int q, ArticuloExtra ax)
+  public void anadirArticuloExtraServicio(Servicio s, int q, ArticuloExtra ax)
       throws Exception {
     String genExc = "No fue posible a�adir articulo extra: ";
 
@@ -235,6 +235,15 @@ public class Tecnico extends Interno {
     }
 
     s.setEstadoServicio(EstadoServicio.FINALIZADO);
+  }
+
+  public void avanzarServicio(Servicio s) throws Exception {
+    if (s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
+      finalizarServicio(s);
+    }
+    if (s.getEstadoServicio() == EstadoServicio.PROGRAMADO) {
+      ejecutarServicio(s);
+    }
   }
 
 }

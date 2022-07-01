@@ -214,7 +214,7 @@ public class Dia {
   }
 
   public void asignarServicioDia(Servicio s) throws Exception {
-    ArrayList<FraccionTurno> ftAsignar = obtenerTurnos(s.getTurno(), s.getTurnoInicio(), s.getturnoFin());
+    ArrayList<FraccionTurno> ftAsignar = obtenerTurnos(s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
 
     for (FraccionTurno ft: ftAsignar) {
       if (ft.getEstaOcupado()) {
@@ -240,7 +240,7 @@ public class Dia {
   public boolean verificarDisponibilidad(Servicio s) throws Exception {
     Turno t = s.getTurno();
     int desde = s.getTurnoInicio();
-    int hasta = s.getturnoFin();
+    int hasta = s.getTurnoFin();
 
     if (validarTurnos(t, desde, hasta) == false) {
       throw new AgendaException("Turno no validos");

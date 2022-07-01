@@ -79,7 +79,7 @@ public class Cliente extends Persona {
       throw new AgendaException("El cliente ya tiene un servicio vigente");
     }
 
-    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getTurnoInicio(), s.getturnoFin());
+    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
   }
 
   public void asignarServicio(Servicio s) throws Exception {

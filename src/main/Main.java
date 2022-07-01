@@ -395,7 +395,7 @@ public class Main {
     // intenta añadir articulo sin estar iniciado
     try {
       Articulo ejemploArticulo = testTec.getArticulos(1);
-      testTec.anadirMaterialServicio(servTrabajado, 50, ejemploArticulo);
+      testTec.anadirArticuloServicio(servTrabajado, 50, ejemploArticulo);
     } catch (Exception e) {
       System.out.println(
           "***** Control funcionando: Forzado intento añadir articulo a servicio sin iniciarlo  => " + e.getMessage());
@@ -416,7 +416,7 @@ public class Main {
     // intenta añadir articulo invalido
     try {
       Articulo ejemploArticulo = testTec.getArticulos(0);
-      testTec.anadirMaterialServicio(servTrabajado, 50, ejemploArticulo);
+      testTec.anadirArticuloServicio(servTrabajado, 50, ejemploArticulo);
     } catch (Exception e) {
       System.out.println(
           "***** Control funcionando: Forzado intento añadir articulo INVALIDO a servicio  => " + e.getMessage());
@@ -425,7 +425,7 @@ public class Main {
     // intenta añadir articulo con stock insuficiente
     try {
       Articulo ejemploArticulo = testTec.getArticulos(1);
-      testTec.anadirMaterialServicio(servTrabajado, 999999999, ejemploArticulo);
+      testTec.anadirArticuloServicio(servTrabajado, 999999999, ejemploArticulo);
     } catch (Exception e) {
       System.out.println(
           "***** Control funcionando: Forzado intento añadir articulo STOCK INSUFICIENTE a servicio  => "
@@ -434,7 +434,7 @@ public class Main {
 
     // anade articulo valido
     Articulo ejemploArticulo = testTec.getArticulos(1);
-    testTec.anadirMaterialServicio(servTrabajado, 5, ejemploArticulo);
+    testTec.anadirArticuloServicio(servTrabajado, 5, ejemploArticulo);
 
     // finaliza servicio
     testTec.finalizarServicio(servTrabajado);
@@ -491,14 +491,15 @@ public class Main {
     System.out.println("\n--------- Servicios disponibles para facturar ----------");
     for (int i = 0; i < serviciosAFacturar.size(); i++) {
       Servicio s = serviciosAFacturar.get(i);
-      System.out.println("\t" + (i + 1) + ") Servicio " + s.getNro() + ", Fecha: " + s.getFecha() + ", estado: "
+      System.out.println("\t" + (i + 1) + ") Servicio " + s.getEstadoServicio() + " " + s.getNro() + ", Fecha: "
+          + s.getFecha() + ", estado: "
           + s.getEstadoServicio());
     }
     System.out.println("-------------- Fin servicios finalizados ---------------");
 
     // Selecciona un servicio finalizado para visualizarlo o agregar articulos extra
     Servicio s = serviciosAFacturar.get(0);
-    System.out.println("Servicio obtenido por Administrativo: Nro " + admTest.getServicio(s).nro);
+    System.out.println("Servicio obtenido por Administrativo: Nro " + admTest.getServicio(s).getNro());
 
     // Crea un articulo extra
     ArticuloExtra aeTest = admTest.crearArticuloExtra("Extra creado por el administrativo", 5000);
@@ -545,15 +546,15 @@ public class Main {
     System.out.println("\n----- EXITO WORKFLOW ADMINISTRATIVO -----");
   }
 
-  public static Interno logIn() throws Exception {
+  public static Interno logIn() {
     System.out.println("INICIE SESION");
     Interno i;
 
     do {
-      System.out.print("Ingrese numero de legajo (-1 para salir) => ");
-      int legajo = ch.scIntParse(sc, -1);
+      System.out.print("Ingrese numero de legajo (0 para salir) => ");
+      int legajo = ch.scIntParse(sc, 0);
 
-      if (legajo == -1) {
+      if (legajo == 0) {
         close();
       }
 
@@ -567,7 +568,7 @@ public class Main {
     return i;
   }
 
-  public static void pantallaPrincipal(Interno i) throws Exception {
+  public static void pantallaPrincipal(Interno i) {
     if (i.getClass() == Admin.class) {
       Admin a = (Admin) i;
       pantallaAdmin(a);
@@ -581,12 +582,12 @@ public class Main {
       Callcenter cc = (Callcenter) i;
       pantallaCallcenter(cc);
     } else {
-      System.out.println("No se puede acceder a esta pantalla");
+      System.out.println("No se puede acceder a este sistema");
       isRunning = false;
     }
   }
 
-  public static void pantallaAdmin(Admin a) throws Exception {
+  public static void pantallaAdmin(Admin a) {
     System.out.println("\n--- Menu ADMIN ---");
     System.out.println("1. Editar costo combustible");
     System.out.println("2. Editar costo viaje");
@@ -614,7 +615,7 @@ public class Main {
     }
   }
 
-  public static void mCostoCombustible(Admin a) throws Exception {
+  public static void mCostoCombustible(Admin a) {
     double costoAnterior = e.getCostoCombustible();
 
     while (true) {
@@ -626,15 +627,19 @@ public class Main {
         pantallaAdmin(a);
         break;
       }
-
-      a.modificarCostoCombustible(costo);
+      try {
+        a.modificarCostoCombustible(costo);
+      } catch (Exception e) {
+        System.out.println("ERROR CAMBIANDO VALOR COMBUSTIBLE: " + e.getMessage());
+        close();
+      }
       System.out.print("Costo de combustible modificado a " + costo);
       break;
     }
     pantallaAdmin(a);
   }
 
-  public static void mCostoViaje(Admin a) throws Exception {
+  public static void mCostoViaje(Admin a) {
     double costoAnterior = e.getCostoViaje();
 
     while (true) {
@@ -647,14 +652,20 @@ public class Main {
         break;
       }
 
-      a.modificarCostoViaje(costo);
+      try {
+        a.modificarCostoViaje(costo);
+      } catch (Exception e) {
+        System.out.println("ERROR CAMBIANDO COSTO VIAJE: " + e.getMessage());
+        close();
+      }
+
       System.out.println("Costo de viaje modificado a " + costo);
       break;
     }
     pantallaAdmin(a);
   }
 
-  public static void mEdicionArticulos(Admin a) throws Exception {
+  public static void mEdicionArticulos(Admin a) {
     ArrayList<Articulo> articulos = a.buscarArticulos();
 
     System.out.println("\nEDITANDO STOCK Y COSTOS DE LOS ARTICULOS");
@@ -677,7 +688,7 @@ public class Main {
     mEdicionArticulo(a, articulo);
   }
 
-  public static void mEdicionArticulo(Admin a, Articulo articulo) throws Exception {
+  public static void mEdicionArticulo(Admin a, Articulo articulo) {
     System.out.println("\nEDITANDO STOCK Y COSTOS DE " + articulo.getDescripcion());
     System.out.print("Ingrese nuevo stock (Actual: " + articulo.getStock()
         + "), 0 para mantener stock anterior o -1 para volver al menu anterior =>");
@@ -710,13 +721,18 @@ public class Main {
     int opcion = ch.scIntParse(sc, 0, 1);
 
     if (opcion == 1) {
-      a.editarCifrasArticulo(articulo, stock, costo);
+      try {
+        a.editarCifrasArticulo(articulo, stock, costo);
+      } catch (Exception e) {
+        System.out.println("ERROR CAMBIANDO CIFRAS DE ARTICULO: " + e.getMessage());
+        close();
+      }
       System.out.println("Stock y costo modificados");
     }
     pantallaAdmin(a);
   }
 
-  public static void mEdicionHorasTecnico(Admin a) throws Exception {
+  public static void mEdicionHorasTecnico(Admin a) {
     CostoHorasTecnico cht = e.getCostoHoraTecnico();
 
     System.out.println("\n---EDITANDO VALOR HORA DE LOS TECNICOS---");
@@ -742,7 +758,7 @@ public class Main {
     pantallaAdmin(a);
   }
 
-  public static void mEdicionHorasTecnico(Admin a, Seniority s) throws Exception {
+  public static void mEdicionHorasTecnico(Admin a, Seniority s) {
     System.out.println("\nEDITANDO HORAS DE " + s);
     System.out.print("Ingrese nuevo costo hora (Actual: " + e.getCostoHoraTecnico(s)
         + "), 0 para sin cambios, -1 para volver al menu anterior =>");
@@ -755,11 +771,17 @@ public class Main {
       costoHora = e.getCostoHoraTecnico(s);
     }
 
-    a.setCostoHoraTecnico(s, costoHora);
+    try {
+      a.setCostoHoraTecnico(s, costoHora);
+    } catch (Exception e) {
+      System.out.println("ERROR CAMBIANDO COSTO HORAS TECNICO: " + e.getMessage());
+      close();
+    }
+
     System.out.println("Costo hora de " + s + " modificado a " + costoHora);
   }
 
-  public static void pantallaAdministrativo(Administrativo adm) throws Exception {
+  public static void pantallaAdministrativo(Administrativo adm) {
     System.out.println("\n--- Menu ADMINISTRATIVO ---");
     System.out.println("1. Gestionar servicios finalizados");
     System.out.println("2. Visualizar facturas");
@@ -771,13 +793,13 @@ public class Main {
     if (opcion == 0) {
       logIn();
     } else if (opcion == 1) {
-      mGestionarserviciosAFacturar(adm);
+      mGestionarServiciosAFacturar(adm);
     } else if (opcion == 2) {
       mVisualizarFacturas(adm);
     }
   }
 
-  public static void mGestionarserviciosAFacturar(Administrativo adm) throws Exception {
+  public static void mGestionarServiciosAFacturar(Administrativo adm) {
     ArrayList<Servicio> servicios = adm.getServiciosAFacturar();
 
     System.out.println("\n--- Gestionar servicios finalizados ---");
@@ -785,7 +807,7 @@ public class Main {
 
     for (int i = 0; i < servicios.size(); i++) {
       Servicio s = servicios.get(i);
-      int inicioT = s.getTurnoInicio(), finT = s.getturnoFin();
+      int inicioT = s.getTurnoInicio(), finT = s.getTurnoFin();
 
       System.out
           .println("\t" + (i + 1) + ") Servicio nro " + s.getNro() + " [fecha servicio=" + s.getFecha() + ", Horario ["
@@ -811,7 +833,7 @@ public class Main {
     mGestionarServicio(adm, servicio);
   }
 
-  public static void mGestionarServicio(Administrativo adm, Servicio s) throws Exception {
+  public static void mGestionarServicio(Administrativo adm, Servicio s) {
     if (s.isFacturado()) {
       System.out.println("Servicio ya facturado.");
       return;
@@ -854,57 +876,111 @@ public class Main {
       pantallaAdministrativo(adm);
       return;
     } else if (opc == 1) {
-      ArrayList<Tecnico> tecnicosServicio = adm.getTecnicos(s);
-      System.out.println("MOSTRANDO " + tecnicosServicio.size() + " TECNICOS DE SERVICIO Nro " + nro);
-      for (Tecnico t : tecnicosServicio) {
-        System.out.println(
-            "\tTecnico legajo: " + t.getLegajo() + " - Nombre: " + t.getNombre() + " - Seniority: " + t.getSeniority());
-      }
-
+      mMostrarTecnicos(adm, s);
     } else if (opc == 2) {
-      ArrayList<Costo> articulos = adm.getArticulos(s);
-      System.out.println("MOSTRANDO " + articulos.size() + " ARTICULOS DE SERVICIO Nro " + nro + " total costo: $"
-          + s.calcularCostoArticulos());
-      for (Costo c : articulos) {
-        System.out.println("\t" + c);
-      }
-
-      if (0 >= articulos.size()) {
-        System.out.println("<NO HAY ARTICULOS>");
-      }
-
+      mMostrarArticulos(adm, s);
     } else if (opc == 3) {
-      ArrayList<Costo> articulos = adm.getArticulosExtra(s);
-      System.out
-          .println("MOSTRANDO " + articulos.size() + " ARTICULOS *Extra* DE SERVICIO Nro" + nro + " total costo: $"
-              + s.calcularCostoArticulosExtra());
-      for (Costo c : articulos) {
-        System.out.println("\t" + c);
-      }
-
-      if (0 >= articulos.size()) {
-        System.out.println("<NO HAY ARTICULOS>");
-      }
-
+      mMostrarArticulosExtra(adm, s);
     } else if (opc == 4) {
-
+      mAnadirArticuloExtra(adm, s);
     } else if (opc == 5) {
-      System.out.println("CONFIRMA FACTURAR EL SERVICIO Nro " + nro + "?");
-      System.out.println("La accion no es reversible");
-      System.out.print("(1 Confirmar, 0 cancelar)");
-
-      int confirmaFacturar = ch.scIntParse(sc, 0, 1);
-      if (confirmaFacturar == 1) {
-        Factura f = adm.facturarServicio(s);
-        System.out.println(adm.getNombre() + " FACTURO el servicio nro " + nro + " => Factura numero: " + f.getNro());
-        mGestionarserviciosAFacturar(adm);
-        return;
-      }
+      mFacturarServicio(adm, s);
+      return;
     }
     mGestionarServicio(adm, s);
   }
 
-  public static void mVisualizarFacturas(Administrativo adm) throws Exception {
+  public static void mMostrarTecnicos(Administrativo adm, Servicio s) {
+    ArrayList<Tecnico> tecnicosServicio = adm.getTecnicos(s);
+    System.out.println("MOSTRANDO " + tecnicosServicio.size() + " TECNICOS DE SERVICIO Nro " + s.getNro());
+    for (Tecnico t : tecnicosServicio) {
+      System.out.println(
+          "\tTecnico legajo: " + t.getLegajo() + " - Nombre: " + t.getNombre() + " - Seniority: " + t.getSeniority());
+    }
+  }
+
+  public static void mMostrarArticulos(Administrativo adm, Servicio s) {
+    ArrayList<Costo> articulos = adm.getArticulos(s);
+    System.out.println("MOSTRANDO " + articulos.size() + " ARTICULOS DE SERVICIO Nro " + s.getNro() + " total costo: $"
+        + s.calcularCostoArticulos());
+    for (Costo c : articulos) {
+      System.out.println("\t" + c);
+    }
+
+    if (0 >= articulos.size()) {
+      System.out.println("<NO HAY ARTICULOS>");
+    }
+  }
+
+  public static void mMostrarArticulosExtra(Administrativo adm, Servicio s) {
+    ArrayList<Costo> articulos = adm.getArticulosExtra(s);
+    System.out
+        .println("MOSTRANDO " + articulos.size() + " ARTICULOS *Extra* DE SERVICIO Nro" + s.getNro() + " total costo: $"
+            + s.calcularCostoArticulosExtra());
+    for (Costo c : articulos) {
+      System.out.println("\t" + c);
+    }
+
+    if (0 >= articulos.size()) {
+      System.out.println("<NO HAY ARTICULOS>");
+    }
+  }
+
+  public static void mAnadirArticuloExtra(Administrativo adm, Servicio s) {
+    System.out.println("Anadir articulo extra para el servicio numero " + s.getNro());
+    System.out.print("Ingrese la descripcion para el articulo => ");
+    String descripcion = sc.nextLine();
+
+    System.out.print("Ingrese el costo para el articulo => ");
+    double costo = ch.scDoubleParse(sc, 0.1);
+
+    ArticuloExtra nuevoArticuloExtra = null;
+
+    try {
+      nuevoArticuloExtra = adm.crearArticuloExtra(descripcion, costo);
+    } catch (Exception e) {
+      System.out.println("ERROR CREANDO ARTICULO EXTRA: " + e.getMessage());
+      close();
+    }
+
+    System.out.println("Confirmar agregar el articulo extra creado? (" + nuevoArticuloExtra + ")");
+    System.out.print("(1 Confirmar, 0 cancelar)");
+
+    int confirma = ch.scIntParse(sc, 0, 1);
+
+    if (confirma == 1) {
+      try {
+        adm.agregarArticuloExtraServicio(nuevoArticuloExtra, 1, s);
+      } catch (Exception e) {
+        System.out.println("ERROR AGREGANDO ARTICULO EXTRA: " + e.getMessage());
+        close();
+      }
+    }
+  }
+
+  public static void mFacturarServicio(Administrativo adm, Servicio s) {
+    System.out.println("CONFIRMA FACTURAR EL SERVICIO Nro " + s.getNro() + "?");
+    System.out.println("La accion no es reversible");
+    System.out.print("(1 Confirmar, 0 cancelar)");
+
+    int confirmaFacturar = ch.scIntParse(sc, 0, 1);
+    if (confirmaFacturar == 1) {
+      Factura f = null;
+      try {
+        f = adm.facturarServicio(s);
+      } catch (Exception e) {
+        System.out.println("ERROR FACTURANDO SERVICIO: " + e.getMessage());
+        close();
+      }
+      System.out
+          .println(adm.getNombre() + " FACTURO el servicio nro " + s.getNro() + " => Factura numero: " + f.getNro());
+      mGestionarServiciosAFacturar(adm);
+    } else {
+      System.out.println("CANCELO LA FACTURACION");
+    }
+  }
+
+  public static void mVisualizarFacturas(Administrativo adm) {
     ArrayList<Factura> facturas = adm.getFacturas();
 
     System.out.println("\n----------- Visualizar Facturas -----------");
@@ -956,15 +1032,205 @@ public class Main {
     System.out.println("-------------------------------------------");
   }
 
-  public static void pantallaTecnico(Tecnico tec) {
-    System.out.println("--- TECNICO ---");
+  public static void pantallaTecnico(Tecnico t) {
+    System.out.println("\n--- Menu TECNICO ---");
+    System.out.println("1. Gestionar servicios asignados");
+    System.out.println("0. Log out");
+    System.out.print("=> ");
+
+    int opcion = ch.scIntParse(sc, 0, 1);
+
+    if (opcion == 0) {
+      logIn();
+      return;
+    }
+    mListarServicios(t);
+  }
+
+  public static void mListarServicios(Tecnico t) {
+    ArrayList<Servicio> servs = t.getServiciosPendientes();
+
+    System.out.println("\n----------- Visualizando Servicios -----------");
+
+    for (int i = 0; i < servs.size(); i++) {
+      Servicio s = servs.get(i);
+      System.out.print("\t" + (i + 1) + ") ");
+      System.out.println(s.toStringShorter());
+    }
+
+    if (0 >= servs.size()) {
+      System.out.println("\t<NO HAY SERVICIOS PENDIENTES>");
+    }
+
+    System.out.println("-------------------------------------------");
+
+    System.out.print("Seleccione servicio para mas opciones\n(0. Volver) => ");
+
+    int opcion = ch.scIntParse(sc, 0, servs.size());
+
+    if (opcion != 0) {
+      Servicio elegido = servs.get(opcion - 1);
+      mVerServicio(t, elegido);
+    }
+    pantallaTecnico(t);
+  }
+
+  public static void mVerServicio(Tecnico t, Servicio s) {
+    String nroServicio = "\nNumero servicio " + s.getNro();
+    String fechaCreacion = "\nCreado " + DateAux.getDateString(s.getFechaCreacion());
+    String diaServicio = "\nFecha Servicio " + DateAux.getDateString(s.getFecha());
+    String horarioServicio = "\nHorario " + DateAux.getHorarioCompleto(s);
+    String cliente = "\nCliente" + s.getCliente().toStringShort();
+    String articulos = "\nArticulos " + s.getArticulos().toString();
+    String articulosExtra = "\nArticulos " + s.getArticulosExtra().toString();
+    String almuerzo = "\nAlmuerzo " + (s.isIncluyeAlmuerzo() ? "INCLUIDO" : "no incluido");
+    String estado = "\nEstado servicio " + s.getEstadoServicio();
+
+    System.out.println("\n--- Mostrando servicio Nro " + s.getNro() + " ---");
+    System.out.println(nroServicio + fechaCreacion + diaServicio + horarioServicio + cliente + articulos
+        + articulosExtra + almuerzo + estado);
+
+    EstadoServicio es = s.getEstadoServicio();
+
+    System.out.println("\nQue desea realizar?");
+    System.out.println("1) Anadir articulo utilizado");
+    System.out.println("2) Anadir articulo extra");
+    System.out.println("3) Declarar almuerzo");
+    System.out.println("4) " + (es == EstadoServicio.PROGRAMADO ? "Comenzar servicio" : "Finalizar servicio"));
+    System.out.println("0) Volver a menu principal");
+    System.out.print("=>");
+
+    int opc = ch.scIntParse(sc, 0, 4);
+
+    if (opc == 0) {
+      pantallaTecnico(t);
+      return;
+    }
+
+    if (opc == 4) {
+      mAvanzarEstadoServicio(t, s);
+
+      if (s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
+        mVerServicio(t, s);
+      }
+      return;
+    }
+
+    if (es != EstadoServicio.EN_CURSO) {
+      System.out.println("Para acceder a estas opciones primero debe comenzar el servicio (opcion 4)");
+      mVerServicio(t, s);
+      return;
+    }
+
+    if (opc == 1) {
+      mAnadirArticulo(t, s);
+    }
+
+    if (opc == 3) {
+      mToggleAlmuerzo(t, s);
+    }
+
+    mVerServicio(t, s);
+  }
+
+  public static void mAvanzarEstadoServicio(Tecnico t, Servicio s) {
+    System.out.println("\nConfirmar avanzar el estado a "
+        + (s.getEstadoServicio() == EstadoServicio.PROGRAMADO ? EstadoServicio.EN_CURSO : EstadoServicio.FINALIZADO)
+        + "?");
+    System.out.print("(1 para confirmar, 0 para cancelar) => ");
+    int confirmaAvance = ch.scIntParse(sc, 0, 1);
+
+    if (confirmaAvance == 1) {
+      try {
+        t.avanzarServicio(s);
+        System.out.println("El estado de servicio cambio a: " + s.getEstadoServicio());
+      } catch (Exception e) {
+        System.out.println("ERROR AVANZANDO ESTADO SERVICIO: " + e.getMessage());
+        close();
+      }
+    }
+  }
+
+  public static void mToggleAlmuerzo(Tecnico t, Servicio s) {
+    try {
+      t.toggleAlmuerzoServicio(s);
+    } catch (Exception e) {
+      System.out.println("ERROR CAMBIANDO ALMUERZO SERVICIO: " + e.getMessage());
+      close();
+    }
+    System.out.println("Has indicado " + (s.isIncluyeAlmuerzo() ? "" : "NO ") + "incluir almuerzo en el servicio");
+  }
+
+  public static void mAnadirArticulo(Tecnico t, Servicio s) {
+    System.out.println("\nAnadir articulo a ingresar para el servicio numero " + s.getNro());
+    ArrayList<Articulo> arts = t.getArticulos();
+
+    for (int i = 0; i < arts.size(); i++) {
+      System.out.println("" + (i + 1) + ") " + arts.get(i));
+    }
+    System.out.print("Seleccione su opcion (0 para cancelar) => ");
+    int inputEleccionArticulo = ch.scIntParse(sc, 0, arts.size());
+    if (inputEleccionArticulo == 0) {
+      System.out.println("Cancelo agregar articulo");
+      return;
+    }
+    Articulo articuloSeleccionado = arts.get(inputEleccionArticulo - 1);
+
+    System.out.print("Ingrese el cantidad utilizada => ");
+    int cantidadEleccion = ch.scIntParse(sc, 0, articuloSeleccionado.getStock());
+
+    if (cantidadEleccion == 0) {
+      System.out.println("Cancelo agregar articulo");
+      return;
+    }
+
+    System.out.println("Confirmar agregar el articulo al servicio " + s.getNro() + "? ("
+        + articuloSeleccionado.getDescripcion() + ")");
+    System.out.print("(1 Confirmar, 0 cancelar) => ");
+
+    int confirma = ch.scIntParse(sc, 0, 1);
+
+    if (confirma == 1) {
+      try {
+        t.anadirArticuloServicio(s, cantidadEleccion, articuloSeleccionado);
+        System.out.println("Anadido " + cantidadEleccion + " unidades de " + articuloSeleccionado.getDescripcion());
+      } catch (Exception e) {
+        System.out.println("ERROR ANADIENDO ARTICULO A SERVICIO: " + e.getMessage());
+        close();
+      }
+    }
+  }
+
+  public static void mAnadirArticuloExtra(Tecnico t, Servicio s) {
+    System.out.println("\nAnadir articulo extra para el servicio numero " + s.getNro());
+    System.out.print("Ingrese la descripcion para el articulo => ");
+    String descripcion = sc.nextLine();
+
+    System.out.print("Ingrese el costo para el articulo => ");
+    double costo = ch.scDoubleParse(sc, 0.1);
+
+    ArticuloExtra nuevoArticuloExtra = t.crearArticuloExtra(descripcion, costo);
+
+    System.out.println("Confirmar agregar el articulo extra creado? (" + nuevoArticuloExtra + ")");
+    System.out.print("(1 Confirmar, 0 cancelar)");
+
+    int confirma = ch.scIntParse(sc, 0, 1);
+
+    if (confirma == 1) {
+      try {
+        t.anadirArticuloExtraServicio(s, 1, nuevoArticuloExtra);
+      } catch (Exception e) {
+        System.out.println("ERROR ANADIENDO ARTICULO EXTRA A SERVICIO: " + e.getMessage());
+        close();
+      }
+    }
   }
 
   public static void pantallaCallcenter(Callcenter cc) {
     System.out.println("--- CALLCENTER ---");
   }
 
-  public static void mEdicionArticulo(Callcenter cc, Articulo articulo) throws Exception {
+  public static void mEdicionArticulo(Callcenter cc, Articulo articulo) {
     System.out.println("\nEDITANDO STOCK Y COSTOS DE " + articulo.getDescripcion());
     System.out.println("Ingrese nuevo stock (Actual: " + articulo.getStock()
         + "), 0 para mantener stock anterior o -1 para volver al menu anterior: ");
@@ -984,7 +1250,12 @@ public class Main {
     int opcion = ch.scIntParse(sc, 0, 1);
 
     if (opcion == 1) {
-      cc.setStockArticulo(articulo, stock);
+      try {
+        cc.setStockArticulo(articulo, stock);
+      } catch (Exception e) {
+        System.out.println("ERROR MODIFICANDO STOCK DE ARTICULO: " + e.getMessage());
+        close();
+      }
       System.out.println("Stock modificado");
     }
     pantallaCallcenter(cc);

@@ -1,6 +1,8 @@
 package main;
 
 import agenda.Turno;
+import comercial.Servicio;
+
 import java.util.Date;
 
 @SuppressWarnings("deprecation")
@@ -58,6 +60,10 @@ public class DateAux {
     String finalTurnoStr = (turno == Turno.MANANA ? getHoraManana(finalTno) : getHoraTarde(finalTno)) + ":"
         + getMinutos(finalTno);
     return inicioTurnoStr + "-" + finalTurnoStr;
+  }
+
+  public static String getHorarioCompleto(Servicio s) {
+    return getHorarioCompleto(s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
   }
 
   public static String getDateString(Date d) {

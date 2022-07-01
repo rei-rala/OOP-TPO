@@ -227,7 +227,7 @@ public class PanelListServicios extends JPanel implements ActionListener {
 			lblTotalServicio.setText("");
 			return;
 		}
-		tfNro.setText("" + s.nro);
+		tfNro.setText("" + s.getNro());
 		tfCliente.setText(g.getCliente(s.getCliente()));
 		tfFecha.setText(g.getFecha(s));
 		tfTipoServicio.setText(g.getTipoServicio(s));
@@ -249,9 +249,9 @@ public class PanelListServicios extends JPanel implements ActionListener {
 
 	private void facturarServicio(Servicio s) {
 		try {
-			if (JOptionPane.showConfirmDialog(null, "Facturar el servicio nro " + s.nro) == 0) {
+			if (JOptionPane.showConfirmDialog(null, "Facturar el servicio nro " + s.getNro()) == 0) {
 				Factura f = invocarFacturacion(s);
-				JOptionPane.showMessageDialog(null, "Servicio " + s.nro + " facturado. Nro factura " + f.getNro());
+				JOptionPane.showMessageDialog(null, "Servicio " + s.getNro() + " facturado. Nro factura " + f.getNro());
 				System.out.println(f);
 
 				currentEdicionServicio = null;

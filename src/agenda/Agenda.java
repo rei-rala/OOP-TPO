@@ -72,7 +72,7 @@ public class Agenda {
     Dia aAsignar = obtenerDiaAgenda(s.getFecha());
     Turno turno = s.getTurno();
     int desde = s.getTurnoInicio();
-    int hasta = s.getturnoFin();
+    int hasta = s.getTurnoFin();
 
     if (aAsignar.verificarDisponibilidad(turno, desde, hasta)) {
       aAsignar.asignarServicioDia(s);

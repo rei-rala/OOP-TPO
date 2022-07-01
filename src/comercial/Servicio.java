@@ -13,7 +13,7 @@ import main.DateAux;
 public class Servicio {
   static int contadorServicios = 0;
 
-  public final int nro;
+  private final int nro;
   private Cliente cliente;
   private final Date fecha;
   private final Date fechaCreacion;
@@ -166,7 +166,7 @@ public class Servicio {
     this.turnoInicio = turnoInicio;
   }
 
-  public int getturnoFin() {
+  public int getTurnoFin() {
     return turnoFin;
   }
 
@@ -300,6 +300,14 @@ public class Servicio {
     return this.facturado;
   }
 
+  public String toStringShorter() {
+    return "Servicio " + estadoServicio + " [nro=" + nro + " fecha=" + DateAux.getDateString(fecha) + ", tipoServicio="
+        + tipoServicio
+        + ", tecnicosAsignados=" + tecnicosAsignados.size()
+        + ", articulosUtilizados=" + articulosUtilizados.size()
+        + ", articulosExtraUtilizados=" + articulosExtraUtilizados.size() + "]";
+  }
+
   public String toStringShort() {
     return "Servicio [nro=" + nro + " fecha=" + DateAux.getDateString(fecha) + ", tiempoTrabajado="
         + tiempoTrabajado + ", tipoServicio=" + tipoServicio + ", tecnicosAsignados=" + tecnicosAsignados.size()
@@ -309,7 +317,8 @@ public class Servicio {
 
   @Override
   public String toString() {
-    return "Servicio [nro=" + nro + ", cliente=" + cliente + ", fecha=" + DateAux.getDateString(fecha) + ", tiempoTrabajado="
+    return "Servicio [nro=" + nro + ", cliente=" + cliente + ", fecha=" + DateAux.getDateString(fecha)
+        + ", tiempoTrabajado="
         + tiempoTrabajado + ", tipoServicio=" + tipoServicio + ", estadoServicio=" + estadoServicio
         + ", tecnicosAsignados=" + tecnicosAsignados + ", articulosUtilizados=" + articulosUtilizados
         + ", articulosExtraUtilizados=" + articulosExtraUtilizados + ", costoViaje=" + costoViaje + ", facturado="

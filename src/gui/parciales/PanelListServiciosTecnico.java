@@ -205,7 +205,7 @@ public class PanelListServiciosTecnico extends JPanel implements ActionListener 
 
     for (Servicio s : tecnicoLogeado.getServiciosPendientes()) {
 
-      JButton btnServicio = new JButton("Nro: " + s.nro + " - " + "Estado: " + s.getEstadoServicio());
+      JButton btnServicio = new JButton("Nro: " + s.getNro() + " - " + "Estado: " + s.getEstadoServicio());
       btnServicio.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -270,17 +270,17 @@ public class PanelListServiciosTecnico extends JPanel implements ActionListener 
 
   public void mostrarClienteServicio(Servicio s) {
     String c = g.getCliente(s);
-    JOptionPane.showMessageDialog(null, c, "Cliente de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(null, c, "Cliente de Servicio " + s.getNro(), JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void mostrarArticulosServicio(Servicio s) {
     String artsStr = g.limpiarStrArticulos(s);
-    JOptionPane.showMessageDialog(null, artsStr, "Articulos de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(null, artsStr, "Articulos de Servicio " + s.getNro(), JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void mostrarOtrosArticulosServicio(Servicio s) {
     String artsStr = g.limpiarStrOtrosArticulos(s);
-    JOptionPane.showMessageDialog(null, artsStr, "Extras de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(null, artsStr, "Extras de Servicio " + s.getNro(), JOptionPane.INFORMATION_MESSAGE);
   }
 
   @Override

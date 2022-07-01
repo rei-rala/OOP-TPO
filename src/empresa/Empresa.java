@@ -254,7 +254,7 @@ public class Empresa {
     Servicio servicioEncontrado = null;
 
     for (Servicio s : servicios) {
-      if (s.nro == nroServicio) {
+      if (s.getNro() == nroServicio) {
         servicioEncontrado = s;
         break;
       }

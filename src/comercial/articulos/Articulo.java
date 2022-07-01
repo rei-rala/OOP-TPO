@@ -40,7 +40,7 @@ abstract public class Articulo extends Recurso {
 		if (stockAUtilizar > stock) {
 			throw new StockException("Stock insuficiente");
 		}
-		if (0 >= stockAUtilizar) {
+		if (0 > stockAUtilizar) {
 			throw new StockException("Stock a consumir no valido");
 		}
 		stock -= stockAUtilizar;

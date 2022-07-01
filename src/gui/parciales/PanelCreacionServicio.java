@@ -209,7 +209,7 @@ public class PanelCreacionServicio extends JPanel {
       btnAvanzarEstado.setText("Enviar a tecnico");
     }
 
-    tfNroServicio.setText("" + ces.nro);
+    tfNroServicio.setText("" + ces.getNro());
     tfFechaServ.setText("" + ces.getFecha());
     tfCliente.setText(g.getCliente(ces));
     tfTipoServ.setText("" + ces.getTipoServicio());
@@ -465,7 +465,7 @@ public class PanelCreacionServicio extends JPanel {
       nuevoServicio = callcenterUser.crearNuevoServicioServicio(DateAux.getToday(), ts, turnoDesde.getTurno(),
           turnoDesde.getNro(), turnoHasta.getNro());
 
-      JOptionPane.showMessageDialog(null, "Servicio creado con Numero " + nuevoServicio.nro);
+      JOptionPane.showMessageDialog(null, "Servicio creado con Numero " + nuevoServicio.getNro());
 
     } catch (Exception exception) {
       g.errorHandler(exception);
@@ -498,7 +498,7 @@ public class PanelCreacionServicio extends JPanel {
 
       callcenterUser.asignarServicio(s, t);
 
-      JOptionPane.showMessageDialog(null, "Tecnico " + t.getNombre() + " asignado a servicio nro" + s.nro);
+      JOptionPane.showMessageDialog(null, "Tecnico " + t.getNombre() + " asignado a servicio nro" + s.getNro());
 
     } catch (Exception exception) {
       g.errorHandler(exception);
