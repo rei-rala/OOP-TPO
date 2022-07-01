@@ -1,4 +1,4 @@
-package main;
+package consola;
 
 import java.util.Scanner;
 
@@ -8,10 +8,11 @@ public class ConsoleHelper {
   }
 
   public int scIntParse(Scanner sc) {
+    String input = sc.nextLine();
     try {
-      return Integer.parseInt(sc.nextLine());
+      return Integer.parseInt(input);
     } catch (Exception e) {
-      System.out.println("Debe ingresar un entero.");
+      System.out.println("Debe ingresar un entero, ingreso: '" + input + "'");
       return scIntParse(sc);
     }
   }
@@ -21,24 +22,25 @@ public class ConsoleHelper {
     if (num >= min && max >= num) {
       return num;
     }
-    System.out.println("Debe ingresar un entero entre " + min + " y " + max + ".");
+    System.out.println("Debe ingresar un entero entre " + min + " y " + max + ", ingreso '" + num + "'");
     return scIntParse(sc, min, max);
   }
 
   public int scIntParse(Scanner sc, int min) {
     int num = scIntParse(sc);
     if (num < min) {
-      System.out.println("Debe ingresar un entero mayor a" + min + ".");
+      System.out.println("Debe ingresar un entero mayor a" + min + ", ingreso '" + num + "'");
       return scIntParse(sc, min);
     }
     return num;
   }
 
   public double scDoubleParse(Scanner sc) {
+    String input = sc.nextLine();
     try {
-      return Double.parseDouble(sc.nextLine());
+      return Double.parseDouble(input);
     } catch (Exception e) {
-      System.out.println("Debe ingresar un numero (double).");
+      System.out.println("Debe ingresar un numero (double), ingreso '" + input + "'");
       return scIntParse(sc);
     }
   }
@@ -48,7 +50,7 @@ public class ConsoleHelper {
     if (num >= min && max >= num) {
       return num;
     }
-    System.out.println("Debe ingresar un double entre " + min + " y " + max + ".");
+    System.out.println("Debe ingresar un double entre " + min + " y " + max + ", ingreso '" + num + "'.");
     return scIntParse(sc, min, max);
   }
 
@@ -56,7 +58,7 @@ public class ConsoleHelper {
     double num = scDoubleParse(sc);
 
     if (num < min) {
-      System.out.println("Debe ingresar un double entre mayor a " + min + ".");
+      System.out.println("Debe ingresar un double entre mayor a " + min + ", ingreso '" + num + "'.");
       return scDoubleParse(sc, min);
     }
     return num;

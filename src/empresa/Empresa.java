@@ -421,6 +421,19 @@ public class Empresa {
     return clientes;
   }
 
+  public ArrayList<Cliente> getClientesSinServiciosPendientes() {
+    ArrayList<Cliente> cSinServicios = new ArrayList<Cliente>();
+
+    for (Cliente c : clientes) {
+      if (c.verificarPoseeServicio()) {
+        continue;
+      }
+      cSinServicios.add(c);
+    }
+
+    return cSinServicios;
+  }
+
   // FIN Metodos: CLIENTES
 
 }

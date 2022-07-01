@@ -28,7 +28,7 @@ public class FraccionTurno {
   }
 
   public void asignarServicio(Servicio s) throws AsignacionException {
-    if (estaOcupado) {
+    if (getEstaOcupado()) {
       throw new AsignacionException("La fraccion del turno ya cuenta con asignacion");
     }
     servicioAsignado = s;
@@ -36,6 +36,13 @@ public class FraccionTurno {
   }
 
   public boolean getEstaOcupado() {
+    if (servicioAsignado == null) {
+      estaOcupado = false;
+    } else {
+      String es = servicioAsignado.getEstadoServicio().toString();
+      estaOcupado = (es == EstadoServicio.PROGRAMADO.toString() || es == EstadoServicio.EN_CURSO.toString());
+    }
+
     return estaOcupado;
   }
 

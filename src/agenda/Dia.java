@@ -98,6 +98,9 @@ public class Dia {
     return disponibles;
   }
 
+  /**
+   * Verifica si se tiene al menos un servicio en el dia
+   */
   public boolean verificarDiaOcupado() {
     boolean diaOcupado = false;
 
@@ -174,10 +177,10 @@ public class Dia {
     }
   }
 
-  public boolean estanTurnosOcupados(Turno t, int desde, int hasta) throws Exception {
+  public boolean estanTurnosOcupados(Turno t, int inicio, int fin) throws Exception {
     boolean ocupado = false;
 
-    for (int i = desde; i < hasta; i++) {
+    for (int i = inicio; i < fin; i++) {
       FraccionTurno ft = obtenerFraccionesTurno(i, t);
 
       if (ft == null) {
@@ -185,6 +188,7 @@ public class Dia {
       }
       if (ft.getEstaOcupado()) {
         ocupado = true;
+        break;
       }
     }
 
@@ -216,7 +220,7 @@ public class Dia {
   public void asignarServicioDia(Servicio s) throws Exception {
     ArrayList<FraccionTurno> ftAsignar = obtenerTurnos(s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
 
-    for (FraccionTurno ft: ftAsignar) {
+    for (FraccionTurno ft : ftAsignar) {
       if (ft.getEstaOcupado()) {
         throw new AsignacionException("El turno se encuentra ocupado");
       }
@@ -225,16 +229,6 @@ public class Dia {
     for (FraccionTurno ft : ftAsignar) {
       ft.asignarServicio(s);
     }
-  }
-
-  public boolean verificarDisponibilidad(Turno turno, int desde, int hasta) throws Exception {
-    if (validarTurnos(turno, desde, hasta) == false) {
-      throw new AgendaException("Turno/s no valido/s");
-    }
-    if (estanTurnosOcupados(turno, desde, hasta)) {
-      throw new AgendaException("Turno/s ya ocupado/s");
-    }
-    return true;
   }
 
   public boolean verificarDisponibilidad(Servicio s) throws Exception {
@@ -268,7 +262,7 @@ public class Dia {
       Date fechaFT = fr.getDia().getFecha();
       System.out.println("fechaFT: " + fechaFT);
       System.out.println("today: " + today);
-      if (today.toString() != fechaFT.toString() && today.after(fechaFT) ) {
+      if (today.toString() != fechaFT.toString() && today.after(fechaFT)) {
         continue;
       }
       if (fr.getEstaOcupado()) {
@@ -301,6 +295,18 @@ public class Dia {
   @Override
   public String toString() {
     return "Dia [diaSemana=" + diaSemana + ", turnoManana=" + turnos + "]";
+  }
+
+  public String toStringFormatted() {
+    String formateado = "";
+
+    for (int i = 0; i < turnos.size(); i++) {
+      FraccionTurno ft = turnos.get(i);
+      formateado += (i + 1) + ") " + getDiaSemana() + " " + ft.getHorario() + " | "
+          + (ft.getEstaOcupado() ? "Asignado servicio Nro " + ft.getServicioAsignado().getNro() : "LIBRE") + "\n";
+    }
+
+    return formateado;
   }
 
 }

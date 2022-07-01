@@ -251,7 +251,7 @@ public class PanelCreacionServicio extends JPanel {
 
       JButton btnCliente = new JButton(g.getClienteShort(c));
 
-      if (c.verificarServicioVigente()) {
+      if (c.verificarPoseeServicio()) {
         btnCliente.setEnabled(false);
         btnCliente.setText(btnCliente.getText() + " [Serv agendado]");
         btnCliente.removeActionListener(new ActionListener() {
@@ -460,8 +460,6 @@ public class PanelCreacionServicio extends JPanel {
         throw new AsignacionException("El comienzo y final deben ser del mismo turno.");
       }
 
-      c.getAgenda().verificarDisponibilidad(turnoDesde.getDia().getFecha(), turnoDesde.getTurno(),
-          turnoDesde.getNro(), turnoHasta.getNro());
       nuevoServicio = callcenterUser.crearNuevoServicioServicio(DateAux.getToday(), ts, turnoDesde.getTurno(),
           turnoDesde.getNro(), turnoHasta.getNro());
 
@@ -475,7 +473,6 @@ public class PanelCreacionServicio extends JPanel {
       }
 
     }
-    refrescarTodo();
   }
 
   private void anadirTecnicoServicio(Servicio s) {

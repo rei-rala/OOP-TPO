@@ -174,6 +174,10 @@ public class Servicio {
     this.turnoFin = turnoFin;
   }
 
+  public String getHorarioServicio() {
+    return DateAux.getHorarioCompleto(turno, turnoInicio, turnoFin);
+  }
+
   // EDICION DE SERVICIO
   public void asignarCliente(Cliente c) throws Exception {
     if (facturado || enPoderTecnico) {
@@ -301,18 +305,29 @@ public class Servicio {
   }
 
   public String toStringShorter() {
-    return "Servicio " + estadoServicio + " [nro=" + nro + " fecha=" + DateAux.getDateString(fecha) + ", tipoServicio="
-        + tipoServicio
-        + ", tecnicosAsignados=" + tecnicosAsignados.size()
-        + ", articulosUtilizados=" + articulosUtilizados.size()
-        + ", articulosExtraUtilizados=" + articulosExtraUtilizados.size() + "]";
+    String clienteStr = getCliente() == null ? "<SIN CLIENTE ASIGNADO>"
+        : getCliente().getNombre() + "(ID: "
+            + getCliente().getNro() + ")";
+
+    return "Numero=" + nro
+        + "\nCliente=" + clienteStr
+        + "\nEstado " + estadoServicio
+        + "\nFecha=" + DateAux.getDateString(fecha)
+        + "\nTipo=" + tipoServicio
+        + "\ntecnicosAsignados=" + tecnicosAsignados.size()
+        + "\narticulosUtilizados=" + articulosUtilizados.size()
+        + "\narticulosExtraUtilizados=" + articulosExtraUtilizados.size();
   }
 
   public String toStringShort() {
-    return "Servicio [nro=" + nro + " fecha=" + DateAux.getDateString(fecha) + ", tiempoTrabajado="
-        + tiempoTrabajado + ", tipoServicio=" + tipoServicio + ", tecnicosAsignados=" + tecnicosAsignados.size()
-        + ", articulosUtilizados=" + articulosUtilizados
-        + ", articulosExtraUtilizados=" + articulosExtraUtilizados + ", costoViaje=" + costoViaje;
+    String clienteStr = getCliente() == null ? "<SIN CLIENTE ASIGNADO>"
+        : getCliente().getNombre() + "(ID: "
+            + getCliente().getNro() + ")";
+    return "Servicio [nro=" + nro + "\nfecha=" + DateAux.getDateString(fecha)
+        + "\ncliente=" + clienteStr + "\ntiempoTrabajado="
+        + tiempoTrabajado + "\ntipoServicio=" + tipoServicio + "\ntecnicosAsignados=" + tecnicosAsignados.size()
+        + "\narticulosUtilizados=" + articulosUtilizados
+        + "\narticulosExtraUtilizados=" + articulosExtraUtilizados + "\ncostoViaje=" + costoViaje;
   }
 
   @Override

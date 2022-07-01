@@ -28,30 +28,12 @@ public class Callcenter extends Interno {
   }
 
   // ARTICULOS
-  public Articulo buscarArticulos(int SKU) {
-    return Empresa.getInstance().getArticulos(SKU);
-  }
-
-  public Articulo buscarArticulos(Articulo a) {
-    return Empresa.getInstance().getArticulos(a);
-  }
-
-  public ArrayList<Articulo> buscarArticulos() {
+  public ArrayList<Articulo> getArticulos() {
     return Empresa.getInstance().getArticulos();
   }
 
-  public ArrayList<Articulo> buscarArticulosSinStock() {
-    ArrayList<Articulo> articulos = buscarArticulos();
-    ArrayList<Articulo> articulosSinStock = new ArrayList<Articulo>();
-
-    for (int i = 0; i < articulos.size(); i++) {
-      Articulo current = articulos.get(i);
-      if (current.getStock() == 0) {
-        articulosSinStock.add(current);
-      }
-    }
-
-    return articulosSinStock;
+  public void setStockArticulo(Articulo a, int stock) throws Exception {
+    a.setStock(stock);
   }
 
   public Cliente getClientes(int numeroCliente) {
@@ -62,40 +44,25 @@ public class Callcenter extends Interno {
     return Empresa.getInstance().getClientes(c);
   }
 
-  public Tecnico getTecnicos(int numeroLegajo) {
-    return Empresa.getInstance().getTecnicos(numeroLegajo);
-  }
+  public ArrayList<Cliente> getClientesSinServicios() {
+    ArrayList<Cliente> clientes = Empresa.getInstance().getClientesSinServiciosPendientes();
 
-  public Tecnico getTecnicos(Tecnico t) {
-    return Empresa.getInstance().getTecnicos(t);
+    return clientes;
   }
 
   public ArrayList<Tecnico> getTecnicos() {
     return Empresa.getInstance().getTecnicos();
   }
 
-  public void anadirStockArticulo(Articulo a, int cantidad) throws Exception {
-    a.anadirStock(cantidad);
-  }
-
-  public void setStockArticulo(Articulo a, int stock) throws Exception {
-    a.setStock(stock);
-  }
-
   // TECNICOS
-  // TODO: Merge con la agenda
-  public ArrayList<Tecnico> buscarTecnicosDisponibles(Date fecha) {
-    return Empresa.getInstance().getTecnicos();
-  }
-
-  // TODO: Merge con la agenda
-  public ArrayList<Tecnico> buscarTecnicosDisponibles(Date fecha, Turno turno, int desde, int hasta) {
+  public ArrayList<Tecnico> buscarTecnicosDisponibles(Servicio s) {
     ArrayList<Tecnico> tecnicosDisponibles = new ArrayList<Tecnico>();
 
-    for (Tecnico t : Empresa.getInstance().getTecnicos()) {
+    for (Tecnico t : getTecnicos()) {
       try {
-        t.getAgenda().verificarDisponibilidad(fecha, turno, desde, hasta);
-        tecnicosDisponibles.add(t);
+        if (t.verificarDisponibilidad(s)) {
+          tecnicosDisponibles.add(t);
+        }
       } catch (Exception e) {
       }
     }
@@ -124,7 +91,7 @@ public class Callcenter extends Interno {
     }
   }
 
-  private void preValidarLiberacion(Servicio s) throws Exception {
+  public void preValidarLiberacion(Servicio s) throws Exception {
     preValidarEdicionServicio(s);
 
     if (s.getCliente() == null) {
@@ -143,6 +110,28 @@ public class Callcenter extends Interno {
   }
 
   // SERVICIOS
+  private ArrayList<Servicio> getServicios() {
+    return Empresa.getInstance().getServicios();
+  }
+
+  public ArrayList<Servicio> getServiciosPendientes() {
+    ArrayList<Servicio> serviciosPendientes = new ArrayList<Servicio>();
+
+    for (Servicio s : getServicios()) {
+      if (s.isFacturado()) {
+        continue;
+      }
+      if (s.getEstadoServicio() == EstadoServicio.CANCELADO || s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
+        continue;
+      }
+      if (s.isEnPoderTecnico()) {
+        continue;
+      }
+      serviciosPendientes.add(s);
+    }
+    return serviciosPendientes;
+  }
+
   public boolean verificarDisponibilidadCliente(Cliente c, Servicio s) throws Exception {
     preValidarCliente(c);
     return c.verificarDisponibilidad(s);

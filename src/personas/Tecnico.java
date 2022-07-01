@@ -42,7 +42,7 @@ public class Tecnico extends Interno {
   }
 
   public boolean verificarDisponibilidad(Servicio s) throws Exception {
-    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
+    return agenda.verificarDisponibilidad(s);
   }
 
   public ArrayList<Servicio> getServiciosPendientes() {

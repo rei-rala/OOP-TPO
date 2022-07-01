@@ -23,12 +23,28 @@ public class Admin extends Interno {
         + ", direccion=" + direccion + ", telefono=" + telefono + "]";
   }
 
+  public double getCostoCombustible() {
+    return Empresa.getInstance().getCostoCombustible();
+  }
+
   public void modificarCostoCombustible(double nvoCostoCombustible) throws ValorException, Exception {
     Empresa.getInstance().setCostoCombustible(nvoCostoCombustible);
   }
 
+  public double getCostoViaje() {
+    return Empresa.getInstance().getCostoViaje();
+  }
+
   public void modificarCostoViaje(double nvoCostoViaje) throws ValorException, Exception {
     Empresa.getInstance().setCostoViaje(nvoCostoViaje);
+  }
+
+  public CostoHorasTecnico getCostoHoraTecnico() {
+    return Empresa.getInstance().getCostoHoraTecnico();
+  }
+
+  public double getCostoHoraTecnico(Seniority s) {
+    return Empresa.getInstance().getCostoHoraTecnico(s);
   }
 
   public void modificarCostoHoraTecnico(CostoHorasTecnico nuevoCHTObject) throws ValorException {
@@ -43,25 +59,21 @@ public class Admin extends Interno {
     Empresa.getInstance().setCostoHoraTecnico(jr, ssr, sr);
   }
 
-  public CostoHorasTecnico getCostoHoraTecnico() {
-    return Empresa.getInstance().getCostoHoraTecnico();
-  }
-
   // METODOS ARTICULOS
-  public Articulo buscarArticulos(int SKU) {
+  public Articulo getArticulos(int SKU) {
     return Empresa.getInstance().getArticulos(SKU);
   }
 
-  public Articulo buscarArticulos(Articulo a) {
+  public Articulo getArticulos(Articulo a) {
     return Empresa.getInstance().getArticulos(a);
   }
 
-  public ArrayList<Articulo> buscarArticulos() {
+  public ArrayList<Articulo> getArticulos() {
     return Empresa.getInstance().getArticulos();
   }
 
   public ArrayList<Articulo> buscarArticulosSinStock() {
-    ArrayList<Articulo> articulos = buscarArticulos();
+    ArrayList<Articulo> articulos = getArticulos();
     ArrayList<Articulo> articulosSinStock = new ArrayList<Articulo>();
 
     for (int i = 0; i < articulos.size(); i++) {
@@ -79,7 +91,7 @@ public class Admin extends Interno {
   }
 
   public void setStockArticulo(int sku, int stock) throws Exception {
-    Articulo a = buscarArticulos(sku);
+    Articulo a = getArticulos(sku);
     a.setStock(stock);
   }
 

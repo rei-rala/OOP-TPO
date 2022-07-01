@@ -18,18 +18,16 @@ public class Agenda {
   public Agenda(Persona propietario) {
     this.dias = new ArrayList<Dia>();
     this.propietario = propietario;
-    
-    
+
     // Creacion inicial de objetos Dia
     Date currentDate = DateAux.getToday();
-
 
     for (int i = 0; i < cantDiasGeneradosXDefecto; i++) {
       // si es domingo lo omitimos
       if (currentDate.getDay() == 0) {
         continue;
       }
-      
+
       dias.add(new Dia(currentDate));
       currentDate = new Date(currentDate.getTime() + DateAux.DAY_IN_MS);
     }
@@ -70,24 +68,26 @@ public class Agenda {
 
   public void asignarServicio(Servicio s) throws Exception {
     Dia aAsignar = obtenerDiaAgenda(s.getFecha());
-    Turno turno = s.getTurno();
-    int desde = s.getTurnoInicio();
-    int hasta = s.getTurnoFin();
 
-    if (aAsignar.verificarDisponibilidad(turno, desde, hasta)) {
+    if (aAsignar == null) {
+      throw new AgendaException("No se pudo asignar el servicio");
+    }
+    if (aAsignar.verificarDisponibilidad(s)) {
       aAsignar.asignarServicioDia(s);
     } else {
       throw new AsignacionException("No se puede asignar el servicio");
     }
   }
 
-  public boolean verificarDisponibilidad(Date fecha, Turno turno, int desde, int hasta) {
+  public boolean verificarDisponibilidad(Servicio s) {
+    Date fecha = s.getFecha();
+
     try {
       Dia d = obtenerDiaAgenda(fecha);
       if (d == null) {
         throw new AgendaException("Dia no valido");
       }
-      return d.verificarDisponibilidad(turno, desde, hasta);
+      return d.verificarDisponibilidad(s);
     } catch (Exception e) {
       return false;
     }
@@ -137,4 +137,35 @@ public class Agenda {
     return "Agenda [propietario=" + propietario.getNombre() + ", cantDias=" + cantDias + "]";
   }
 
+  public String getDiasShort() {
+    String formateado = "";
+
+    for (int i = 0; i < dias.size(); i++) {
+      Dia d = dias.get(i);
+      formateado += (i + 1) + ") Fecha " + DateAux.getDateString(d.getFecha()) + " - " + d.getNombreDiaSemana()
+          + (d.verificarDiaOcupado() ? " *SERVICIO PENDIENTE*" : "") + "\n";
+    }
+
+    return formateado;
+  }
+
+  public String getDiasFormatted() {
+    String formateado = "";
+
+    for (Dia d : dias) {
+      formateado += d.toStringFormatted() + "\n";
+    }
+
+    return formateado;
+  }
+
+  public String toStringFormatted() {
+    String formateado = "";
+
+    for (Dia d : dias) {
+      formateado += d.toStringFormatted() + "\n";
+    }
+
+    return formateado;
+  }
 }
