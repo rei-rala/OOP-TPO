@@ -20,7 +20,7 @@ public class FraccionTurno {
   }
 
   private String obtenerHorario() {
-    return DateAux.obtenerHorario(turno, nro);
+    return DateAux.getHorarioUnico(turno, nro);
   }
 
   public String getHorario() {

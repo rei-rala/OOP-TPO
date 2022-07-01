@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.*;
 
@@ -154,11 +155,20 @@ public class Gui {
   }
 
   public String getNro(Servicio s) {
-    return "" + s.nro;
+    return "" + s.getNro();
+  }
+
+  public String getFechaCreacion(Servicio s) {
+    return "" + s.getFechaCreacion();
   }
 
   public String getFecha(Servicio s) {
-    return "" + s.getFecha();
+    Date f = s.getFecha();
+    return DateAux.getDateString(f);
+  }
+
+  public String getHorarioTurnos(Servicio s) {
+    return DateAux.getHorarioCompleto(s.getTurno(), s.getTurnoInicio(), s.getturnoFin());
   }
 
   public String getTipoServicio(Servicio s) {
@@ -200,10 +210,10 @@ public class Gui {
   }
 
   public String getOtrosArticulos(Servicio s) {
-    ArrayList<Costo> otrosCostos = s.getOtrosCostos();
-    String articulosUtilizados = otrosCostos.size() + " utilizados";
+    ArrayList<Costo> articulosExtraUtilizados = s.getArticulosExtra();
+    String articulosUtilizados = articulosExtraUtilizados.size() + " utilizados";
 
-    for (Costo c : otrosCostos) {
+    for (Costo c : articulosExtraUtilizados) {
       articulosUtilizados += "\t\n" + c.getArticulo().getDescripcion() + " x " + c.getCantidad() + " = $"
           + c.obtenerTotalCosto();
     }
@@ -212,7 +222,7 @@ public class Gui {
   }
 
   public String getTotalServicio(Servicio s) {
-    return "TOTAL: " + s.obtenerTotalServicio();
+    return "TOTAL: " + s.calcularTotalServicio();
   }
 
   public String getNro(Factura f) {
@@ -227,6 +237,10 @@ public class Gui {
   }
 
   public String getCliente(Cliente c) {
+    if (c == null) {
+      return "<<NO HAY CLIENTE ASIGNADO>>";
+    }
+
     String clShort = getClienteShort(c);
     String direccion = "Direccion: " + c.getDireccion();
     String telefono = "Telefono: " + c.getTelefono();
@@ -235,6 +249,7 @@ public class Gui {
 
   public String getCliente(Servicio s) {
     Cliente c = s.getCliente();
+
     return getCliente(c);
   }
 
@@ -268,26 +283,23 @@ public class Gui {
   }
 
   public String limpiarStrOtrosArticulos(Servicio s) {
-    ArrayList<Costo> alO = s.getOtrosCostos();
+    ArrayList<Costo> alO = s.getArticulosExtra();
     return limpiarStrArticulos(alO);
   }
 
   public String getServicioStr(Factura f) {
     Servicio s = f.getServicio();
-    String horarioDesde = "Desde: " + DateAux.obtenerHorario(s.getTurno(), s.getturnoInicio());
-    String horarioHasta = "Hasta: " + DateAux.obtenerHorario(s.getTurno(), s.getturnoFin() + 1);
-
     String nro = "Servicio numero: " + getNro(s) + "\n";
     String fecha = "Fecha: " + getFecha(s) + "\n";
     String tipo = "Tipo: " + getTipoServicio(s) + "\n";
-    String turno = "Turno " + s.getTurno() + " [" + horarioDesde + " - " + horarioHasta + "]\n";
+    String turno = "Turno " + s.getTurno() + " [" + DateAux.getHorarioCompleto(s.getTurno(), s.getTurnoInicio(), s.getturnoFin())+ "]\n";
     String tecnicos = "Tecnicos: " + limpiarStrTecnicos(s.getTecnicos()) + "\n";
     String articulos = "\nArticulos: " + limpiarStrArticulos(s.getArticulos()) + "\n";
-    String otrosArts = "Extras: " + limpiarStrArticulos(s.getOtrosCostos()) + "\n";
+    String otrosArts = "Extras: " + limpiarStrArticulos(s.getArticulosExtra()) + "\n";
     String tiempoTrabajado = "Tiempo: " + s.getTiempoTrabajado() + "\n";
     String costoViaje = "Viaticos: " + s.getCostoViaje() + "\n";
     String incluyeAlmuerzo = "Almuerzo tecnico/s: " + (s.isIncluyeAlmuerzo() ? "INCLUYE" : "No incluye") + "\n";
-    String costoTotal = "Total servicio: " + s.obtenerTotalServicio();
+    String costoTotal = "Total servicio: " + s.calcularTotalServicio();
 
     return nro + fecha + tipo + turno + tecnicos + articulos + otrosArts + tiempoTrabajado + incluyeAlmuerzo
         + costoViaje + costoTotal;

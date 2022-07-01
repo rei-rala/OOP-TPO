@@ -23,15 +23,15 @@ public class Agenda {
     // Creacion inicial de objetos Dia
     Date currentDate = DateAux.getToday();
 
-    final long DAY_IN_MS = 1000 * 60 * 60 * 24;
 
     for (int i = 0; i < cantDiasGeneradosXDefecto; i++) {
       // si es domingo lo omitimos
       if (currentDate.getDay() == 0) {
         continue;
       }
+      
       dias.add(new Dia(currentDate));
-      currentDate = new Date(currentDate.getTime() + DAY_IN_MS);
+      currentDate = new Date(currentDate.getTime() + DateAux.DAY_IN_MS);
     }
     this.cantDias = dias.size();
   }
@@ -71,7 +71,7 @@ public class Agenda {
   public void asignarServicio(Servicio s) throws Exception {
     Dia aAsignar = obtenerDiaAgenda(s.getFecha());
     Turno turno = s.getTurno();
-    int desde = s.getturnoInicio();
+    int desde = s.getTurnoInicio();
     int hasta = s.getturnoFin();
 
     if (aAsignar.verificarDisponibilidad(turno, desde, hasta)) {

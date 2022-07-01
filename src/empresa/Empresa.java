@@ -72,10 +72,13 @@ public class Empresa {
     String clientesStr = iterarToString(clientes);
     String internosStr = iterarToString(internos);
     String tecnicosStr = iterarToString(tecnicos);
+    String servicioStr = iterarToString(servicios);
+    String facturasStr = iterarToString(facturas);
 
     return "Empresa [getCostoCombustible()=" + getCostoCombustible() + "\ngetCostoViaje()=" + getCostoViaje()
         + "\ngetCostoHoraTecnico()=" + getCostoHoraTecnico() + "\ngetArticulos()=" + articulosStr
-        + "\ngetTecnicos()=" + tecnicosStr + "\ngetClientes()=" + clientesStr + "\ngetInternos()=" + internosStr + "]";
+        + "\ngetTecnicos()=" + tecnicosStr + "\ngetClientes()=" + clientesStr + "\ngetInternos()=" + internosStr
+        + "\ngetServicios()=" + servicioStr + "\ngetFacturas()=" + facturasStr + "]";
   }
 
   public double redondear(double valor) {

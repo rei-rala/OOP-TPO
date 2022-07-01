@@ -32,7 +32,7 @@ public class PanelCreacionServicio extends JPanel {
   private static final long serialVersionUID = 1L;
 
   private Gui g = Gui.getInstance();
-  private Interno i = g.getUsuarioLogeado();
+  private Callcenter callcenterUser = (Callcenter) g.getUsuarioLogeado();
 
   private Servicio currentEdicionServicio;
   private JPanel pListadoClientes;
@@ -156,7 +156,6 @@ public class PanelCreacionServicio extends JPanel {
     pEdicionServicioCC.add(btnAvanzarEstado);
 
     refrescarTodo();
-    poblarAmbos();
   }
 
   public void setCurrentEdicionServicio(Servicio s) {
@@ -164,34 +163,23 @@ public class PanelCreacionServicio extends JPanel {
     refrescarTodo();
   }
 
-  private void refrescarEmpresa() {
-    g = Gui.getInstance();
-  }
-
   private void refrescarTodo() {
     setVisible(false);
 
+    poblarClientes();
+    poblarServicios();
+
     Servicio ces = currentEdicionServicio;
     boolean cesNull = ces == null;
+    boolean isBtnEnabled = !cesNull;
 
     for (Component c : pEdicionServicioCC.getComponents()) {
-      c.setEnabled(!cesNull);
+      c.setEnabled(isBtnEnabled);
     }
 
     for (Component c : pTecAsignados.getComponents()) {
-      c.setEnabled(!cesNull);
+      c.setEnabled(isBtnEnabled);
     }
-
-    btnVerTecnicos.removeActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-      }
-    });
-    btnAvanzarEstado.removeActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-      }
-    });
 
     if (cesNull) {
       tfNroServicio.setText("");
@@ -202,9 +190,23 @@ public class PanelCreacionServicio extends JPanel {
       tfCliente.setText("");
       btnAvanzarEstado.setText("Seleccione servicio");
 
+      btnVerTecnicos.removeActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        }
+      });
+      btnAvanzarEstado.removeActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        }
+      });
       btnAgregarTecnico.removeActionListener(null);
       setVisible(true);
       return;
+    }
+
+    if (!ces.isEnPoderTecnico()) {
+      btnAvanzarEstado.setText("Enviar a tecnico");
     }
 
     tfNroServicio.setText("" + ces.nro);
@@ -232,9 +234,6 @@ public class PanelCreacionServicio extends JPanel {
       }
     });
 
-    if (!ces.isEnPoderTecnico()) {
-      btnAvanzarEstado.setText("Enviar a tecnico");
-    }
     setVisible(true);
   }
 
@@ -293,18 +292,13 @@ public class PanelCreacionServicio extends JPanel {
         continue;
       }
       JButton btnServicio = new JButton(g.getServicioTitle(s));
-      btnServicio.addActionListener(e -> setCurrentEdicionServicio(s));
+      btnServicio.addActionListener(e -> {
+        setCurrentEdicionServicio(s);
+      });
       pListadoServicios.add(btnServicio);
     }
 
     pListadoServicios.setVisible(true);
-  }
-
-  private void poblarAmbos() {
-    g.refrescarEmpresa();
-    refrescarEmpresa();
-    poblarClientes();
-    poblarServicios();
   }
 
   private String formatearTecnicos(Servicio s) {
@@ -347,8 +341,13 @@ public class PanelCreacionServicio extends JPanel {
 
   private void avanzarEstadoServicio(Servicio s) {
     try {
-      s.liberarDesdeCallcenter();
-      refrescarTodo();
+      if (JOptionPane.showConfirmDialog(null,
+          "Desea liberar el servicio desde Callcenter? Pasara a poder de los tecnicos asignados.") == 1) {
+        callcenterUser.liberarServicioCallcenter(s);
+        setCurrentEdicionServicio(null);
+      }
+
+      JOptionPane.showMessageDialog(null, "Servicio Nro " + s.getNro() + " en poder de los tecnicos.");
     } catch (Exception e) {
       g.errorHandler(e);
     }
@@ -445,11 +444,9 @@ public class PanelCreacionServicio extends JPanel {
     Servicio nuevoServicio = null;
 
     try {
-      if (i.getClass() != Callcenter.class) {
+      if (callcenterUser.getClass() != Callcenter.class) {
         throw new CredencialException("Credenciales invalidas para Call Center");
       }
-
-      Callcenter cc = (Callcenter) i;
 
       TipoServicio ts = obtenerSeleccionServicio();
       Dia seleccionado = obtenerSeleccionDia(c);
@@ -465,7 +462,7 @@ public class PanelCreacionServicio extends JPanel {
 
       c.getAgenda().verificarDisponibilidad(turnoDesde.getDia().getFecha(), turnoDesde.getTurno(),
           turnoDesde.getNro(), turnoHasta.getNro());
-      nuevoServicio = cc.crearNuevoServicioServicio(DateAux.getToday(), ts, turnoDesde.getTurno(),
+      nuevoServicio = callcenterUser.crearNuevoServicioServicio(DateAux.getToday(), ts, turnoDesde.getTurno(),
           turnoDesde.getNro(), turnoHasta.getNro());
 
       JOptionPane.showMessageDialog(null, "Servicio creado con Numero " + nuevoServicio.nro);
@@ -477,23 +474,15 @@ public class PanelCreacionServicio extends JPanel {
         nuevoServicio.setEstadoServicio(EstadoServicio.CANCELADO);
       }
 
-    } finally {
-      poblarAmbos();
-      diaSeleccionCliente.clear();
-      fraccionesSeleccionCliente.clear();
     }
-    for (Servicio s : g.empresa.getServicios()) {
-      System.out.println(s);
-    }
+    refrescarTodo();
   }
 
   private void anadirTecnicoServicio(Servicio s) {
     try {
-      if (i.getClass() != Callcenter.class) {
+      if (callcenterUser.getClass() != Callcenter.class) {
         throw new CredencialException("Credenciales invalidas para Call Center");
       }
-
-      Callcenter cc = (Callcenter) i;
 
       ArrayList<Tecnico> tecs = g.obtenerTecnicos();
       String msg = g.listarTecnicos();
@@ -507,7 +496,7 @@ public class PanelCreacionServicio extends JPanel {
 
       Tecnico t = tecs.get(eleccion);
 
-      cc.asignarServicio(s, t);
+      callcenterUser.asignarServicio(s, t);
 
       JOptionPane.showMessageDialog(null, "Tecnico " + t.getNombre() + " asignado a servicio nro" + s.nro);
 
@@ -517,7 +506,6 @@ public class PanelCreacionServicio extends JPanel {
     }
     diaSeleccionCliente.clear();
     fraccionesSeleccionCliente.clear();
-    poblarAmbos();
   }
 
 }

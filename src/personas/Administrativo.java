@@ -27,12 +27,24 @@ public class Administrativo extends Interno {
   }
 
   // Metodos para SERVICIOS
-  public Servicio verServicio(int nroServicio) {
+  public Servicio getServicio(int nroServicio) {
     return Empresa.getInstance().getServicios(nroServicio);
   }
 
-  public Servicio verServicio(Servicio s) {
+  public Servicio getServicio(Servicio s) {
     return Empresa.getInstance().getServicios(s);
+  }
+
+  public ArrayList<Tecnico> getTecnicos(Servicio s) {
+    return s.getTecnicos();
+  }
+
+  public ArrayList<Costo> getArticulos(Servicio s) {
+    return s.getArticulos();
+  }
+
+  public ArrayList<Costo> getArticulosExtra(Servicio s) {
+    return s.getArticulosExtra();
   }
 
   public ArticuloExtra crearArticuloExtra(String descripcion, double costo) throws Exception {
@@ -62,7 +74,7 @@ public class Administrativo extends Interno {
   }
 
   public String getMargenFacturaString(Factura f) {
-    return "" + Empresa.getInstance().redondear(getMargenFactura(f)) + "%";
+    return f.calcularMargenStr();
   }
 
   public ArrayList<Servicio> getServiciosAFacturar() {
@@ -71,10 +83,11 @@ public class Administrativo extends Interno {
 
     for (int i = 0; i < listaServicios.size(); i++) {
       Servicio currentServicio = listaServicios.get(i);
-      boolean esServicioFinalizado = currentServicio.getEstadoServicio() == EstadoServicio.FINALIZADO;
-      boolean esServicioFacturado = currentServicio.isFacturado();
 
-      if (esServicioFinalizado && esServicioFacturado == false) {
+      boolean esServicioFinalizado = currentServicio.getEstadoServicio() == EstadoServicio.FINALIZADO;
+      boolean faltaFacturar = currentServicio.isFacturado() == false;
+
+      if (esServicioFinalizado && faltaFacturar) {
         listaSinFacturar.add(currentServicio);
       }
     }
@@ -100,9 +113,8 @@ public class Administrativo extends Interno {
 
   }
 
-  // Metodos para FACTURAS (propios de administrativo)
-  public Factura verFacturaEmpresa(int nroFactura) {
-    return Empresa.getInstance().getFacturas(nroFactura);
+  public ArrayList<Factura> getFacturas() {
+    return Empresa.getInstance().getFacturas();
   }
 
 }

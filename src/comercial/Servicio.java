@@ -16,13 +16,14 @@ public class Servicio {
   public final int nro;
   private Cliente cliente;
   private final Date fecha;
+  private final Date fechaCreacion;
 
   private double tiempoTrabajado;
   private TipoServicio tipoServicio;
   private EstadoServicio estadoServicio;
   private ArrayList<Tecnico> tecnicosAsignados = new ArrayList<Tecnico>();
   private ArrayList<Costo> articulosUtilizados = new ArrayList<Costo>();
-  private ArrayList<Costo> otrosCostos = new ArrayList<Costo>();
+  private ArrayList<Costo> articulosExtraUtilizados = new ArrayList<Costo>();
   private final double costoViaje = Empresa.getInstance().getCostoViaje();
   private boolean almuerzo;
   private boolean enPoderTecnico;
@@ -34,6 +35,7 @@ public class Servicio {
 
   public Servicio(Date fecha, TipoServicio tipoServicio, Turno turno, int turnoInicio, int turnoFin) throws Exception {
     this.nro = ++contadorServicios;
+    this.fechaCreacion = DateAux.getNow();
     this.fecha = fecha;
     this.tipoServicio = tipoServicio;
     this.turno = turno;
@@ -81,6 +83,10 @@ public class Servicio {
     return fecha;
   }
 
+  public Date getFechaCreacion() {
+    return fechaCreacion;
+  }
+
   public TipoServicio getTipoServicio() {
     return tipoServicio;
   }
@@ -108,8 +114,8 @@ public class Servicio {
     return articulosUtilizados;
   }
 
-  public ArrayList<Costo> getOtrosCostos() {
-    return otrosCostos;
+  public ArrayList<Costo> getArticulosExtra() {
+    return articulosExtraUtilizados;
   }
 
   public double getCostoViaje() {
@@ -122,6 +128,10 @@ public class Servicio {
 
   public boolean isEnPoderTecnico() {
     return enPoderTecnico;
+  }
+
+  public void otorgarPoderTecnico() {
+    enPoderTecnico = true;
   }
 
   public boolean isIncluyeAlmuerzo() {
@@ -148,11 +158,11 @@ public class Servicio {
     this.cliente = c;
   }
 
-  public int getturnoInicio() {
+  public int getTurnoInicio() {
     return turnoInicio;
   }
 
-  public void setturnoInicio(int turnoInicio) {
+  public void setTurnoInicio(int turnoInicio) {
     this.turnoInicio = turnoInicio;
   }
 
@@ -219,21 +229,7 @@ public class Servicio {
     }
 
     Costo nuevoOtroCosto = new Costo(cantidad, extraArt);
-    return otrosCostos.add(nuevoOtroCosto);
-  }
-
-  public void liberarDesdeCallcenter() throws ServicioException {
-    if (this.cliente == null) {
-      throw new ServicioException("El servicio debe estar asignado a un cliente.");
-    }
-    if (this.enPoderTecnico) {
-      throw new ServicioException("El servicio se encuentra en poder de lo/s tecnico/s.");
-    }
-    if (0 >= this.tecnicosAsignados.size()) {
-      throw new ServicioException("El servicio debe contar con al menos 1 (un) tecnico");
-    }
-
-    enPoderTecnico = true;
+    return articulosExtraUtilizados.add(nuevoOtroCosto);
   }
 
   public double obtenerValorHoraServicio() {
@@ -245,22 +241,32 @@ public class Servicio {
     return aux;
   }
 
-  public double obtenerTotalServicio() {
-    double tiempoTrabajado = getTiempoTrabajado();
-
-    double stHorasTecnico = obtenerValorHoraServicio() * tiempoTrabajado;
+  public double calcularCostoArticulos() {
     double stArtsUtilizados = 0;
-    double stOtrosArtsUtilizados = 0;
-
     for (Costo ca : articulosUtilizados) {
       stArtsUtilizados += ca.obtenerTotalCosto();
     }
 
-    for (Costo co : otrosCostos) {
+    return stArtsUtilizados;
+  }
+
+  public double calcularCostoArticulosExtra() {
+    double stOtrosArtsUtilizados = 0;
+
+    for (Costo co : articulosExtraUtilizados) {
       stOtrosArtsUtilizados += co.obtenerTotalCosto();
     }
 
-    return stHorasTecnico + stArtsUtilizados + stOtrosArtsUtilizados + costoViaje;
+    return stOtrosArtsUtilizados;
+  }
+
+  public double calcularTotalServicio() {
+    double tiempoTrabajado = getTiempoTrabajado();
+    double costoArticulos = calcularCostoArticulos();
+    double costoArticulosExtra = calcularCostoArticulosExtra();
+    double stHorasTecnico = obtenerValorHoraServicio() * tiempoTrabajado;
+
+    return stHorasTecnico + costoArticulos + costoArticulosExtra + costoViaje;
   }
 
   public void cancelarServicio() throws Exception {
@@ -294,11 +300,19 @@ public class Servicio {
     return this.facturado;
   }
 
+  public String toStringShort() {
+    return "Servicio [nro=" + nro + " fecha=" + DateAux.getDateString(fecha) + ", tiempoTrabajado="
+        + tiempoTrabajado + ", tipoServicio=" + tipoServicio + ", tecnicosAsignados=" + tecnicosAsignados.size()
+        + ", articulosUtilizados=" + articulosUtilizados
+        + ", articulosExtraUtilizados=" + articulosExtraUtilizados + ", costoViaje=" + costoViaje;
+  }
+
   @Override
   public String toString() {
-    return "Servicio [nro=" + nro + ", cliente=" + cliente + ", fecha=" + fecha + ", tiempoTrabajado="
+    return "Servicio [nro=" + nro + ", cliente=" + cliente + ", fecha=" + DateAux.getDateString(fecha) + ", tiempoTrabajado="
         + tiempoTrabajado + ", tipoServicio=" + tipoServicio + ", estadoServicio=" + estadoServicio
         + ", tecnicosAsignados=" + tecnicosAsignados + ", articulosUtilizados=" + articulosUtilizados
-        + ", otrosCostos=" + otrosCostos + ", costoViaje=" + costoViaje + ", facturado=" + facturado + "]";
+        + ", articulosExtraUtilizados=" + articulosExtraUtilizados + ", costoViaje=" + costoViaje + ", facturado="
+        + facturado + "]";
   }
 }

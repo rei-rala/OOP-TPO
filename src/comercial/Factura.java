@@ -41,7 +41,7 @@ public class Factura {
   }
 
   public double calcularSubTotal() {
-    double subtotal = servicio.obtenerTotalServicio();
+    double subtotal = servicio.calcularTotalServicio();
 
     return Empresa.getInstance().redondear(subtotal);
   }
@@ -77,6 +77,13 @@ public class Factura {
       return calcularGanancias() / total;
     }
     return 0;
+  }
+
+  public String calcularMargenStr() {
+    double total = Empresa.getInstance().redondear(calcularTotal());
+
+    return "" + (total > 0 ? Empresa.getInstance().redondear(calcularGanancias() / total * 100) : "0") + "%";
+
   }
 
   public Date getFecha() {

@@ -22,28 +22,155 @@ public class Main {
 
   public static void main(String[] args) throws Exception {
 
-    // Al instanciar los objetos se anaden directamente a Empresa.
+    instanciarObjectosInicialesEmpresa();
+    instanciarObjectosAdicionalesEmpresa();
+    testWorkflowInicial();
+
+    // GUI
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        try {
+          Gui.getInstance().initialize();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    });
+
+    while (isRunning) {
+      System.out.println("\n\nBienvenido al sistema de gestión de la empresa");
+      Interno i = logIn();
+      pantallaPrincipal(i);
+    }
+
+    close();
+  }
+
+  /**
+   * Instancia objetos para la empresa
+   * EL codigo implementado incorpora cada instancia automaticamente a la empresa
+   */
+  public static void instanciarObjectosInicialesEmpresa() {
+    System.out.println("\n\n---------------------------------------------------------");
+    System.out.println("------------ INSTANCIANDO OBJETOS INICIALES -------------");
+    System.out.println("---------------------------------------------------------");
     // VARIABLES ARTICULOS PRUEBA
-    Cable c = new Cable(30, 0);
-    ConectorCoaxial cc = new ConectorCoaxial(50, 100);
-    DivisorCoaxial dc = new DivisorCoaxial(50, 80);
-    Modem m = new Modem(200, 120);
-    DecodificadorTV dtv = new DecodificadorTV(40, 120);
+    new Cable(50, 9999);
+    new ConectorCoaxial(30, 9999);
+    new DivisorCoaxial(30, 9999);
+    new Modem(250, 9999);
+    new DecodificadorTV(180, 9999);
 
     // VARIABLES PERSONAS PRUEBA
-    Admin ADMIN = new Admin("Hector V.O.N.", "");
-    Administrativo adm1 = new Administrativo("Administrativo UNO", "");
-    Tecnico tec1 = new Tecnico("tec Senior", "", Seniority.SENIOR);
-    Callcenter cc1 = new Callcenter("Callcenter UNO", "");
-    Tecnico tec2 = new Tecnico("tec Junior", "passTJR", Seniority.JUNIOR);
-    Cliente cl1 = new Cliente("Cliente UNO");
-    Cliente cl2 = new Cliente("Cliente DOS");
-    Cliente cl3 = new Cliente("Cliente TRES");
+    new Admin("Hector V.O.N.", "");
+    new Administrativo("Administrativo UNO", "");
+    new Tecnico("tec Senior", "", Seniority.SENIOR);
+    new Callcenter("Callcenter UNO", "");
+    new Tecnico("tec Junior", "passTJR", Seniority.JUNIOR);
 
+    System.out.println("\n----- EMPRESA tras instanciar los objetos iniciales -----");
     System.out.println(e);
+    System.out.println("---------------------------------------------------------");
+    System.out.println("------------------ FIN PREVIEW EMPRESA ------------------");
+    System.out.println("---------------------------------------------------------\n\n");
+  }
+
+  /**
+   * Instancia objetos para la empresa
+   * EL codigo implementado incorpora cada instancia automaticamente a la empresa
+   */
+  public static void instanciarObjectosAdicionalesEmpresa() throws Exception {
+    System.out.println("\n\n---------------------------------------------------------");
+    System.out.println("----------- INSTANCIANDO OBJETOS Adicionales ------------");
+    System.out.println("---------------------------------------------------------");
+
+    // De acuerdo a la funcion instanciarObjectosInicialesEmpresa,
+    // los legajos corresponderian a los siguientes roles de acuerdo al orden en el
+    // que se instancian.
+    // 4: Callcenter | 3: Tecnico Senior | 2: Administrativo | 1: ADMIN
+    Callcenter cc = (Callcenter) e.getInternos(4);
+    Tecnico t = (Tecnico) e.getInternos(3);
+    Administrativo a = (Administrativo) e.getInternos(2);
+
+    // HARDCODED:
+    // A. 3 servicios creados sin ninguna asignacion.
+    // B. 3 servicios creados sin asignacion de tecnico.
+    // C. 1 servicio programado
+    // D. 1 servicio en curso
+    // E. 2 servicios finalizados (pre factura).
+    // F. 1 servicio ya facturado.
+    // TOTAL: 11 servicios asignados al mismo tecnico (pobre tipo).
+
+    Date fecha = DateAux.getStartDay(new Date(DateAux.getToday().getTime()));
+    for (int i = 0; i < 12; i++) {
+
+      int siguienteEtapa = 2;
+
+      while (fecha.getDay() == 0 || fecha.getDay() == 6) {
+        fecha = DateAux.getNextDay(fecha);
+      }
+      TipoServicio tipoServAlternar = i % 2 == 0 ? TipoServicio.INSTALACION : TipoServicio.REPARACION;
+      Turno turnoAlternar = i % 2 == 0 ? Turno.MANANA : Turno.TARDE;
+      int turnoInicio = 0, turnoFin = 5;
+      Cliente clienteDinamico = new Cliente("Cliente dinamico nro " + (i + 1));
+
+      // Punto A
+      Servicio currentServicio = new Servicio(fecha, tipoServAlternar, turnoAlternar, turnoInicio, turnoFin);
+
+      if (siguienteEtapa > i) {
+        continue;
+      }
+      siguienteEtapa += 3;
+      // Punto B
+      currentServicio.asignarCliente(clienteDinamico);
+
+      if (siguienteEtapa > i) {
+        continue;
+      }
+      siguienteEtapa += 1;
+      // Punto C
+      currentServicio.asignarTecnico(t);
+
+      if (siguienteEtapa > i) {
+        continue;
+      }
+      siguienteEtapa += 1;
+      // Punto D
+      cc.liberarServicioCallcenter(currentServicio);
+
+      if (siguienteEtapa > i) {
+        continue;
+      }
+      siguienteEtapa += 2;
+
+      // Punto E
+      t.ejecutarServicio(currentServicio);
+      t.finalizarServicio(currentServicio);
+
+      if (siguienteEtapa > i) {
+        continue;
+      }
+
+      // Punto F
+      a.facturarServicio(currentServicio);
+    }
+
+    System.out.println("\n----- EMPRESA tras instanciar los objetos adicionales -----");
+    System.out.println(e);
+    System.out.println("---------------------------------------------------------");
+    System.out.println("------------- FIN PREVIEW ADICIONAL EMPRESA! -------------");
+    System.out.println("---------------------------------------------------------\n\n");
+  }
+
+  /**
+   * Prueba todos los workflow en un solo metodo
+   * Incluye cada rol
+   * 
+   * @throws Exception
+   */
+  public static void testWorkflowInicial() {
 
     try {
-      // -------------------------------------------------
       // PRUEBA COMPLETA DE PROCESO
       // Por rol, en orden
 
@@ -61,27 +188,6 @@ public class Main {
       System.out.println("NOT HANDLED ERROR EN WORKFLOW TEST");
       e.printStackTrace();
     }
-    // -------------------------------------------------
-
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        try {
-          Gui.getInstance().initialize();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    });
-
-    while (isRunning) {
-      System.out.println("\n\nBienvenido al sistema de gestión de la empresa");
-      Interno i = logIn();
-      pantallaPrincipal(i);
-    }
-
-    // GUI
-
-    close();
   }
 
   /**
@@ -133,7 +239,7 @@ public class Main {
     Cliente clienteCC = testCC.getClientes(1);
     // tambien obtenemos un tecnico de prueba
     Tecnico tecnicoCC = testCC.getTecnicos().get(0);
-    Date testDate = DateAux.getToday();
+    Date testDate = DateAux.getStartDay(new Date(2022, 06, 19));
 
     // Creando servicio con parametros invalidos
     try {
@@ -177,9 +283,10 @@ public class Main {
     Servicio s2 = testCC.crearNuevoServicioServicio(testDate, TipoServicio.INSTALACION, Turno.TARDE, 0, 2);
 
     // probando verificacion sobreturno
-    boolean estaDisponible = clienteCC.verificarDisponibilidad(sobreturnado);
-    if (!estaDisponible) {
-      System.out.println("***** Control funcionando: Verifica CLIENTE con turno ocupado ");
+    try {
+      clienteCC.verificarDisponibilidad(sobreturnado);
+    } catch (Exception e) {
+      System.out.println("***** Control funcionando: Verifica CLIENTE con turno ocupado " + e.getMessage());
     }
 
     // asignando pese a sobreturno
@@ -261,13 +368,13 @@ public class Main {
 
     // Preasignando un servicio
     Callcenter auxCC = new Callcenter("", "");
-    Servicio auxS = auxCC.crearNuevoServicioServicio(DateAux.getToday(), TipoServicio.INSTALACION, Turno.MANANA, 0, 2);
+    Servicio auxS = auxCC.crearNuevoServicioServicio(new Date(), TipoServicio.INSTALACION, Turno.MANANA, 0, 2);
     auxCC.asignarServicio(auxS, new Cliente("Cliente workflow test"));
     auxCC.asignarServicio(auxS, testTec);
     auxCC.liberarServicioCallcenter(auxS);
 
     // Inicio tareas TECNICO
-    ArrayList<Servicio> servsAsignados = testTec.getServiciosAsignados();
+    ArrayList<Servicio> servsAsignados = testTec.getServiciosPendientes();
     System.out.println("\ntestTec tiene estos servicios: ");
     for (Servicio s : servsAsignados) {
       System.out.println("\tServicio nro: " + s.getNro() + ", Cliente: " + s.getCliente().getNombre());
@@ -275,7 +382,7 @@ public class Main {
     System.out.println("Fin servicios testTec\n");
 
     // Selecciona un servicio: lo haria desde get(Servicio)
-    Servicio servTrabajado = testTec.getServiciosAsignados().get(0);
+    Servicio servTrabajado = servsAsignados.get(0);
 
     // intenta finalizar servicio sin iniciarlo
     try {
@@ -344,7 +451,7 @@ public class Main {
 
     // El tecnico tenia un solo servicio
     // tras su finalizacion, no deberia aparecer en su listado.
-    ArrayList<Servicio> servsAsignados2 = testTec.getServiciosAsignados();
+    ArrayList<Servicio> servsAsignados2 = testTec.getServiciosPendientes();
     System.out.println("\ntestTec tiene estos servicios (No deberia haber Servicios): ");
     for (int i = 0; i < servsAsignados2.size(); i++) {
       Servicio s = servsAsignados2.get(i);
@@ -391,7 +498,7 @@ public class Main {
 
     // Selecciona un servicio finalizado para visualizarlo o agregar articulos extra
     Servicio s = serviciosAFacturar.get(0);
-    System.out.println("Servicio obtenido por Administrativo: Nro " + admTest.verServicio(s).nro);
+    System.out.println("Servicio obtenido por Administrativo: Nro " + admTest.getServicio(s).nro);
 
     // Crea un articulo extra
     ArticuloExtra aeTest = admTest.crearArticuloExtra("Extra creado por el administrativo", 5000);
@@ -417,7 +524,7 @@ public class Main {
 
     // Anadiendo exitosamente Art extra al servicio
     admTest.agregarArticuloExtraServicio(aeTest, 1, s);
-    System.out.println("Extras del servicio tras modificacion del administrativo " + s.getOtrosCostos());
+    System.out.println("Extras del servicio tras modificacion del administrativo " + s.getArticulosExtra());
 
     // Decide facturar el servicio
     Factura f = admTest.facturarServicio(s);
@@ -677,14 +784,22 @@ public class Main {
     System.out.println("---------------- Servicios ----------------");
 
     for (int i = 0; i < servicios.size(); i++) {
-      Servicio servicio = servicios.get(i);
-      System.out.println((i + 1) + ". " + servicio);
+      Servicio s = servicios.get(i);
+      int inicioT = s.getTurnoInicio(), finT = s.getturnoFin();
+
+      System.out
+          .println("\t" + (i + 1) + ") Servicio nro " + s.getNro() + " [fecha servicio=" + s.getFecha() + ", Horario ["
+              + DateAux.getHorarioCompleto(s.getTurno(), inicioT, finT) + ", cliente="
+              + s.getCliente().getNombre() + "]");
+    }
+
+    if (0 >= servicios.size()) {
+      System.out.println("\t<NO HAY SERVICIOS PENDIENTES DE FACTURAR>");
     }
 
     System.out.println("-------------------------------------------");
 
     System.out.print("Seleccione servicio visualizar (0. Volver) => ");
-
     int opcion = ch.scIntParse(sc, 0, servicios.size());
 
     if (opcion == 0) {
@@ -697,9 +812,8 @@ public class Main {
   }
 
   public static void mGestionarServicio(Administrativo adm, Servicio s) throws Exception {
-    if (s.isFacturado() || s.isEnPoderTecnico()) {
-      System.out.println("Servicio ya facturado o en poder de tecnico/s");
-      mGestionarserviciosAFacturar(adm);
+    if (s.isFacturado()) {
+      System.out.println("Servicio ya facturado.");
       return;
     }
 
@@ -714,20 +828,132 @@ public class Main {
 
     ArrayList<Costo> arts = s.getArticulos();
     int qArts = arts.size();
-    ArrayList<Costo> otrosArts = s.getOtrosCostos();
+    ArrayList<Costo> otrosArts = s.getArticulosExtra();
     int qOtrosArts = otrosArts.size();
     ArrayList<Tecnico> tecs = s.getTecnicos();
     int qTecs = tecs.size();
 
     System.out.println("\n--- Gestionando servicio Nro " + nro + " ---");
-    System.out.println("Fecha: " + fecha + " Cliente: " + cliente + " TipoServicio: " + ts + " EstadoServicio: "
-        + es + " TiempoTrabajado: " + tiempoTrabajado + " CostoViaje: " + costoViaje + " IncluyeAlmuerzo: "
-        + (incluyeAlmuerzo ? "SI" : "NO") + " Articulos utilizados: " + qArts + " Cantidad de otros costos: "
-        + qOtrosArts + " Tecnicos asignados: " + qTecs);
+    System.out.println("Fecha: " + fecha + "\nCliente: " + cliente + "\nTipoServicio: " + ts + "\nEstadoServicio: "
+        + es + "\nTiempoTrabajado: " + tiempoTrabajado + "\nCostoViaje: " + costoViaje + "\nIncluyeAlmuerzo: "
+        + (incluyeAlmuerzo ? "SI" : "NO") + "\nArticulos utilizados: " + qArts + "\nCantidad de otros costos: "
+        + qOtrosArts + "\nTecnicos asignados: " + qTecs + "\nTotal servicio: $" + s.calcularTotalServicio());
+
+    System.out.println("\nQue desea realizar?");
+    System.out.println("1) Ver Tecnicos asignados");
+    System.out.println("2) Ver articulos utilizados");
+    System.out.println("3) Ver articulos extras utilizados");
+    System.out.println("4) Agregar articulo extra");
+    System.out.println("5) Facturar servicio");
+    System.out.println("0) Volver a menu principal");
+    System.out.print("=>");
+
+    int opc = ch.scIntParse(sc, 0, 5);
+
+    if (opc == 0) {
+      pantallaAdministrativo(adm);
+      return;
+    } else if (opc == 1) {
+      ArrayList<Tecnico> tecnicosServicio = adm.getTecnicos(s);
+      System.out.println("MOSTRANDO " + tecnicosServicio.size() + " TECNICOS DE SERVICIO Nro " + nro);
+      for (Tecnico t : tecnicosServicio) {
+        System.out.println(
+            "\tTecnico legajo: " + t.getLegajo() + " - Nombre: " + t.getNombre() + " - Seniority: " + t.getSeniority());
+      }
+
+    } else if (opc == 2) {
+      ArrayList<Costo> articulos = adm.getArticulos(s);
+      System.out.println("MOSTRANDO " + articulos.size() + " ARTICULOS DE SERVICIO Nro " + nro + " total costo: $"
+          + s.calcularCostoArticulos());
+      for (Costo c : articulos) {
+        System.out.println("\t" + c);
+      }
+
+      if (0 >= articulos.size()) {
+        System.out.println("<NO HAY ARTICULOS>");
+      }
+
+    } else if (opc == 3) {
+      ArrayList<Costo> articulos = adm.getArticulosExtra(s);
+      System.out
+          .println("MOSTRANDO " + articulos.size() + " ARTICULOS *Extra* DE SERVICIO Nro" + nro + " total costo: $"
+              + s.calcularCostoArticulosExtra());
+      for (Costo c : articulos) {
+        System.out.println("\t" + c);
+      }
+
+      if (0 >= articulos.size()) {
+        System.out.println("<NO HAY ARTICULOS>");
+      }
+
+    } else if (opc == 4) {
+
+    } else if (opc == 5) {
+      System.out.println("CONFIRMA FACTURAR EL SERVICIO Nro " + nro + "?");
+      System.out.println("La accion no es reversible");
+      System.out.print("(1 Confirmar, 0 cancelar)");
+
+      int confirmaFacturar = ch.scIntParse(sc, 0, 1);
+      if (confirmaFacturar == 1) {
+        Factura f = adm.facturarServicio(s);
+        System.out.println(adm.getNombre() + " FACTURO el servicio nro " + nro + " => Factura numero: " + f.getNro());
+        mGestionarserviciosAFacturar(adm);
+        return;
+      }
+    }
+    mGestionarServicio(adm, s);
   }
 
-  public static void mVisualizarFacturas(Administrativo adm) {
+  public static void mVisualizarFacturas(Administrativo adm) throws Exception {
+    ArrayList<Factura> facturas = adm.getFacturas();
 
+    System.out.println("\n----------- Visualizar Facturas -----------");
+    System.out.println("----------------- Facturas ----------------");
+
+    for (int i = 0; i < facturas.size(); i++) {
+      Factura f = facturas.get(i);
+
+      System.out.print("\t" + (i + 1) + ") ");
+      System.out
+          .println("Factura nro " + f.getNro() + " [facturado:" + DateAux.getDateString(f.getFecha()) + ", cliente: "
+              + f.getServicio().getCliente().getNombre() + ", Servicio nro " + f.getServicio().getNro() + " del "
+              + DateAux.getDateString(f.getServicio().getFecha()) + "]");
+    }
+
+    if (0 >= facturas.size()) {
+      System.out.println("\t<NO HAY SERVICIOS FACTURADOS>");
+    }
+
+    System.out.println("-------------------------------------------");
+
+    System.out.print("Seleccione factura para visualizar (0. Volver) => ");
+
+    int opcion = ch.scIntParse(sc, 0, facturas.size());
+
+    if (opcion != 0) {
+      Factura f = facturas.get(opcion - 1);
+      mostrarFactura(adm, f);
+    }
+    pantallaAdministrativo(adm);
+  }
+
+  public static void mostrarFactura(Administrativo adm, Factura f) {
+    int nro = f.getNro();
+    String s = f.getServicio().toStringShort();
+    String c = f.getServicio().getCliente().toStringShort();
+    double subtotal = f.calcularSubTotal(), ganancia = f.calcularGanancias(), iva = f.calcularIVA(),
+        total = f.calcularTotal();
+    String margen = f.calcularMargenStr();
+
+    System.out.println("\n----------- Mostrando Factura " + nro + " -----------");
+    System.out.println("\tServicio: " + s);
+    System.out.println("\tCliente: " + c);
+    System.out.println("\tSubtotal: $" + subtotal);
+    System.out.println("\tTotal: $" + total);
+    System.out.println("\tIVA: $" + iva);
+    System.out.println("\tGanancia: $" + ganancia);
+    System.out.println("\tRentabilidad de este servicio: " + margen);
+    System.out.println("-------------------------------------------");
   }
 
   public static void pantallaTecnico(Tecnico tec) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import agenda.*;
+import comercial.EstadoServicio;
 import comercial.Servicio;
 import empresa.Empresa;
 import excepciones.*;
@@ -51,9 +52,24 @@ public class Cliente extends Persona {
       }
 
       if (d.verificarDiaOcupado()) {
-        tieneServicioVigente = true;
-        break;
+        for (FraccionTurno ft : d.obtenerFraccionesTurno()) {
+          Servicio servDelTurno = ft.getServicioAsignado();
+
+          if (servDelTurno == null) {
+            continue;
+          }
+
+          if (servDelTurno.isFacturado()) {
+            continue;
+          }
+
+          if (servDelTurno.getEstadoServicio() != EstadoServicio.FINALIZADO) {
+            tieneServicioVigente = true;
+            break;
+          }
+        }
       }
+
     }
     return tieneServicioVigente;
   }
@@ -63,7 +79,7 @@ public class Cliente extends Persona {
       throw new AgendaException("El cliente ya tiene un servicio vigente");
     }
 
-    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getturnoInicio(), s.getturnoFin());
+    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getTurnoInicio(), s.getturnoFin());
   }
 
   public void asignarServicio(Servicio s) throws Exception {
@@ -85,6 +101,11 @@ public class Cliente extends Persona {
 
   public ArrayList<FraccionTurno> verTurnosDisponibles() {
     return agenda.obtenerTodosTurnosDisponible();
+  }
+
+  public String toStringShort() {
+    return "Cliente [nro=" + nro + ", nombre=" + nombre + ", dni=" + dni + ", direccion="
+        + direccion + "]";
   }
 
   @Override

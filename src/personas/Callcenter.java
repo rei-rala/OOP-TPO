@@ -220,6 +220,16 @@ public class Callcenter extends Interno {
 
   public void liberarServicioCallcenter(Servicio s) throws Exception {
     preValidarLiberacion(s);
-    s.liberarDesdeCallcenter();
+
+    if (s.getCliente() == null) {
+      throw new ServicioException("El servicio debe estar asignado a un cliente.");
+    }
+    if (s.isEnPoderTecnico()) {
+      throw new ServicioException("El servicio se encuentra en poder de lo/s tecnico/s.");
+    }
+    if (0 >= s.getTecnicos().size()) {
+      throw new ServicioException("El servicio debe contar con al menos 1 (un) tecnico");
+    }
+    s.otorgarPoderTecnico();
   }
 }

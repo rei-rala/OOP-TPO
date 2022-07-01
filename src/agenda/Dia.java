@@ -214,7 +214,13 @@ public class Dia {
   }
 
   public void asignarServicioDia(Servicio s) throws Exception {
-    ArrayList<FraccionTurno> ftAsignar = obtenerTurnos(s.getTurno(), s.getturnoInicio(), s.getturnoFin());
+    ArrayList<FraccionTurno> ftAsignar = obtenerTurnos(s.getTurno(), s.getTurnoInicio(), s.getturnoFin());
+
+    for (FraccionTurno ft: ftAsignar) {
+      if (ft.getEstaOcupado()) {
+        throw new AsignacionException("El turno se encuentra ocupado");
+      }
+    }
 
     for (FraccionTurno ft : ftAsignar) {
       ft.asignarServicio(s);
@@ -233,7 +239,7 @@ public class Dia {
 
   public boolean verificarDisponibilidad(Servicio s) throws Exception {
     Turno t = s.getTurno();
-    int desde = s.getturnoInicio();
+    int desde = s.getTurnoInicio();
     int hasta = s.getturnoFin();
 
     if (validarTurnos(t, desde, hasta) == false) {

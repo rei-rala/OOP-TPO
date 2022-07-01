@@ -42,10 +42,10 @@ public class Tecnico extends Interno {
   }
 
   public boolean verificarDisponibilidad(Servicio s) throws Exception {
-    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getturnoInicio(), s.getturnoFin());
+    return agenda.verificarDisponibilidad(s.getFecha(), s.getTurno(), s.getTurnoInicio(), s.getturnoFin());
   }
 
-  public ArrayList<Servicio> getServiciosAsignados() {
+  public ArrayList<Servicio> getServiciosPendientes() {
     ArrayList<Servicio> asignados = new ArrayList<Servicio>();
 
     for (Servicio s : Empresa.getInstance().getServicios()) {

@@ -24,289 +24,312 @@ import javax.swing.SwingConstants;
 import java.awt.FlowLayout;
 
 public class PanelListServiciosTecnico extends JPanel implements ActionListener {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	private Gui g = Gui.getInstance();
-	private Tecnico i = (Tecnico) g.getUsuarioLogeado();
-	private Servicio currentServicio;
+  private Gui g = Gui.getInstance();
+  private Tecnico tecnicoLogeado = (Tecnico) g.getUsuarioLogeado();
+  private Servicio currentServicio;
 
-	private JPanel pListadoServicios;
-	private JPanel pEdicionServicio;
-	private JLabel lblNewLabel;
-	private JTextField tfNroServicio;
-	private JLabel lblNewLabel_1;
-	private JButton btnVerCliente;
-	private JLabel lblNewLabel_2;
-	private JPanel panel;
-	private JButton btnVerArticulos;
-	private JButton btnAgregarArticulo;
-	private JLabel lblNewLabel_3;
-	private JPanel panel_1;
-	private JButton btnVerOtrosArts;
-	private JButton btnAgregarOtroArt;
-	private JPanel panel_2;
-	private JLabel lblNewLabel_4;
-	private JLabel lblEstadoServicio;
-	private JButton btnAvanzarEstado;
-	private JPanel panel_3;
-	private JLabel lblNewLabel_6;
-	private JLabel lblAlmuerzo;
-	private JButton btnToggleAlmuerzo;
-	private JLabel lblNewLabel_5;
-	private JTextField tfFecha;
+  private JPanel pListadoServicios;
+  private JPanel pEdicionServicio;
+  private JLabel lblNewLabel;
+  private JTextField tfNroServicio;
+  private JLabel lblNewLabel_1;
+  private JButton btnVerCliente;
+  private JLabel lblNewLabel_2;
+  private JPanel panel;
+  private JButton btnVerArticulos;
+  private JButton btnAgregarArticulo;
+  private JLabel lblNewLabel_3;
+  private JPanel panel_1;
+  private JButton btnVerOtrosArts;
+  private JButton btnAgregarOtroArt;
+  private JPanel panel_2;
+  private JLabel lblNewLabel_4;
+  private JLabel lblEstadoServicio;
+  private JButton btnAvanzarEstado;
+  private JPanel panel_3;
+  private JLabel lblNewLabel_6;
+  private JLabel lblAlmuerzo;
+  private JButton btnToggleAlmuerzo;
+  private JLabel lblNewLabel_5;
+  private JTextField tfFecha;
+  private JLabel lblNewLabel_99;
+  private JTextField tfFechaCreacion;
 
-	/**
-	 * Create the panel.
-	 */
-	public PanelListServiciosTecnico() {
-		setBorder(new TitledBorder(
-				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
-				"Servicios asignados", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		setLayout(new GridLayout(0, 2, 0, 0));
+  private JTextField tfHorarioServicio;
 
-		pListadoServicios = new JPanel();
-		add(pListadoServicios);
-		pListadoServicios.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+  /**
+   * Create the panel.
+   */
+  public PanelListServiciosTecnico() {
+    setBorder(new TitledBorder(
+        new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
+        "Servicios asignados", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(0, 0, 0)));
+    setLayout(new GridLayout(0, 2, 0, 0));
 
-		pEdicionServicio = new JPanel();
-		pEdicionServicio
-				.setBorder(new TitledBorder(null, "Edicion", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		add(pEdicionServicio);
-		pEdicionServicio.setLayout(new GridLayout(0, 2, 0, 0));
+    pListadoServicios = new JPanel();
+    add(pListadoServicios);
+    pListadoServicios.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		lblNewLabel = new JLabel("Nro servicio");
-		pEdicionServicio.add(lblNewLabel);
+    pEdicionServicio = new JPanel();
+    pEdicionServicio
+        .setBorder(new TitledBorder(null, "Edicion", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+    add(pEdicionServicio);
+    pEdicionServicio.setLayout(new GridLayout(0, 2, 0, 0));
 
-		tfNroServicio = new JTextField();
-		tfNroServicio.setEnabled(false);
-		tfNroServicio.setEditable(false);
-		pEdicionServicio.add(tfNroServicio);
-		tfNroServicio.setColumns(10);
+    lblNewLabel = new JLabel("Nro servicio");
+    pEdicionServicio.add(lblNewLabel);
 
-		lblNewLabel_5 = new JLabel("Fecha");
-		pEdicionServicio.add(lblNewLabel_5);
+    tfNroServicio = new JTextField();
+    tfNroServicio.setEnabled(false);
+    tfNroServicio.setEditable(false);
+    pEdicionServicio.add(tfNroServicio);
+    tfNroServicio.setColumns(10);
 
-		tfFecha = new JTextField();
-		tfFecha.setEnabled(false);
-		tfFecha.setEditable(false);
-		tfFecha.setText("");
-		pEdicionServicio.add(tfFecha);
-		tfFecha.setColumns(10);
+    lblNewLabel_99 = new JLabel("Fecha creacion");
+    pEdicionServicio.add(lblNewLabel_99);
 
-		lblNewLabel_1 = new JLabel("Cliente");
-		pEdicionServicio.add(lblNewLabel_1);
+    tfFechaCreacion = new JTextField();
+    tfFechaCreacion.setEnabled(false);
+    tfFechaCreacion.setEditable(false);
+    tfFechaCreacion.setText("");
+    pEdicionServicio.add(tfFechaCreacion);
+    tfFechaCreacion.setColumns(10);
 
-		btnVerCliente = new JButton("Ver");
-		btnVerCliente.addActionListener(this);
-		pEdicionServicio.add(btnVerCliente);
+    lblNewLabel_5 = new JLabel("Fecha servicio");
+    pEdicionServicio.add(lblNewLabel_5);
 
-		lblNewLabel_2 = new JLabel("Articulos");
-		pEdicionServicio.add(lblNewLabel_2);
+    tfFecha = new JTextField();
+    tfFecha.setEnabled(false);
+    tfFecha.setEditable(false);
+    tfFecha.setText("");
+    pEdicionServicio.add(tfFecha);
+    tfFecha.setColumns(10);
 
-		panel = new JPanel();
-		pEdicionServicio.add(panel);
-		panel.setLayout(new GridLayout(0, 1, 0, 0));
+    
+    pEdicionServicio.add(new JLabel("Horario servicio"));
+    
+    tfHorarioServicio = new JTextField();
+    tfHorarioServicio.setEnabled(false);
+    tfHorarioServicio.setEditable(false);
+    tfHorarioServicio.setText("");
+    pEdicionServicio.add(tfHorarioServicio);
+    tfHorarioServicio.setColumns(10);
 
-		btnVerArticulos = new JButton("Ver");
-		btnVerArticulos.addActionListener(this);
-		panel.add(btnVerArticulos);
+    lblNewLabel_1 = new JLabel("Cliente");
+    pEdicionServicio.add(lblNewLabel_1);
 
-		btnAgregarArticulo = new JButton("Agregar");
-		btnAgregarArticulo.addActionListener(this);
-		panel.add(btnAgregarArticulo);
+    btnVerCliente = new JButton("Ver");
+    btnVerCliente.addActionListener(this);
+    pEdicionServicio.add(btnVerCliente);
 
-		lblNewLabel_3 = new JLabel("Otros Articulos");
-		pEdicionServicio.add(lblNewLabel_3);
+    lblNewLabel_2 = new JLabel("Articulos");
+    pEdicionServicio.add(lblNewLabel_2);
 
-		panel_1 = new JPanel();
-		pEdicionServicio.add(panel_1);
-		panel_1.setLayout(new GridLayout(0, 1, 0, 0));
+    panel = new JPanel();
+    pEdicionServicio.add(panel);
+    panel.setLayout(new GridLayout(0, 1, 0, 0));
 
-		btnVerOtrosArts = new JButton("Ver");
-		btnVerOtrosArts.addActionListener(this);
-		panel_1.add(btnVerOtrosArts);
+    btnVerArticulos = new JButton("Ver");
+    btnVerArticulos.addActionListener(this);
+    panel.add(btnVerArticulos);
 
-		btnAgregarOtroArt = new JButton("Agregar");
-		btnAgregarOtroArt.addActionListener(this);
-		panel_1.add(btnAgregarOtroArt);
+    btnAgregarArticulo = new JButton("Agregar");
+    btnAgregarArticulo.addActionListener(this);
+    panel.add(btnAgregarArticulo);
 
-		panel_3 = new JPanel();
-		pEdicionServicio.add(panel_3);
-		panel_3.setLayout(new GridLayout(0, 1, 0, 0));
+    lblNewLabel_3 = new JLabel("Otros Articulos");
+    pEdicionServicio.add(lblNewLabel_3);
 
-		lblNewLabel_6 = new JLabel("Almuerzo");
-		lblNewLabel_6.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_3.add(lblNewLabel_6);
+    panel_1 = new JPanel();
+    pEdicionServicio.add(panel_1);
+    panel_1.setLayout(new GridLayout(0, 1, 0, 0));
 
-		lblAlmuerzo = new JLabel("");
-		lblAlmuerzo.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_3.add(lblAlmuerzo);
+    btnVerOtrosArts = new JButton("Ver");
+    btnVerOtrosArts.addActionListener(this);
+    panel_1.add(btnVerOtrosArts);
 
-		btnToggleAlmuerzo = new JButton("Cambiar");
-		btnToggleAlmuerzo.addActionListener(this);
-		pEdicionServicio.add(btnToggleAlmuerzo);
+    btnAgregarOtroArt = new JButton("Agregar");
+    btnAgregarOtroArt.addActionListener(this);
+    panel_1.add(btnAgregarOtroArt);
 
-		panel_2 = new JPanel();
-		pEdicionServicio.add(panel_2);
-		panel_2.setLayout(new GridLayout(0, 1, 0, 0));
+    panel_3 = new JPanel();
+    pEdicionServicio.add(panel_3);
+    panel_3.setLayout(new GridLayout(0, 1, 0, 0));
 
-		lblNewLabel_4 = new JLabel("Estado servicio");
-		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_2.add(lblNewLabel_4);
+    lblNewLabel_6 = new JLabel("Almuerzo");
+    lblNewLabel_6.setHorizontalAlignment(SwingConstants.CENTER);
+    panel_3.add(lblNewLabel_6);
 
-		lblEstadoServicio = new JLabel("");
-		lblEstadoServicio.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_2.add(lblEstadoServicio);
+    lblAlmuerzo = new JLabel("");
+    lblAlmuerzo.setHorizontalAlignment(SwingConstants.CENTER);
+    panel_3.add(lblAlmuerzo);
 
-		btnAvanzarEstado = new JButton("Avanzar estado");
-		btnAvanzarEstado.addActionListener(this);
-		pEdicionServicio.add(btnAvanzarEstado);
+    btnToggleAlmuerzo = new JButton("Cambiar");
+    btnToggleAlmuerzo.addActionListener(this);
+    pEdicionServicio.add(btnToggleAlmuerzo);
 
-		for (Component c : pEdicionServicio.getComponents()) {
-			if (c.getClass() == JLabel.class) {
-				JLabel label = (JLabel) c;
-				label.setHorizontalAlignment(SwingConstants.CENTER);
-			}
-		}
+    panel_2 = new JPanel();
+    pEdicionServicio.add(panel_2);
+    panel_2.setLayout(new GridLayout(0, 1, 0, 0));
 
-		poblarServicios();
-	}
+    lblNewLabel_4 = new JLabel("Estado servicio");
+    lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
+    panel_2.add(lblNewLabel_4);
 
-	private void poblarServicios() {
-		pListadoServicios.setVisible(false);
-		pListadoServicios.removeAll();
+    lblEstadoServicio = new JLabel("");
+    lblEstadoServicio.setHorizontalAlignment(SwingConstants.CENTER);
+    panel_2.add(lblEstadoServicio);
 
-		for (Servicio s : i.getServiciosAsignados()) {
-			if (s.isEnPoderTecnico() == false) {
-				continue;
-			}
-			if (s.getEstadoServicio() == EstadoServicio.CANCELADO
-					|| s.getEstadoServicio() == EstadoServicio.FINALIZADO) {
-				continue;
-			}
+    btnAvanzarEstado = new JButton("Avanzar estado");
+    btnAvanzarEstado.addActionListener(this);
+    pEdicionServicio.add(btnAvanzarEstado);
 
-			JButton btnServicio = new JButton("Nro: " + s.nro + " - " + "Estado: " + s.getEstadoServicio());
-			btnServicio.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					currentServicio = s;
-					llenarDatoServicio();
-				}
-			});
+    for (Component c : pEdicionServicio.getComponents()) {
+      if (c.getClass() == JLabel.class) {
+        JLabel label = (JLabel) c;
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+      }
+    }
 
-			pListadoServicios.add(btnServicio);
-		}
+    poblarServicios();
+  }
 
-		if (0 >= pListadoServicios.getComponentCount()) {
-			JLabel noServAsignados = new JLabel("No tienes servicios asignados");
-			noServAsignados.setHorizontalAlignment(SwingConstants.CENTER);
-			pListadoServicios.add(noServAsignados);
-		}
+  private void poblarServicios() {
+    pListadoServicios.setVisible(false);
+    pListadoServicios.removeAll();
 
-		pListadoServicios.setVisible(true);
-	}
+    for (Servicio s : tecnicoLogeado.getServiciosPendientes()) {
 
-	private void llenarDatoServicio() {
-		if (currentServicio == null) {
-			tfNroServicio.setText("");
-			lblEstadoServicio.setText("");
-			lblAlmuerzo.setText("");
-			tfFecha.setText("");
-			return;
-		}
-		tfNroServicio.setText(g.getNro(currentServicio));
-		tfFecha.setText(g.getFecha(currentServicio));
-		lblEstadoServicio.setText(g.getEstadoServicio(currentServicio));
-		lblAlmuerzo.setText(g.getIncluyeAlmuerzo(currentServicio));
-	}
+      JButton btnServicio = new JButton("Nro: " + s.nro + " - " + "Estado: " + s.getEstadoServicio());
+      btnServicio.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          currentServicio = s;
+          llenarDatoServicio();
+        }
+      });
 
-	public void avanzarEstado(Tecnico t) throws Exception {
-		Servicio ce = currentServicio;
-		EstadoServicio es = ce.getEstadoServicio();
+      pListadoServicios.add(btnServicio);
+    }
 
-		if (es == EstadoServicio.PROGRAMADO) {
-			if (JOptionPane.showConfirmDialog(null, "Avanzar estado a EN CURSO? No es reversible") == 0) {
-				t.ejecutarServicio(ce);
-			} else {
-				JOptionPane.showMessageDialog(null, "Cancelado por usuario");
-			}
-		} else if (es == EstadoServicio.EN_CURSO) {
-			if (JOptionPane.showConfirmDialog(null, "Avanzar estado a FINALIZADO? No es reversible") == 0) {
-				t.finalizarServicio(ce);
-				currentServicio = null;
-			} else {
-				JOptionPane.showMessageDialog(null, "Cancelado por usuario");
-			}
-		} else {
-			g.errorHandler(new CredencialException("Permisos insuficientes"));
-		}
-	}
+    if (0 >= pListadoServicios.getComponentCount()) {
+      JLabel noServAsignados = new JLabel("No tienes servicios asignados");
+      noServAsignados.setHorizontalAlignment(SwingConstants.CENTER);
+      pListadoServicios.add(noServAsignados);
+    }
 
-	public void mostrarClienteServicio(Servicio s) {
-		String c = g.getCliente(s);
-		JOptionPane.showMessageDialog(null, c, "Cliente de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
-	}
+    pListadoServicios.setVisible(true);
+  }
 
-	public void mostrarArticulosServicio(Servicio s) {
-		String artsStr = g.limpiarStrArticulos(s);
-		JOptionPane.showMessageDialog(null, artsStr, "Articulos de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
-	}
+  private void llenarDatoServicio() {
+    if (currentServicio == null) {
+      tfNroServicio.setText("");
+      lblEstadoServicio.setText("");
+      lblAlmuerzo.setText("");
+      tfFecha.setText("");
+      tfFechaCreacion.setText("");
+      tfHorarioServicio.setText("");
+      return;
+    }
+    tfNroServicio.setText(g.getNro(currentServicio));
+    tfFechaCreacion.setText(g.getFechaCreacion(currentServicio));
+    tfFecha.setText(g.getFecha(currentServicio));
+    tfHorarioServicio.setText(g.getHorarioTurnos(currentServicio));
+    lblEstadoServicio.setText(g.getEstadoServicio(currentServicio));
+    lblAlmuerzo.setText(g.getIncluyeAlmuerzo(currentServicio));
+  }
 
-	public void mostrarOtrosArticulosServicio(Servicio s) {
-		String artsStr = g.limpiarStrOtrosArticulos(s);
-		JOptionPane.showMessageDialog(null, artsStr, "Extras de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
-	}
+  public void avanzarEstado(Tecnico t) throws Exception {
+    Servicio ce = currentServicio;
+    EstadoServicio es = ce.getEstadoServicio();
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		try {
-			if (i.getClass() != Tecnico.class) {
-				throw new CredencialException("Permisos insuficientes");
-			}
+    if (es == EstadoServicio.PROGRAMADO) {
+      if (JOptionPane.showConfirmDialog(null, "Avanzar estado a EN CURSO? No es reversible") == 0) {
+        t.ejecutarServicio(ce);
+        JOptionPane.showMessageDialog(null, "Servicio Nro " + currentServicio.getNro() + " iniciado.");
+      } else {
+        JOptionPane.showMessageDialog(null, "Cancelado por usuario");
+      }
+    } else if (es == EstadoServicio.EN_CURSO) {
+      if (JOptionPane.showConfirmDialog(null, "Avanzar estado a FINALIZADO? No es reversible") == 0) {
+        t.finalizarServicio(ce);
+        JOptionPane.showMessageDialog(null, "Servicio Nro " + currentServicio.getNro() + " finalizado.");
+        currentServicio = null;
+      } else {
+        JOptionPane.showMessageDialog(null, "Cancelado por usuario");
+      }
+    } else {
+      g.errorHandler(new CredencialException("Permisos insuficientes"));
+    }
+  }
 
-			if (currentServicio == null) {
-				throw new ServicioException("Primero seleccione un servicio");
-			}
+  public void mostrarClienteServicio(Servicio s) {
+    String c = g.getCliente(s);
+    JOptionPane.showMessageDialog(null, c, "Cliente de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
+  }
 
-			Tecnico t = (Tecnico) i;
-			Object src = e.getSource();
+  public void mostrarArticulosServicio(Servicio s) {
+    String artsStr = g.limpiarStrArticulos(s);
+    JOptionPane.showMessageDialog(null, artsStr, "Articulos de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
+  }
 
-			if (src == btnVerCliente) {
-				mostrarClienteServicio(currentServicio);
-			}
+  public void mostrarOtrosArticulosServicio(Servicio s) {
+    String artsStr = g.limpiarStrOtrosArticulos(s);
+    JOptionPane.showMessageDialog(null, artsStr, "Extras de Servicio " + s.nro, JOptionPane.INFORMATION_MESSAGE);
+  }
 
-			if (src == btnVerArticulos) {
-				mostrarArticulosServicio(currentServicio);
-			}
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    try {
+      if (tecnicoLogeado.getClass() != Tecnico.class) {
+        throw new CredencialException("Permisos insuficientes");
+      }
 
-			if (src == btnAgregarArticulo) {
-				g.adicionarCosto(t, currentServicio);
-			}
+      if (currentServicio == null) {
+        throw new ServicioException("Primero seleccione un servicio");
+      }
 
-			if (src == btnVerOtrosArts) {
-				mostrarOtrosArticulosServicio(currentServicio);
-			}
+      Tecnico t = (Tecnico) tecnicoLogeado;
+      Object src = e.getSource();
 
-			if (src == btnAgregarOtroArt) {
-				g.adicionarOtroCosto(t, currentServicio);
-			}
+      if (src == btnVerCliente) {
+        mostrarClienteServicio(currentServicio);
+      }
 
-			if (src == btnAvanzarEstado) {
-				avanzarEstado(t);
-			}
+      if (src == btnVerArticulos) {
+        mostrarArticulosServicio(currentServicio);
+      }
 
-			if (src == btnToggleAlmuerzo) {
-				t.toggleAlmuerzoServicio(currentServicio);
-			}
+      if (src == btnAgregarArticulo) {
+        g.adicionarCosto(t, currentServicio);
+      }
 
-			llenarDatoServicio();
-			poblarServicios();
+      if (src == btnVerOtrosArts) {
+        mostrarOtrosArticulosServicio(currentServicio);
+      }
 
-		} catch (Exception exception) {
-			g.errorHandler(exception);
-		}
-	}
+      if (src == btnAgregarOtroArt) {
+        g.adicionarOtroCosto(t, currentServicio);
+      }
+
+      if (src == btnAvanzarEstado) {
+        avanzarEstado(t);
+      }
+
+      if (src == btnToggleAlmuerzo) {
+        t.toggleAlmuerzoServicio(currentServicio);
+      }
+
+      llenarDatoServicio();
+      poblarServicios();
+
+    } catch (Exception exception) {
+      g.errorHandler(exception);
+    }
+  }
 }
