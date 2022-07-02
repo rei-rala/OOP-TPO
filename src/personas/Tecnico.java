@@ -1,16 +1,19 @@
 package personas;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import agenda.*;
 import comercial.*;
 import comercial.articulos.*;
 import empresa.Empresa;
 import excepciones.*;
+import main.DateAux;
+
 
 public class Tecnico extends Interno {
   private Seniority seniority;
-  private Agenda agenda;
+  private final Agenda agenda;
 
   public Tecnico(String nombre, long dni, String direccion, String telefono, String contrasena, Seniority seniority) {
     super(nombre, dni, direccion, telefono, contrasena);
@@ -49,17 +52,23 @@ public class Tecnico extends Interno {
     ArrayList<Servicio> asignados = new ArrayList<Servicio>();
 
     for (Servicio s : Empresa.getInstance().getServicios()) {
+      if (s.getFecha().before(DateAux.getNextDay(new Date()))) {
+        s.forceCancelar();
+        continue;
+      }
       if (s.getTecnicos().contains(this) == false) {
         continue;
       }
       if (s.isFacturado()) {
         continue;
       }
+
       if (s.isEnPoderTecnico() == false) {
         continue;
       }
 
-      if (s.getEstadoServicio() == EstadoServicio.PROGRAMADO || s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
+      if (s.getEstadoServicio().toString().equalsIgnoreCase(EstadoServicio.PROGRAMADO.toString())
+          || s.getEstadoServicio().toString().equalsIgnoreCase(EstadoServicio.EN_CURSO.toString())) {
         asignados.add(s);
       }
 
@@ -85,20 +94,6 @@ public class Tecnico extends Interno {
     }
 
     return asignados;
-  }
-
-  public Servicio verServiciosAsignados(int nroServicio) {
-    ArrayList<Servicio> asignados = verServiciosAsignados();
-    Servicio buscado = null;
-
-    for (Servicio s : asignados) {
-      if (s.getNro() == nroServicio) {
-        buscado = s;
-        break;
-      }
-    }
-
-    return buscado;
   }
 
   public void asignarServicio(Servicio s) throws Exception {

@@ -1,0 +1,47 @@
+*el programa comienza y pide iniciar sesion:
+se debe ingresar (los numeros corresponden a los legajos de usuarios):
+1-para ingresar como Admin
+2-para ingresar como Administrativo
+3-para ingresar como tecnico
+4-para ingresar como Call Center
+(cuando se pida contraseña solo apretar enter)
+
+Nota: el programa ya tiene precargados algunos clientes, tecnicos y servicios pendientes(programados)
+
+*el menu call center nos permite
+ -crear un nuevo servicio
+ -gestionar servicios pendientes
+si creamos un servicio nuevo, este se crea sin cliente y sin tecnico.
+luego de crearlo, el call center debera ingresar a "gestionar servicios pendientes"
+alli "asignar un tecnico" y "asignar un cliente"
+luego call center debera seleccionar "enviar servicio a tecnios"
+(los tecnicos no veran los servicios hasta que call center no se los envie)
+
+*en el menu tecnico,se puede "gestionar servicios asignados" (usando el id del servicio)
+alli se debe  primero "comenzar el servicio" y luego "finalizar el servicio"
+*una vez finalizado se podra crear la factura(para eso hay que loguearse como administrativo)
+
+----
+El flujo de trabajo normal podria leerse de la siguiente manera:
+
+CALLCENTER
+* La asignacion de servicios solo estara disponibles para tecnicos y clientes con la disponibilidad especificada en el servicio
+	1. Crea servicio.
+	2. Asigna cliente (puede asignarse desde el comienzo o con un servicio sin cliente asignado) desde lista disponible.
+	3. Asigna tecnico desde lista disponible.
+	4. Libera el servicio, este pasa al poder de los tecnicos asignados.
+
+TECNICO:
+	1. Visualiza sus servicios asignados 
+	2. Elige un servicio.
+	3. Marca el servicio como EN_CURSO.
+	4. Puede editar los diferentes atributos.
+	5. Finaliza el servicio [ya no figura en su lista]
+
+ADMINISTRATIVO
+	1. Lista los servicios finalizados
+	2. Selecciona uno de ellos
+	3. Puede optar por añadir articulo extra.
+	4. Factura el servicio
+	5. Vuelve al meno principal y lista las facturas realizadas
+	6. Selecciona una de las facturas

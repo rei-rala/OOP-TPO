@@ -28,7 +28,7 @@ public class ConsolaAdmin extends Consola {
     System.out.println("0. Logout");
 
     System.out.print("Ingrese opcion => ");
-    int opcion = ch.scIntParse(sc, 0);
+    int opcion = scIntParse(0);
 
     if (opcion == 0) {
       return;
@@ -52,7 +52,7 @@ public class ConsolaAdmin extends Consola {
     while (true) {
       System.out.println("\nEDITANDO COSTO COMBUSTIBLE");
       System.out.print("Ingrese nuevo costo (Actual: " + costoAnterior + ") o 0 para volver al menu anterior => ");
-      double costo = ch.scDoubleParse(sc, 0);
+      double costo = scDoubleParse( 0);
 
       if (costo == 0) {
         pantallaAdmin();
@@ -76,7 +76,7 @@ public class ConsolaAdmin extends Consola {
     while (true) {
       System.out.println("\nEDITANDO COSTO DE VIAJE");
       System.out.print("Ingrese nuevo costo (Actual: " + costoAnterior + ") o 0 para volver al menu anterior => ");
-      double costo = ch.scDoubleParse(sc, 0);
+      double costo = scDoubleParse( 0);
 
       if (costo == 0) {
         pantallaAdmin();
@@ -108,7 +108,7 @@ public class ConsolaAdmin extends Consola {
     }
 
     System.out.print("Ingrese numero de articulo a editar (0 para volver al menu anterior): => ");
-    int opcion = ch.scIntParse(sc, 0, articulos.size());
+    int opcion = scIntParse( 0, articulos.size());
 
     if (opcion == 0) {
       pantallaAdmin();
@@ -123,7 +123,7 @@ public class ConsolaAdmin extends Consola {
     System.out.println("\nEDITANDO STOCK Y COSTOS DE " + articulo.getDescripcion());
     System.out.print("Ingrese nuevo stock (Actual: " + articulo.getStock()
         + "), 0 para mantener stock anterior o -1 para volver al menu anterior =>");
-    int stock = ch.scIntParse(sc, 0);
+    int stock = scIntParse( 0);
 
     if (stock == -1) {
       pantallaAdmin();
@@ -132,7 +132,7 @@ public class ConsolaAdmin extends Consola {
 
     System.out.println("Ingrese nuevo costo (Actual: " + articulo.getCosto()
         + "), 0 para mantener stock anterior o -1 para volver al menu anterior\n=> ");
-    double costo = ch.scDoubleParse(sc, (double) 0);
+    double costo = scDoubleParse( (double) 0);
 
     if (costo == -1) {
       pantallaAdmin();
@@ -149,7 +149,7 @@ public class ConsolaAdmin extends Consola {
 
     System.out.println("Confirmar nuevo stock " + stock + " y costo " + costo + " para " + articulo + "?");
     System.out.print("(0. No, 1. Si) =>");
-    int opcion = ch.scIntParse(sc, 0, 1);
+    int opcion = scIntParse( 0, 1);
 
     if (opcion == 1) {
       try {
@@ -177,7 +177,7 @@ public class ConsolaAdmin extends Consola {
     System.out.println("0. Volver al menu anterior");
     System.out.print("=>");
 
-    int seniority = ch.scIntParse(sc, 0, 3);
+    int seniority = scIntParse( 0, 3);
 
     if (seniority == 3) {
       mEdicionHorasTecnico(Seniority.SENIOR);
@@ -193,7 +193,7 @@ public class ConsolaAdmin extends Consola {
     System.out.println("\nEDITANDO HORAS DE " + s);
     System.out.print("Ingrese nuevo costo hora (Actual: " + admin.getCostoHoraTecnico(s)
         + "), 0 para sin cambios, -1 para volver al menu anterior =>");
-    double costoHora = ch.scDoubleParse(sc, -1);
+    double costoHora = scDoubleParse( -1);
 
     if (costoHora == -1) {
       return;

@@ -68,7 +68,7 @@ public class DateAux {
 
   public static String getDateString(Date d) {
     int dia = d.getDate();
-    int mes = d.getMonth();
+    int mes = d.getMonth()+1;
     int anio = 1900 + d.getYear();
 
     return "" + dia + "/" + mes + "/" + anio;

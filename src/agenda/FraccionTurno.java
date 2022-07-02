@@ -5,22 +5,20 @@ import comercial.*;
 import excepciones.AsignacionException;
 
 public class FraccionTurno {
+	private final Dia dia;
+	private final Turno turno;
+	private final int nro;
   private Servicio servicioAsignado;
   private boolean estaOcupado;
-  private final Dia dia;
-  private final Turno turno;
-  private final int nro;
   private String horario;
 
   public FraccionTurno(Dia dia, Turno turno, int nro) {
     this.dia = dia;
     this.turno = turno;
     this.nro = nro;
-    this.horario = obtenerHorario();
-  }
-
-  private String obtenerHorario() {
-    return DateAux.getHorarioUnico(turno, nro);
+    this.horario = DateAux.getHorarioUnico(turno, nro);
+    this.estaOcupado = false;
+    this.servicioAsignado = null;
   }
 
   public String getHorario() {

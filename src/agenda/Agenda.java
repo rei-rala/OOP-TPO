@@ -13,24 +13,29 @@ public class Agenda {
   private final ArrayList<Dia> dias;
   private final Persona propietario;
   private int cantDias = 0;
-  private final int cantDiasGeneradosXDefecto = 30;
+  private final int cantDiasGeneradosXDefecto = 15;
 
   public Agenda(Persona propietario) {
     this.dias = new ArrayList<Dia>();
     this.propietario = propietario;
 
-    // Creacion inicial de objetos Dia
-    Date currentDate = DateAux.getToday();
+    inicializarDias();
+  }
 
-    for (int i = 0; i < cantDiasGeneradosXDefecto; i++) {
+  private void inicializarDias() {
+    Date currentDate = DateAux.getToday();
+    System.out.println(currentDate.toString());
+    int i = 0;
+    do {
+      currentDate = DateAux.getNextDay(currentDate);
       // si es domingo lo omitimos
       if (currentDate.getDay() == 0) {
         continue;
       }
+      obtenerDiaAgenda(currentDate);
+      i++;
+    } while (i < cantDiasGeneradosXDefecto);
 
-      dias.add(new Dia(currentDate));
-      currentDate = new Date(currentDate.getTime() + DateAux.DAY_IN_MS);
-    }
     this.cantDias = dias.size();
   }
 
@@ -63,6 +68,8 @@ public class Agenda {
       Dia nuevoDia = new Dia(f);
 
       dias.add(nuevoDia);
+      cantDias = dias.size();
+
       return nuevoDia;
     }
 
@@ -76,7 +83,7 @@ public class Agenda {
       throw new AgendaException("No se pudo asignar el servicio");
     }
     if (aAsignar.verificarDisponibilidad(s)) {
-      aAsignar.asignarServicioDia(s);
+      aAsignar.asignarServicio(s);
     } else {
       throw new AsignacionException("No se puede asignar el servicio");
     }
@@ -86,6 +93,9 @@ public class Agenda {
     Date fecha = s.getFecha();
 
     try {
+      if (fecha.before(DateAux.getToday())) {
+        throw new AgendaException("La fecha debe ser posterior");
+      }
       Dia d = obtenerDiaAgenda(fecha);
       if (d == null) {
         throw new AgendaException("Dia no valido");
@@ -94,45 +104,6 @@ public class Agenda {
     } catch (Exception e) {
       return false;
     }
-  }
-
-  public FraccionTurno obtenerTurnoDisponible() {
-    FraccionTurno disponible = null;
-
-    for (Dia d : dias) {
-      FraccionTurno turnoDiaDisponible = d.obtenerSiguienteFraccionDisponible();
-
-      if (turnoDiaDisponible == null) {
-        continue;
-      }
-      disponible = turnoDiaDisponible;
-    }
-
-    return disponible;
-  }
-
-  public ArrayList<FraccionTurno> obtenerTodosTurnosDisponible(Turno t) {
-    ArrayList<FraccionTurno> disponibles = new ArrayList<FraccionTurno>();
-
-    for (Dia d : dias) {
-      for (FraccionTurno ft : d.obtenerTodosTurnoDisponibles(t)) {
-        disponibles.add(ft);
-      }
-    }
-
-    return disponibles;
-  }
-
-  public ArrayList<FraccionTurno> obtenerTodosTurnosDisponible() {
-    ArrayList<FraccionTurno> disponibles = new ArrayList<FraccionTurno>();
-
-    for (Dia d : dias) {
-      for (FraccionTurno ft : d.obtenerTodosTurnoDisponibles()) {
-        disponibles.add(ft);
-      }
-    }
-
-    return disponibles;
   }
 
   @Override
@@ -150,6 +121,18 @@ public class Agenda {
     }
 
     return formateado;
+  }
+
+  public ArrayList<Dia> obtenerDias() {
+    ArrayList<Dia> diasDispo = new ArrayList<Dia>();
+    
+    for (Dia d: dias) {
+      if (d.getFecha().after(new Date())) {
+        diasDispo.add(d);
+      }
+    }
+
+    return diasDispo;
   }
 
   public String getDiasFormatted() {

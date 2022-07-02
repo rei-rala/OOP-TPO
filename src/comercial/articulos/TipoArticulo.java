@@ -1,9 +1,0 @@
-package comercial.articulos;
-
-public enum TipoArticulo {
-	CABLE,
-	CONECTOR_COAXIAL_RG6,
-	DIVISOR_COAXIAL_1a2,
-	MODEM_INTERNET,
-	DECODIFICADOR_TV
-}

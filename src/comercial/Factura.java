@@ -39,6 +39,10 @@ public class Factura {
   public Servicio getServicio() {
     return servicio;
   }
+  
+  public Date getFecha() {
+    return fecha;
+  }
 
   public double calcularSubTotal() {
     double subtotal = servicio.calcularTotalServicio();
@@ -86,7 +90,4 @@ public class Factura {
 
   }
 
-  public Date getFecha() {
-    return fecha;
-  }
 }

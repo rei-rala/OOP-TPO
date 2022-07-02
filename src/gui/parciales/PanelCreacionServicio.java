@@ -460,7 +460,7 @@ public class PanelCreacionServicio extends JPanel {
         throw new AsignacionException("El comienzo y final deben ser del mismo turno.");
       }
 
-      nuevoServicio = callcenterUser.crearNuevoServicioServicio(DateAux.getToday(), ts, turnoDesde.getTurno(),
+      nuevoServicio = callcenterUser.crearServicio(DateAux.getToday(), ts, turnoDesde.getTurno(),
           turnoDesde.getNro(), turnoHasta.getNro());
 
       JOptionPane.showMessageDialog(null, "Servicio creado con Numero " + nuevoServicio.getNro());

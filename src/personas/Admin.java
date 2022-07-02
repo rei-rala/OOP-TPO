@@ -72,7 +72,7 @@ public class Admin extends Interno {
     return Empresa.getInstance().getArticulos();
   }
 
-  public ArrayList<Articulo> buscarArticulosSinStock() {
+  public ArrayList<Articulo> getArticulosNoStock() {
     ArrayList<Articulo> articulos = getArticulos();
     ArrayList<Articulo> articulosSinStock = new ArrayList<Articulo>();
 
@@ -88,11 +88,6 @@ public class Admin extends Interno {
 
   public void anadirStockArticulo(Articulo a, int cantidad) throws Exception {
     a.anadirStock(cantidad);
-  }
-
-  public void setStockArticulo(int sku, int stock) throws Exception {
-    Articulo a = getArticulos(sku);
-    a.setStock(stock);
   }
 
   public void setStockArticulo(Articulo a, int stock) throws Exception {

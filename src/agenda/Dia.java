@@ -47,8 +47,31 @@ public class Dia {
   public String getDiaSemana() {
     return diaSemana;
   }
+  
+  public String getNombreDiaSemana() {
+	    int nroDia = fecha.getDay();
 
-  public FraccionTurno obtenerFraccionesTurno(int nroTurno, Turno t) {
+	    switch (nroDia) {
+	      case 0:
+	        return "DOMINGO";
+	      case 1:
+	        return "LUNES";
+	      case 2:
+	        return "MARTES";
+	      case 3:
+	        return "MIERCOLES";
+	      case 4:
+	        return "JUEVES";
+	      case 5:
+	        return "VIERNES";
+	      case 6:
+	        return "SABADO";
+	      default:
+	        return "error";
+	    }
+	  }
+
+  public FraccionTurno obtenerFraccionTurno(int nroTurno, Turno t) {
     FraccionTurno encontrado = null;
 
     for (FraccionTurno fr : obtenerFraccionesTurno(t)) {
@@ -77,28 +100,47 @@ public class Dia {
     return seleccion;
   }
 
-  private FraccionTurno obtenerTurnoDisponible(ArrayList<FraccionTurno> alFT) {
-    FraccionTurno disponible = null;
-    for (FraccionTurno ft : alFT) {
-      if (ft.getEstaOcupado()) {
-        continue;
-      }
-      disponible = ft;
-      break;
+
+  public boolean validarTurnos(Turno t, int desde, int hasta) {
+	  String tno = t.toString();
+	  
+	  
+    if (desde > hasta || 0 > desde || 0 > hasta) {
+      return false;
     }
-    return disponible;
+
+    if (tno.contains(Turno.MANANA.toString())) {
+      if (desde > turnos.size() || hasta > turnos.size()) {
+        return false;
+      }
+    } else {
+      if (desde > turnos.size() || hasta > turnos.size()) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
-  private ArrayList<FraccionTurno> obtenerTodosTurnosDisponibles(ArrayList<FraccionTurno> alFT) {
-    ArrayList<FraccionTurno> disponibles = new ArrayList<FraccionTurno>();
-    for (FraccionTurno ft : alFT) {
-      if (ft.getEstaOcupado()) {
-        continue;
+
+  private boolean estanTurnosOcupados(Turno t, int inicio, int fin) throws Exception {
+    boolean ocupado = false;
+
+    for (int i = inicio; i < fin; i++) {
+      FraccionTurno ft = obtenerFraccionTurno(i, t);
+
+      if (ft == null) {
+        throw new AsignacionException("Parametros de turno no validos");
       }
-      disponibles.add(ft);
+      if (ft.getEstaOcupado()) {
+        ocupado = true;
+        break;
+      }
     }
-    return disponibles;
+
+    return ocupado;
   }
+  
 
   /**
    * Verifica si se tiene al menos un servicio en el dia
@@ -116,93 +158,12 @@ public class Dia {
     return diaOcupado;
   }
 
-  public boolean validarTurnos(Turno t, int desde, int hasta) {
-    if (desde > hasta || 0 > desde || 0 > hasta) {
-      return false;
-    }
-
-    if (t == Turno.MANANA) {
-      if (desde > turnos.size() || hasta > turnos.size()) {
-        return false;
-      }
-    } else {
-      if (desde > turnos.size() || hasta > turnos.size()) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  public FraccionTurno obtenerTurnoDisponible(Turno t) {
-    ArrayList<FraccionTurno> turnosDia = obtenerFraccionesTurno(t);
-    return obtenerTurnoDisponible(turnosDia);
-  }
-
-  public FraccionTurno obtenerTurnoDisponible() {
-    ArrayList<FraccionTurno> turnosTurno = obtenerFraccionesTurno();
-
-    return obtenerTurnoDisponible(turnosTurno);
-  }
-
-  public ArrayList<FraccionTurno> obtenerTodosTurnoDisponibles(Turno t) {
-    ArrayList<FraccionTurno> turnosDia = obtenerFraccionesTurno(t);
-    return obtenerTodosTurnosDisponibles(turnosDia);
-  }
-
-  public ArrayList<FraccionTurno> obtenerTodosTurnoDisponibles() {
-    ArrayList<FraccionTurno> turnosTurno = obtenerFraccionesTurno();
-
-    return obtenerTodosTurnosDisponibles(turnosTurno);
-  }
-
-  public String getNombreDiaSemana() {
-    int nroDia = fecha.getDay();
-
-    switch (nroDia) {
-      case 0:
-        return "DOMINGO";
-      case 1:
-        return "LUNES";
-      case 2:
-        return "MARTES";
-      case 3:
-        return "MIERCOLES";
-      case 4:
-        return "JUEVES";
-      case 5:
-        return "VIERNES";
-      case 6:
-        return "SABADO";
-      default:
-        return "error";
-    }
-  }
-
-  public boolean estanTurnosOcupados(Turno t, int inicio, int fin) throws Exception {
-    boolean ocupado = false;
-
-    for (int i = inicio; i < fin; i++) {
-      FraccionTurno ft = obtenerFraccionesTurno(i, t);
-
-      if (ft == null) {
-        throw new AsignacionException("Parametros de turno no validos");
-      }
-      if (ft.getEstaOcupado()) {
-        ocupado = true;
-        break;
-      }
-    }
-
-    return ocupado;
-  }
-
   public ArrayList<FraccionTurno> obtenerTurnos(Turno t, int desde, int hasta) throws Exception {
     ArrayList<FraccionTurno> turnos = new ArrayList<FraccionTurno>();
     int expectedSize = hasta - desde;
 
     for (int i = desde; i < hasta; i++) {
-      FraccionTurno ft = obtenerFraccionesTurno(i, t);
+      FraccionTurno ft = obtenerFraccionTurno(i, t);
       if (ft == null) {
         throw new AsignacionException("Parametros de turno no validos");
       }
@@ -219,20 +180,6 @@ public class Dia {
     return turnos;
   }
 
-  public void asignarServicioDia(Servicio s) throws Exception {
-    ArrayList<FraccionTurno> ftAsignar = obtenerTurnos(s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
-
-    for (FraccionTurno ft : ftAsignar) {
-      if (ft.getEstaOcupado()) {
-        throw new AsignacionException("El turno se encuentra ocupado");
-      }
-    }
-
-    for (FraccionTurno ft : ftAsignar) {
-      ft.asignarServicio(s);
-    }
-  }
-
   public boolean verificarDisponibilidad(Servicio s) throws Exception {
     Turno t = s.getTurno();
     int desde = s.getTurnoInicio();
@@ -246,10 +193,21 @@ public class Dia {
     }
     return true;
   }
+  
 
-  public void asignarFraccionesTurnos(Servicio s) throws Exception {
+  public void asignarServicio(Servicio s) throws Exception {
     try {
-      asignarServicioDia(s);
+    	ArrayList<FraccionTurno> ftAsignar = obtenerTurnos(s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
+
+        for (FraccionTurno ft : ftAsignar) {
+          if (ft.getEstaOcupado()) {
+            throw new AsignacionException("El turno se encuentra ocupado");
+          }
+        }
+
+        for (FraccionTurno ft : ftAsignar) {
+          ft.asignarServicio(s);
+        }
     } catch (AgendaException e) {
       throw e;
     } catch (Exception e) {
@@ -257,41 +215,6 @@ public class Dia {
     }
   }
 
-  public FraccionTurno obtenerSiguienteFraccionDisponible() {
-    Date today = DateAux.getToday();
-
-    for (FraccionTurno fr : obtenerFraccionesTurno()) {
-      Date fechaFT = fr.getDia().getFecha();
-
-      if (DateAux.getDateString(fechaFT).equalsIgnoreCase(DateAux.getDateString(today)) && today.after(fechaFT)) {
-        continue;
-      }
-      if (fr.getEstaOcupado()) {
-        continue;
-      }
-
-      return fr;
-    }
-    return null;
-  }
-
-  public FraccionTurno obtenerSiguienteFraccionDisponible(Turno t) {
-    ArrayList<FraccionTurno> turnoSeleccionado = obtenerFraccionesTurno(t);
-
-    for (FraccionTurno fr : turnoSeleccionado) {
-      if (fr.getEstaOcupado() == false) {
-        return fr;
-      }
-    }
-    return null;
-  }
-
-  public void verFraccionesTurno() {
-    for (FraccionTurno ft : obtenerFraccionesTurno()) {
-      System.out
-          .println("" + ft.getNro() + ". " + ft.getHorario() + "(" + fecha.getDay() + ") | " + ft.getTurno());
-    }
-  }
 
   @Override
   public String toString() {

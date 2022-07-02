@@ -28,7 +28,7 @@ public class ConsolaAdministrativo extends Consola {
     System.out.println("0. Log out");
     System.out.print("=> ");
 
-    int opcion = ch.scIntParse(sc, 0, 2);
+    int opcion = scIntParse( 0, 2);
 
     if (opcion == 0) {
       return;
@@ -62,7 +62,7 @@ public class ConsolaAdministrativo extends Consola {
     System.out.println("-------------------------------------------");
 
     System.out.print("Seleccione servicio visualizar (0. Volver) => ");
-    int opcion = ch.scIntParse(sc, 0, servicios.size());
+    int opcion = scIntParse( 0, servicios.size());
 
     if (opcion == 0) {
       pantallaAdministrativo();
@@ -110,7 +110,7 @@ public class ConsolaAdministrativo extends Consola {
     System.out.println("0) Volver a menu principal");
     System.out.print("=>");
 
-    int opc = ch.scIntParse(sc, 0, 5);
+    int opc = scIntParse( 0, 5);
 
     if (opc == 0) {
       pantallaAdministrativo();
@@ -172,7 +172,7 @@ public class ConsolaAdministrativo extends Consola {
     String descripcion = sc.nextLine();
 
     System.out.print("Ingrese el costo para el articulo => ");
-    double costo = ch.scDoubleParse(sc, 0.1);
+    double costo = scDoubleParse( 0.1);
 
     ArticuloExtra nuevoArticuloExtra = null;
 
@@ -186,7 +186,7 @@ public class ConsolaAdministrativo extends Consola {
     System.out.println("Confirmar agregar el articulo extra creado? (" + nuevoArticuloExtra + ")");
     System.out.print("(1 Confirmar, 0 cancelar)");
 
-    int confirma = ch.scIntParse(sc, 0, 1);
+    int confirma = scIntParse( 0, 1);
 
     if (confirma == 1) {
       try {
@@ -202,7 +202,7 @@ public class ConsolaAdministrativo extends Consola {
     System.out.println("La accion no es reversible");
     System.out.print("(1 Confirmar, 0 cancelar)");
 
-    int confirmaFacturar = ch.scIntParse(sc, 0, 1);
+    int confirmaFacturar = scIntParse( 0, 1);
     if (confirmaFacturar == 1) {
       Factura f = null;
       try {
@@ -244,7 +244,7 @@ public class ConsolaAdministrativo extends Consola {
 
     System.out.print("Seleccione factura para visualizar (0. Volver) => ");
 
-    int opcion = ch.scIntParse(sc, 0, facturas.size());
+    int opcion = scIntParse( 0, facturas.size());
 
     if (opcion != 0) {
       Factura f = facturas.get(opcion - 1);

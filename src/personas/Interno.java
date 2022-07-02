@@ -1,15 +1,12 @@
 package personas;
 
-import java.util.ArrayList;
-
 import empresa.Empresa;
 
 public abstract class Interno extends Persona {
 
-	public static ArrayList<Interno> internosBackup = new ArrayList<Interno>();
 	public static int conteoInternos = 0;
-	public final int legajo;
-
+	
+	protected final int legajo;
 	protected String contrasena;
 
 	public Interno(String nombre, long dni, String direccion, String telefono, String contrasena) {

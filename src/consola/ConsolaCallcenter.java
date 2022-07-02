@@ -34,7 +34,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println("0. Log out");
     System.out.print("=> ");
 
-    int opcion = ch.scIntParse(sc, 0, 3);
+    int opcion = scIntParse(0, 3);
 
     if (opcion == 0) {
       return;
@@ -87,7 +87,7 @@ public class ConsolaCallcenter extends Consola {
     }
 
     System.out.print("(0 para cancelar) => ");
-    int opcion = ch.scIntParse(sc, 0, clientes.size());
+    int opcion = scIntParse(0, clientes.size());
 
     if (opcion == 0) {
       return null;
@@ -106,7 +106,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println(a.getDiasShort());
     System.out.print("(0 para cancelar) => ");
 
-    int opcion = ch.scIntParse(sc, 0, a.getDias().size());
+    int opcion = scIntParse(0, a.getDias().size());
     Dia diaSeleccionado = a.getDias().get(opcion - 1);
 
     if (opcion == 0) {
@@ -129,7 +129,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println("2. Servicio de reparacion");
     System.out.println("0. Atras");
 
-    int opcion = ch.scIntParse(sc, 0, 2);
+    int opcion = scIntParse(0, 2);
 
     if (opcion == 0) {
       mSeleccionDiaCliente(c);
@@ -145,7 +145,7 @@ public class ConsolaCallcenter extends Consola {
     }
 
     System.out.print("(0 para volver atras) => ");
-    int opcionDesde = ch.scIntParse(sc, 0, fraccionesTurno.size());
+    int opcionDesde = scIntParse(0, fraccionesTurno.size());
 
     if (opcionDesde == 0) {
       mSeleccionDiaCliente(c);
@@ -169,7 +169,7 @@ public class ConsolaCallcenter extends Consola {
     }
 
     System.out.print("(0 para volver atras) => ");
-    int opcionHasta = ch.scIntParse(sc, 0, fraccionesTurnoHasta.size());
+    int opcionHasta = scIntParse(0, fraccionesTurnoHasta.size());
 
     if (opcionHasta == 0) {
       mSeleccionDiaCliente(c);
@@ -191,7 +191,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println("Confirmar?");
     System.out.print("(1 confirmar, 0 cancelar) => ");
 
-    int opcionConfirmar = ch.scIntParse(sc, 0, 1);
+    int opcionConfirmar = scIntParse(0, 1);
 
     if (opcionConfirmar == 0) {
       System.out.println("Creacion de servicio cancelado!");
@@ -201,7 +201,7 @@ public class ConsolaCallcenter extends Consola {
 
     Servicio nuevoServicio = null;
     try {
-      nuevoServicio = callcenter.crearNuevoServicioServicio(dia.getFecha(), ts, ftDesde.getTurno(), ftDesde.getNro(),
+      nuevoServicio = callcenter.crearServicio(dia.getFecha(), ts, ftDesde.getTurno(), ftDesde.getNro(),
           ftHasta.getNro());
     } catch (Exception e) {
       System.out.println("Error al crear servicio: " + e.getMessage());
@@ -242,7 +242,7 @@ public class ConsolaCallcenter extends Consola {
           : "numero " + s.getCliente().getNro() + " nombre "
               + s.getCliente().getNombre();
       System.out.println((i + 1) + ") Servicio " + s.getEstadoServicio() + " numero: " + s.getNro() + ", fecha: "
-          + DateAux.getDateString(s.getFecha()) + ", horario " + DateAux.getHorarioCompleto(s)+ " | "
+          + DateAux.getDateString(s.getFecha()) + ", horario " + DateAux.getHorarioCompleto(s) + " | "
           + " cliente: " + idCliente);
     }
 
@@ -251,7 +251,7 @@ public class ConsolaCallcenter extends Consola {
     }
 
     System.out.print("(0 para volver atras) => ");
-    int opcion = ch.scIntParse(sc, 0, servs.size());
+    int opcion = scIntParse(0, servs.size());
 
     if (opcion == 0) {
       System.out.println("Seleccion cancelada");
@@ -275,7 +275,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println("0) Volver atras");
 
     System.out.print("Ingrese opcion => ");
-    int opcion = ch.scIntParse(sc, 0, 4);
+    int opcion = scIntParse(0, 4);
 
     if (opcion == 0) {
       mListarServicios();
@@ -288,21 +288,83 @@ public class ConsolaCallcenter extends Consola {
         mSeleccionServicio(s);
         return;
       }
+      mAsignacionCliente(s);
     }
-
     if (opcion == 2) {
       mAsignacionTecnico(s);
     }
-
     if (opcion == 3) {
       mEnviarServicioATecnicos(s);
     }
-
     if (opcion == 4) {
       mCancelarServicio(s);
+    }
+  }
+
+  private void mAsignacionCliente(Servicio s) {
+    Cliente c = mSeleccionCliente(s);
+
+    if (c == null) {
+      System.out.println("Seleccion cancelada");
+      mSeleccionServicio(s);
       return;
     }
 
+    System.out.println("Confirmar la asignacion del cliente nro " + c.getNro() + " al servicio numero "
+        + s.getNro() + "?");
+
+    int opcionConfirmar = scIntParse(0, 1);
+
+    if (opcionConfirmar == 0) {
+      System.out.println("Asignacion de cliente cancelada!");
+      mSeleccionServicio(s);
+      return;
+    }
+    mAsignarClienteServicio(c, s);
+  }
+
+  private Cliente mSeleccionCliente(Servicio s) {
+    System.out.println("\n--------- Listando Clientes ---------");
+    System.out.println("Se muestran clientes disponibles");
+    System.out.println("-------------- Seleccione -------------");
+
+    ArrayList<Cliente> clientes = callcenter.getClientesSinServicios();
+    for (int i = 0; i < clientes.size(); i++) {
+      Cliente c = clientes.get(i);
+      System.out.println(
+          (i + 1) + ") Nro" + c.getNro() + " - nombre: " + c.getNombre());
+    }
+
+    if (clientes.size() == 0) {
+      System.out.println("No hay clientes disponibles para el servicio seleccionado!");
+    }
+
+    System.out.print("(0 para cancelar) => ");
+    int opcion = scIntParse(0, clientes.size());
+
+    if (opcion == 0) {
+      return null;
+    }
+    return clientes.get(opcion - 1);
+  }
+
+  private void mAsignarClienteServicio(Cliente c, Servicio s) {
+    System.out.println("\n---- Asignando  servicio a cliente ----");
+    System.out.println("Servicio: " + s.getNro() + " - " + s.getFecha() + " [" + s.getHorarioServicio() + "]");
+    System.out.println("Cliente: nro" + c.getNro() + ", Nombre" + c.getNombre());
+
+    System.out.println("-------------- Seleccione -------------");
+
+    try {
+      callcenter.asignarServicio(s, c);
+    } catch (Exception e) {
+      System.out.println("Error al asignar cliente al servicio: " + e.getMessage());
+      System.out.println("Intente nuevamente");
+      mSeleccionServicio(s);
+      return;
+    }
+    System.out.println("Cliente asignado con exito!");
+    mSeleccionServicio(s);
   }
 
   private void mAsignacionTecnico(Servicio s) {
@@ -317,7 +379,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println("Confirmar la asignacion del tecnico con legajo " + t.getLegajo() + " al servicio numero "
         + s.getNro() + "?");
 
-    int opcionConfirmar = ch.scIntParse(sc, 0, 1);
+    int opcionConfirmar = scIntParse(0, 1);
 
     if (opcionConfirmar == 0) {
       System.out.println("Asignacion de tecnico cancelada!");
@@ -332,7 +394,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println("Se muestran tecnicos disponibles segun el servicio proporcionado");
     System.out.println("-------------- Seleccione -------------");
 
-    ArrayList<Tecnico> tecnicos = callcenter.buscarTecnicosDisponibles(s);
+    ArrayList<Tecnico> tecnicos = callcenter.getTecnicosDisponibles(s);
     for (int i = 0; i < tecnicos.size(); i++) {
       Tecnico t = tecnicos.get(i);
       System.out.println(
@@ -344,7 +406,7 @@ public class ConsolaCallcenter extends Consola {
     }
 
     System.out.print("(0 para cancelar) => ");
-    int opcion = ch.scIntParse(sc, 0, tecnicos.size());
+    int opcion = scIntParse(0, tecnicos.size());
 
     if (opcion == 0) {
       return null;
@@ -388,7 +450,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println("Confirma enviar este servicio a los tecnicos? La accion no es reversible");
     System.out.print("(1 confirmar, 0 cancelar) => ");
 
-    int opcionConfirmar = ch.scIntParse(sc, 0, 1);
+    int opcionConfirmar = scIntParse(0, 1);
 
     if (opcionConfirmar == 0) {
       System.out.println("Envio de servicio cancelado!");
@@ -416,7 +478,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println("Confirma cancelar este servicio? La accion no es reversible");
     System.out.print("(1 confirmar, 0 cancelar) => ");
 
-    int opcionConfirmar = ch.scIntParse(sc, 0, 1);
+    int opcionConfirmar = scIntParse(0, 1);
 
     if (opcionConfirmar == 0) {
       System.out.println("Cancelacion de servicio cancelada!");
@@ -448,15 +510,13 @@ public class ConsolaCallcenter extends Consola {
     }
 
     System.out.print("(0 para cancelar) => ");
-    int opcion = ch.scIntParse(sc, 0, articulos.size());
+    int opcion = scIntParse(0, articulos.size());
 
     if (opcion == 0) {
       return;
     }
 
     mEdicionArticulo(articulos.get(opcion - 1));
-
-    pantallaCallcenter();
   }
 
   private void mEdicionArticulo(Articulo articulo) {
@@ -464,7 +524,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println("SKU=" + articulo.getSKU() + " - " + articulo.getDescripcion() + " - " + articulo.getStock());
     System.out.println("Ingrese nuevo stock (Actual: " + articulo.getStock()
         + "), 0 para mantener stock anterior o -1 para volver al menu anterior: ");
-    int stock = ch.scIntParse(sc, -1, Integer.MAX_VALUE);
+    int stock = scIntParse(-1, Integer.MAX_VALUE);
 
     if (stock == -1) {
       System.out.println("Cancelado");
@@ -478,7 +538,7 @@ public class ConsolaCallcenter extends Consola {
 
     System.out.println("Confirmar nuevo stock " + stock + " para " + articulo + "?");
     System.out.print("(0. No, 1. Si) =>");
-    int opcion = ch.scIntParse(sc, 0, 1);
+    int opcion = scIntParse(0, 1);
 
     if (opcion == 1) {
       try {
@@ -490,5 +550,8 @@ public class ConsolaCallcenter extends Consola {
       System.out.println(
           "Stock de '" + articulo.getDescripcion() + " modificado a " + stock);
     }
+
+    pantallaCallcenter();
   }
+
 }

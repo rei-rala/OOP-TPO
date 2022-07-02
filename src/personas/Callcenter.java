@@ -10,210 +10,214 @@ import comercial.articulos.*;
 import excepciones.*;
 import main.DateAux;
 
+@SuppressWarnings("deprecation")
 public class Callcenter extends Interno {
 
-  public Callcenter(String nombre, long dni, String direccion, String telefono, String contrasena) {
-    super(nombre, dni, direccion, telefono, contrasena);
-  }
+	public Callcenter(String nombre, long dni, String direccion, String telefono, String contrasena) {
+		super(nombre, dni, direccion, telefono, contrasena);
+	}
 
-  // ALTERNATIVO SIN DATOS
-  public Callcenter(String nombre, String contrasena) {
-    super(nombre, contrasena);
-  }
+	// ALTERNATIVO SIN DATOS
+	public Callcenter(String nombre, String contrasena) {
+		super(nombre, contrasena);
+	}
 
-  @Override
-  public String toString() {
-    return "Callcenter [legajo=" + legajo + ", nombre=" + nombre + ", dni=" + dni + ", direccion=" + direccion
-        + ", telefono=" + telefono + "]";
-  }
+	@Override
+	public String toString() {
+		return "Callcenter [legajo=" + legajo + ", nombre=" + nombre + ", dni=" + dni + ", direccion=" + direccion
+				+ ", telefono=" + telefono + "]";
+	}
 
-  // ARTICULOS
-  public ArrayList<Articulo> getArticulos() {
-    return Empresa.getInstance().getArticulos();
-  }
+	// ARTICULOS
+	public ArrayList<Articulo> getArticulos() {
+		return Empresa.getInstance().getArticulos();
+	}
 
-  public void setStockArticulo(Articulo a, int stock) throws Exception {
-    a.setStock(stock);
-  }
+	public void setStockArticulo(Articulo a, int stock) throws Exception {
+		a.setStock(stock);
+	}
 
-  public Cliente getClientes(int numeroCliente) {
-    return Empresa.getInstance().getClientes(numeroCliente);
-  }
+	public Cliente getClientes(int numeroCliente) {
+		return Empresa.getInstance().getClientes(numeroCliente);
+	}
 
-  public Cliente getClientes(Cliente c) {
-    return Empresa.getInstance().getClientes(c);
-  }
+	public Cliente getClientes(Cliente c) {
+		return Empresa.getInstance().getClientes(c);
+	}
 
-  public ArrayList<Cliente> getClientesSinServicios() {
-    ArrayList<Cliente> clientes = Empresa.getInstance().getClientesSinServiciosPendientes();
+	public ArrayList<Cliente> getClientesSinServicios() {
+		ArrayList<Cliente> clientes = new ArrayList<Cliente>();
 
-    return clientes;
-  }
+		for (Cliente c : Empresa.getInstance().getClientes()) {
+			if (c.verificarPoseeServicio()) {
+				continue;
+			}
+			clientes.add(c);
+		}
 
-  public ArrayList<Tecnico> getTecnicos() {
-    return Empresa.getInstance().getTecnicos();
-  }
+		return clientes;
+	}
 
-  // TECNICOS
-  public ArrayList<Tecnico> buscarTecnicosDisponibles(Servicio s) {
-    ArrayList<Tecnico> tecnicosDisponibles = new ArrayList<Tecnico>();
+	public ArrayList<Tecnico> getTecnicos() {
+		return Empresa.getInstance().getTecnicos();
+	}
 
-    for (Tecnico t : getTecnicos()) {
-      try {
-        if (t.verificarDisponibilidad(s)) {
-          tecnicosDisponibles.add(t);
-        }
-      } catch (Exception e) {
-      }
-    }
-    return tecnicosDisponibles;
-  }
+	// TECNICOS
+	public ArrayList<Tecnico> getTecnicosDisponibles(Servicio s) {
+		ArrayList<Tecnico> tecnicosDisponibles = new ArrayList<Tecnico>();
 
-  // Auxiliares para servicio
-  private void preValidarCliente(Cliente c) throws Exception {
-    if (c == null) {
-      throw new AsignacionException("No existe cliente");
-    }
-  }
+		for (Tecnico t : getTecnicos()) {
+			try {
+				if (t.verificarDisponibilidad(s)) {
+					tecnicosDisponibles.add(t);
+				}
+			} catch (Exception e) {
+			}
+		}
+		return tecnicosDisponibles;
+	}
 
-  private void preValidarTecnico(Tecnico t) throws Exception {
-    if (t == null) {
-      throw new AsignacionException("No existe tecnico");
-    }
-  }
+	// Auxiliares para servicio
+	private void preValidarCliente(Cliente c) throws Exception {
+		if (c == null) {
+			throw new AsignacionException("No existe cliente");
+		}
+	}
 
-  private void preValidarEdicionServicio(Servicio s) throws Exception {
-    if (s == null) {
-      throw new AsignacionException("No existe servicio");
-    }
-    if (s.isFacturado()) {
-      throw new AsignacionException("El servicio se encuentra facturado");
-    }
-  }
+	private void preValidarTecnico(Tecnico t) throws Exception {
+		if (t == null) {
+			throw new AsignacionException("No existe tecnico");
+		}
+	}
 
-  public void preValidarLiberacion(Servicio s) throws Exception {
-    preValidarEdicionServicio(s);
+	private void preValidarEdicionServicio(Servicio s) throws Exception {
+		if (s == null) {
+			throw new AsignacionException("No existe servicio");
+		}
+		if (s.isFacturado()) {
+			throw new AsignacionException("El servicio se encuentra facturado");
+		}
+	}
 
-    if (s.getCliente() == null) {
-      throw new AsignacionException("Primero debe asignarse cliente");
-    }
+	public void preValidarLiberacion(Servicio s) throws Exception {
+		preValidarEdicionServicio(s);
 
-    preValidarCliente(s.getCliente());
+		if (s.getCliente() == null) {
+			throw new AsignacionException("Primero debe asignarse cliente");
+		}
 
-    if (s.getTecnicos().isEmpty()) {
-      throw new AsignacionException("El servicio no tiene tecnicos asignados");
-    }
+		preValidarCliente(s.getCliente());
 
-    for (Tecnico t : s.getTecnicos()) {
-      preValidarTecnico(t);
-    }
-  }
+		if (s.getTecnicos().isEmpty()) {
+			throw new AsignacionException("El servicio no tiene tecnicos asignados");
+		}
 
-  // SERVICIOS
-  private ArrayList<Servicio> getServicios() {
-    return Empresa.getInstance().getServicios();
-  }
+		for (Tecnico t : s.getTecnicos()) {
+			preValidarTecnico(t);
+		}
+	}
 
-  public ArrayList<Servicio> getServiciosPendientes() {
-    ArrayList<Servicio> serviciosPendientes = new ArrayList<Servicio>();
+	public void liberarServicioCallcenter(Servicio s) throws Exception {
+		preValidarLiberacion(s);
 
-    for (Servicio s : getServicios()) {
-      if (s.isFacturado()) {
-        continue;
-      }
-      if (s.getEstadoServicio() == EstadoServicio.CANCELADO || s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
-        continue;
-      }
-      if (s.isEnPoderTecnico()) {
-        continue;
-      }
-      serviciosPendientes.add(s);
-    }
-    return serviciosPendientes;
-  }
+		if (s.getCliente() == null) {
+			throw new ServicioException("El servicio debe estar asignado a un cliente.");
+		}
+		if (s.isEnPoderTecnico()) {
+			throw new ServicioException("El servicio se encuentra en poder de lo/s tecnico/s.");
+		}
+		if (0 >= s.getTecnicos().size()) {
+			throw new ServicioException("El servicio debe contar con al menos 1 (un) tecnico");
+		}
+		s.otorgarPoderTecnico();
+	}
+	
+	// SERVICIOS
+	public ArrayList<Servicio> getServiciosPendientes() {
+		ArrayList<Servicio> serviciosPendientes = new ArrayList<Servicio>();
 
-  public boolean verificarDisponibilidadCliente(Cliente c, Servicio s) throws Exception {
-    preValidarCliente(c);
-    return c.verificarDisponibilidad(s);
-  }
+		for (Servicio s : Empresa.getInstance().getServicios()) {
+			if (s.isFacturado()) {
+				continue;
+			}
+			if (s.getEstadoServicio() == EstadoServicio.CANCELADO || s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
+				continue;
+			}
+			if (s.isEnPoderTecnico()) {
+				continue;
+			}
+			serviciosPendientes.add(s);
+		}
+		return serviciosPendientes;
+	}
 
-  public boolean verificarDisponibilidadTecnico(Tecnico t, Servicio s)
-      throws Exception {
-    preValidarTecnico(t);
+	public boolean verificarDisponibilidadCliente(Cliente c, Servicio s) throws Exception {
+		preValidarCliente(c);
+		return c.verificarDisponibilidad(s);
+	}
 
-    return t.verificarDisponibilidad(s);
-  }
+	public boolean verificarDisponibilidadTecnico(Tecnico t, Servicio s) throws Exception {
+		preValidarTecnico(t);
 
-  public Servicio crearNuevoServicioServicio(Date fechaServicio, TipoServicio ts, Turno t, int desde,
-      int hasta) throws Exception {
-    double duracionServInicial = DateAux.calcularHoras(desde, hasta);
-    Date today = DateAux.getToday();
+		return t.verificarDisponibilidad(s);
+	}
 
-    if (fechaServicio == null || ts == null || t == null) {
-      throw new ServicioException("Verificar datos ingresados");
-    }
-    if (fechaServicio.before(today) && fechaServicio.compareTo(today) > 0) {
+	public Servicio crearServicio(Date fechaServicio, TipoServicio ts, Turno t, int desde, int hasta)
+			throws Exception {
+		double duracionServInicial = DateAux.calcularHoras(desde, hasta);
+		Date today = DateAux.getToday();
 
-      throw new ServicioException("La fecha no debe ser anterior a la actual");
-    }
-    if (0 >= fechaServicio.getDay() || fechaServicio.getDay() > 6) {
-      throw new Exception("Dia no valido");
-    }
-    if (desde >= 12 || hasta >= 12) {
-      throw new Exception("El numero de turno es incorrecto");
-    }
-    if (desde > hasta) {
-      throw new Exception("La hora de inicio no puede ser mayor a la hora de fin");
-    }
-    if (fechaServicio.getDay() == 6 && t == Turno.TARDE) {
-      throw new Exception("No se puede asignar un servicio a sabado a la tarde");
-    }
+		if (fechaServicio == null || ts == null || t == null) {
+			throw new ServicioException("Verificar datos ingresados");
+		}
+		if (fechaServicio.before(today) && fechaServicio.compareTo(today) > 0) {
 
-    if (Empresa.getInstance().verificarArticulosSuficientes(ts) == false) {
-      throw new StockException("Faltan articulos necesarios para crear nuevo servicio");
-    }
+			throw new ServicioException("La fecha no debe ser anterior a la actual");
+		}
+		if (0 >= fechaServicio.getDay() || fechaServicio.getDay() > 6) {
+			throw new Exception("Dia no valido");
+		}
+		if (desde >= 12 || hasta >= 12) {
+			throw new Exception("El numero de turno es incorrecto");
+		}
+		if (desde > hasta) {
+			throw new Exception("La hora de inicio no puede ser mayor a la hora de fin");
+		}
+		if (fechaServicio.getDay() == 6 && t == Turno.TARDE) {
+			throw new Exception("No se puede asignar un servicio a sabado a la tarde");
+		}
 
-    if (ts == TipoServicio.INSTALACION && 1 > duracionServInicial) {
-      throw new ServicioException("Una reparacion debe durar al menos 1 hora");
-    } else if (0 > duracionServInicial) {
-      throw new ServicioException("Duracion de servicio no valida");
-    }
+		if (Empresa.getInstance().verificarArticulosSuficientes(ts) == false) {
+			throw new StockException("Faltan articulos necesarios para crear nuevo servicio");
+		}
 
-    return new Servicio(fechaServicio, ts, t, desde, hasta);
-  }
+		if (ts == TipoServicio.INSTALACION && 1 > duracionServInicial) {
+			throw new ServicioException("Una reparacion debe durar al menos 1 hora");
+		} else if (0 > duracionServInicial) {
+			throw new ServicioException("Duracion de servicio no valida");
+		}
 
-  public void asignarServicio(Servicio s, Cliente c)
-      throws Exception {
-    preValidarCliente(c);
-    preValidarEdicionServicio(s);
+		return new Servicio(fechaServicio, ts, t, desde, hasta);
+	}
 
-    c.asignarServicio(s);
-  }
+	public void asignarServicio(Servicio s, Cliente c) throws Exception {
+		preValidarCliente(c);
+		preValidarEdicionServicio(s);
 
-  public void asignarServicio(Servicio s, Tecnico t) throws Exception {
-    preValidarTecnico(t);
-    preValidarEdicionServicio(s);
+		c.asignarServicio(s);
+	}
 
-    t.asignarServicio(s);
-  }
+	public void asignarServicio(Servicio s, Tecnico t) throws Exception {
+		preValidarTecnico(t);
+		preValidarEdicionServicio(s);
 
-  public void cancelarServicio(Servicio s) throws Exception {
-    preValidarEdicionServicio(s);
-    s.cancelarServicio();
-  }
+		t.asignarServicio(s);
+	}
 
-  public void liberarServicioCallcenter(Servicio s) throws Exception {
-    preValidarLiberacion(s);
+	public void cancelarServicio(Servicio s) throws Exception {
+		preValidarEdicionServicio(s);
+		s.cancelarServicio();
+	}
 
-    if (s.getCliente() == null) {
-      throw new ServicioException("El servicio debe estar asignado a un cliente.");
-    }
-    if (s.isEnPoderTecnico()) {
-      throw new ServicioException("El servicio se encuentra en poder de lo/s tecnico/s.");
-    }
-    if (0 >= s.getTecnicos().size()) {
-      throw new ServicioException("El servicio debe contar con al menos 1 (un) tecnico");
-    }
-    s.otorgarPoderTecnico();
-  }
+
 }

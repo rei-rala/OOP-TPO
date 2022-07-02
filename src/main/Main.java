@@ -7,16 +7,16 @@ import comercial.articulos.*;
 import agenda.*;
 import consola.*;
 
-import gui.Gui;
+//import gui.Gui;
+//import java.awt.EventQueue;
 
-import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+@SuppressWarnings("deprecation")
 public class Main {
   static Empresa e = Empresa.getInstance();
-  static ConsoleHelper ch = new ConsoleHelper();
   static Scanner scanner = new Scanner(System.in);
   static boolean isRunning = true;
   static Interno i;
@@ -28,35 +28,29 @@ public class Main {
     testWorkflowInicial();
 
     // GUI
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        try {
-          Gui.getInstance().initialize();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    });
+    /*
+     * EventQueue.invokeLater(new Runnable() { public void run() { try {
+     * Gui.getInstance().initialize(); } catch (Exception e) { e.printStackTrace();
+     * } } });
+     */
 
-    
-     
-     while (isRunning) {
-      pantallaPrincipal();
-      }
-     
+    pantallaPrincipal();
 
     close();
   }
 
   /**
-   * Instancia objetos para la empresa
-   * EL codigo implementado incorpora cada instancia automaticamente a la empresa
+   * Instancia objetos para la empresa EL codigo implementado incorpora cada
+   * instancia automaticamente a la empresa
    */
   public static void instanciarObjectosInicialesEmpresa() {
     System.out.println("\n\n---------------------------------------------------------");
     System.out.println("------------ INSTANCIANDO OBJETOS INICIALES -------------");
     System.out.println("---------------------------------------------------------");
     // VARIABLES ARTICULOS PRUEBA
+
+    // Si estos objetos no se instancian de esta manera, lo mas probable es que
+    // fallen las pruebas del workflow.
     new Cable(50, 9999);
     new ConectorCoaxial(30, 9999);
     new DivisorCoaxial(30, 9999);
@@ -78,8 +72,8 @@ public class Main {
   }
 
   /**
-   * Instancia objetos para la empresa
-   * EL codigo implementado incorpora cada instancia automaticamente a la empresa
+   * Instancia objetos para la empresa EL codigo implementado incorpora cada
+   * instancia automaticamente a la empresa
    */
   public static void instanciarObjectosAdicionalesEmpresa() throws Exception {
     System.out.println("\n\n---------------------------------------------------------");
@@ -165,8 +159,7 @@ public class Main {
   }
 
   /**
-   * Prueba todos los workflow en un solo metodo
-   * Incluye cada rol
+   * Prueba todos los workflow en un solo metodo Incluye cada rol
    * 
    * @throws Exception
    */
@@ -193,8 +186,8 @@ public class Main {
   }
 
   /**
-   * El administrador administra stock y valores de articulos
-   * No participa en el flujo de un Servicio.
+   * El administrador administra stock y valores de articulos No participa en el
+   * flujo de un Servicio.
    * 
    * @throws Exception Este metodo solo arroja error si la excepcion no fue
    *                   correctamente manejada
@@ -214,16 +207,13 @@ public class Main {
   /**
    * Workflow normal de un CALLCENTER
    * 
-   * 0) Se logea.
-   * 1) Crear servicios siempre y cuando los parametros sean validos.
+   * 0) Se logea. 1) Crear servicios siempre y cuando los parametros sean validos.
    * 2) Asignar servicios a un cliente (En tanto el cliente NO tenga servicios
-   * vigentes y tenga disponible los
-   * turnos del servicio).
-   * 3) Asignar servicios a un tecnico (En tanto el tecnico tenga disponible los
-   * turnos del servicio).
-   * 4) Antes de liberar un servicio, puede cancelarlo
-   * 5) Liberar servicio (Debe tener tecnico y cliente asignados), el servicio
-   * pasa a manos de los tecnicos asignados.
+   * vigentes y tenga disponible los turnos del servicio). 3) Asignar servicios a
+   * un tecnico (En tanto el tecnico tenga disponible los turnos del servicio). 4)
+   * Antes de liberar un servicio, puede cancelarlo 5) Liberar servicio (Debe
+   * tener tecnico y cliente asignados), el servicio pasa a manos de los tecnicos
+   * asignados.
    * 
    * @throws Exception Este metodo solo arroja error si la excepcion no fue
    *                   correctamente manejada dentro del procedimiento normal del
@@ -238,51 +228,52 @@ public class Main {
     // Omitiendo log in
     Callcenter testCC = new Callcenter("", "");
     // Callcenter crea servicios
-    Cliente clienteCC = testCC.getClientes(1);
+    Cliente clienteCC = new Cliente("PRUEBA WF CC");
     // tambien obtenemos un tecnico de prueba
-    Tecnico tecnicoCC = testCC.getTecnicos().get(0);
-    Date testDate = DateAux.getStartDay(new Date(2022, 06, 19));
+    Tecnico tecnicoCC = new Tecnico("Tecnico prueba wf CC", "", Seniority.SENIOR);
+    Date testDate = DateAux.getStartDay(new Date());
 
     // Creando servicio con parametros invalidos
     try {
-      testCC.crearNuevoServicioServicio(testDate, TipoServicio.INSTALACION, Turno.MANANA, 0, -1);
+      testCC.crearServicio(testDate, TipoServicio.INSTALACION, Turno.MANANA, 0, -1);
     } catch (Exception e) {
-      System.out.println(
-          "***** Control funcionando: Forzado intento crear servicio parametros no validos 1  => " + e.getMessage());
+      System.out.println("***** Control funcionando: Forzado intento crear servicio parametros no validos 1  => "
+          + e.getMessage());
     }
     try {
-      testCC.crearNuevoServicioServicio(testDate, TipoServicio.INSTALACION, Turno.TARDE, 0, 13);
+      testCC.crearServicio(testDate, TipoServicio.INSTALACION, Turno.TARDE, 0, 13);
     } catch (Exception e) {
-      System.out.println(
-          "***** Control funcionando: Forzado intento crear servicio parametros no validos 2  => " + e.getMessage());
+      System.out.println("***** Control funcionando: Forzado intento crear servicio parametros no validos 2  => "
+          + e.getMessage());
     }
 
     // Creando un servicio valido y asignandolo al cliente
-    Servicio s1 = testCC.crearNuevoServicioServicio(testDate, TipoServicio.INSTALACION, Turno.MANANA, 0, 2);
+    Servicio s1 = testCC.crearServicio(testDate, TipoServicio.INSTALACION, Turno.MANANA, 0, 2);
     // probando liberar servicio sin cliente
     try {
       testCC.liberarServicioCallcenter(s1);
     } catch (Exception e) {
-      System.out
-          .println("***** Control funcionando: Forzado intento liberar servicio falta CLIENTE  => " + e.getMessage());
+      System.out.println(
+          "***** Control funcionando: Forzado intento liberar servicio falta CLIENTE  => " + e.getMessage());
     }
 
-    // Asignando servicio a cliente
-    testCC.asignarServicio(s1, clienteCC);
+    // Asignando servicio X a cliente Y
+    Servicio sTestCC = new Servicio(new Date(2022, 8, 1), TipoServicio.INSTALACION, Turno.MANANA, 0, 5);
+    testCC.asignarServicio(sTestCC, new Cliente("Cliente prueba WORKFLOW CALLCENTER"));
     System.out.println("ASIGNADO EXITOSAMENTE CLIENTE 'clienteCC'");
 
     // probando liberar servicio sin tecnicos
     try {
-      testCC.liberarServicioCallcenter(s1);
+      testCC.liberarServicioCallcenter(sTestCC);
     } catch (Exception e) {
-      System.out
-          .println("***** Control funcionando: Forzado intento liberar servicio falta TECNICO  => " + e.getMessage());
+      System.out.println(
+          "***** Control funcionando: Forzado intento liberar servicio falta TECNICO  => " + e.getMessage());
     }
 
     // Creando servicio con sobreturnos con Servicio s1
-    Servicio sobreturnado = testCC.crearNuevoServicioServicio(testDate, TipoServicio.INSTALACION, Turno.MANANA, 1, 3);
+    Servicio sobreturnado = testCC.crearServicio(new Date(2022, 8, 1), TipoServicio.INSTALACION, Turno.MANANA, 0, 5);
     // Creando otro servicio sin sobreturno con Servicio s1
-    Servicio s2 = testCC.crearNuevoServicioServicio(testDate, TipoServicio.INSTALACION, Turno.TARDE, 0, 2);
+    Servicio s2 = testCC.crearServicio(testDate, TipoServicio.INSTALACION, Turno.TARDE, 0, 2);
 
     // probando verificacion sobreturno
     try {
@@ -295,39 +286,39 @@ public class Main {
     try {
       testCC.asignarServicio(sobreturnado, clienteCC);
     } catch (Exception e) {
-      System.out
-          .println("***** Control funcionando: Forzado intento asignar CLIENTE con sobreturno  => " + e.getMessage());
+      System.out.println(
+          "***** Control funcionando: Forzado intento asignar CLIENTE con sobreturno  => " + e.getMessage());
     }
 
     // asignando a cliente que ya cuenta con un turno
     try {
       testCC.asignarServicio(s2, clienteCC);
     } catch (Exception e) {
-      System.out.println(
-          "***** Control funcionando: Forzado intento asignar CLIENTE con turno vigente  => " + e.getMessage());
+      System.out.println("***** Control funcionando: Forzado intento asignar CLIENTE con turno vigente  => "
+          + e.getMessage());
     }
 
     // Asignando servicio a tecnico
-    testCC.asignarServicio(s1, tecnicoCC);
+    testCC.asignarServicio(sTestCC, tecnicoCC);
     System.out.println("ASIGNADO EXITOSAMENTE TECNICO 'tecnicoCC'");
 
     // Probando asignar el mismo tecnico al servicio
     try {
       testCC.asignarServicio(s1, tecnicoCC);
     } catch (Exception e) {
-      System.out.println(
-          "***** Control funcionando: Forzado intento asignar TECNICO al mismo servicio  => " + e.getMessage());
+      System.out.println("***** Control funcionando: Forzado intento asignar TECNICO al mismo servicio  => "
+          + e.getMessage());
     }
     // Probando asignar sobreturno tecnico
     try {
       testCC.asignarServicio(sobreturnado, tecnicoCC);
     } catch (Exception e) {
-      System.out
-          .println("***** Control funcionando: Forzado intento asignar TECNICO sobreturnado  => " + e.getMessage());
+      System.out.println(
+          "***** Control funcionando: Forzado intento asignar TECNICO sobreturnado  => " + e.getMessage());
     }
 
     // Liberando servicio
-    testCC.liberarServicioCallcenter(s1);
+    testCC.liberarServicioCallcenter(sTestCC);
     System.out.println("LIBERADO EXITOSAMENTE SERVICIO 's1'");
 
     // Probando cancelar servicio en curso
@@ -347,12 +338,9 @@ public class Main {
   /**
    * Workflow normal de un TECNICO
    * 
-   * 0) Se logea.
-   * 1) Visualiza los servicios asignados liberados desde callcenter
-   * 2) Inicializa un servicio.
-   * 3) Sobre un servicio EN_CURSO puede añadir articulos, añadir otros articulos,
-   * declarar si almorzo.
-   * 4) Finaliza servicio
+   * 0) Se logea. 1) Visualiza los servicios asignados liberados desde callcenter
+   * 2) Inicializa un servicio. 3) Sobre un servicio EN_CURSO puede añadir
+   * articulos, añadir otros articulos, declarar si almorzo. 4) Finaliza servicio
    * 5) Tras marcar finalizado, no podra editar el servicio.
    * 
    * @throws Exception Este metodo solo arroja error si la excepcion no fue
@@ -370,7 +358,7 @@ public class Main {
 
     // Preasignando un servicio
     Callcenter auxCC = new Callcenter("", "");
-    Servicio auxS = auxCC.crearNuevoServicioServicio(new Date(), TipoServicio.INSTALACION, Turno.MANANA, 0, 2);
+    Servicio auxS = auxCC.crearServicio(new Date(2022, 8, 01), TipoServicio.INSTALACION, Turno.MANANA, 0, 2);
     auxCC.asignarServicio(auxS, new Cliente("Cliente workflow test"));
     auxCC.asignarServicio(auxS, testTec);
     auxCC.liberarServicioCallcenter(auxS);
@@ -390,8 +378,8 @@ public class Main {
     try {
       testTec.finalizarServicio(servTrabajado);
     } catch (Exception e) {
-      System.out
-          .println("***** Control funcionando: Forzado intento finalizar servicio sin iniciarlo  => " + e.getMessage());
+      System.out.println("***** Control funcionando: Forzado intento finalizar servicio sin iniciarlo  => "
+          + e.getMessage());
     }
 
     // intenta añadir articulo sin estar iniciado
@@ -399,8 +387,9 @@ public class Main {
       Articulo ejemploArticulo = testTec.getArticulos(1);
       testTec.anadirArticuloServicio(servTrabajado, 50, ejemploArticulo);
     } catch (Exception e) {
-      System.out.println(
-          "***** Control funcionando: Forzado intento añadir articulo a servicio sin iniciarlo  => " + e.getMessage());
+      System.out
+          .println("***** Control funcionando: Forzado intento añadir articulo a servicio sin iniciarlo  => "
+              + e.getMessage());
     }
     // intenta modificar almuerzo de servicio sin estar iniciado
     try {
@@ -420,8 +409,8 @@ public class Main {
       Articulo ejemploArticulo = testTec.getArticulos(0);
       testTec.anadirArticuloServicio(servTrabajado, 50, ejemploArticulo);
     } catch (Exception e) {
-      System.out.println(
-          "***** Control funcionando: Forzado intento añadir articulo INVALIDO a servicio  => " + e.getMessage());
+      System.out.println("***** Control funcionando: Forzado intento añadir articulo INVALIDO a servicio  => "
+          + e.getMessage());
     }
 
     // intenta añadir articulo con stock insuficiente
@@ -446,9 +435,8 @@ public class Main {
     try {
       testTec.toggleAlmuerzoServicio(servTrabajado);
     } catch (Exception e) {
-      System.out.println(
-          "***** Control funcionando: Forzado intento editar almuerzo a servicio FINALIZADO => "
-              + e.getMessage());
+      System.out.println("***** Control funcionando: Forzado intento editar almuerzo a servicio FINALIZADO => "
+          + e.getMessage());
     }
 
     // El tecnico tenia un solo servicio
@@ -467,11 +455,10 @@ public class Main {
   /**
    * Workflow normal de un ADMINISTRATIVO
    * 
-   * 0) Se logea
-   * 1) Visualiza los servicios finalizados por los tecnicos
-   * 2) Puede optar por anadir articulos extras (campo libre)
-   * 3) Puede facturar un servicio.
-   * 4) Tras facturar un servicio, puede visualizar las facturas y sus datos
+   * 0) Se logea 1) Visualiza los servicios finalizados por los tecnicos 2) Puede
+   * optar por anadir articulos extras (campo libre) 3) Puede facturar un
+   * servicio. 4) Tras facturar un servicio, puede visualizar las facturas y sus
+   * datos
    * 
    * @throws Exception Este metodo solo arroja error si la excepcion no fue
    *                   correctamente manejada dentro del procedimiento normal del
@@ -494,8 +481,7 @@ public class Main {
     for (int i = 0; i < serviciosAFacturar.size(); i++) {
       Servicio s = serviciosAFacturar.get(i);
       System.out.println("\t" + (i + 1) + ") Servicio " + s.getEstadoServicio() + " " + s.getNro() + ", Fecha: "
-          + s.getFecha() + ", estado: "
-          + s.getEstadoServicio());
+          + s.getFecha() + ", estado: " + s.getEstadoServicio());
     }
     System.out.println("-------------- Fin servicios finalizados ---------------");
 
@@ -511,8 +497,9 @@ public class Main {
     try {
       admTest.crearArticuloExtra("Debo fallar por tener costo '-1'", -1);
     } catch (Exception e) {
-      System.out.println("***** Control funcionando: Forzado intento crear Articulo Extra - parametros no validos => "
-          + e.getMessage());
+      System.out.println(
+          "***** Control funcionando: Forzado intento crear Articulo Extra - parametros no validos => "
+              + e.getMessage());
     }
 
     // Intenta anadir un articulo y coloca cantidad no valida
@@ -521,8 +508,8 @@ public class Main {
           .crearArticuloExtra("Fallara en un paso siguiente por informar cantidad negativa", 1);
       admTest.agregarArticuloExtraServicio(aeErrorTest, -1, s);
     } catch (Exception e) {
-      System.out.println(
-          "***** Control funcionando: Forzado intento anadir A Extra con cantidad negativa => " + e.getMessage());
+      System.out.println("***** Control funcionando: Forzado intento anadir A Extra con cantidad negativa => "
+          + e.getMessage());
     }
 
     // Anadiendo exitosamente Art extra al servicio
@@ -537,13 +524,14 @@ public class Main {
     try {
       admTest.agregarArticuloExtraServicio(aeTest, 1, s);
     } catch (Exception e) {
-      System.out.println(
-          "***** Control funcionando: Forzado intento anadir A Extra a un servicio ya facturado => " + e.getMessage());
+      System.out
+          .println("***** Control funcionando: Forzado intento anadir A Extra a un servicio ya facturado => "
+              + e.getMessage());
     }
 
     // Visualiza el margen obtenido de la factura
-    System.out
-        .println("admTest visualiza margen de factura nro" + f.getNro() + ": " + admTest.getMargenFacturaString(f));
+    System.out.println(
+        "admTest visualiza margen de factura nro" + f.getNro() + ": " + admTest.getMargenFacturaString(f));
 
     System.out.println("\n----- EXITO WORKFLOW ADMINISTRATIVO -----");
   }
@@ -554,7 +542,18 @@ public class Main {
 
     do {
       System.out.print("Ingrese numero de legajo (0 para salir) => ");
-      int legajo = ch.scIntParse(scanner, 0);
+      int legajo = -1;
+
+      String input = scanner.nextLine();
+
+      while (0 > legajo) {
+
+        try {
+          legajo = Integer.parseInt(input);
+        } catch (Exception e) {
+          System.out.println("Debe ingresar un entero, ingreso: '" + input + "'");
+        }
+      }
 
       if (legajo == 0) {
         close();
@@ -573,6 +572,12 @@ public class Main {
   public static void pantallaPrincipal() {
     System.out.println("----------------------------------------------");
     System.out.println("Bienvenido al sistema de gestión de la empresa");
+    System.out.println("----------------------------------------------");
+    System.out.println("USUARIOS DE PRUEBA: ");
+    System.out.println("Legajo => 4 : Callcenter | pass ''(vacio, pulse directamente enter) ");
+    System.out.println("Legajo => 3 : Tecnico | pass ''(vacio, pulse directamente enter) ");
+    System.out.println("Legajo => 2 : Administrativo | pass ''(vacio, pulse directamente enter) ");
+    System.out.println("Legajo => 1 : ADMIN | pass ''(vacio, pulse directamente enter) ");
     System.out.println("----------------------------------------------");
 
     Interno i = logInConsola();

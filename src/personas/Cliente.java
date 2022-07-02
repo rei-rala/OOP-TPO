@@ -1,6 +1,5 @@
 package personas;
 
-import java.util.ArrayList;
 
 import agenda.*;
 import comercial.Servicio;
@@ -80,13 +79,6 @@ public class Cliente extends Persona {
     s.setCliente(this);
   }
 
-  public ArrayList<FraccionTurno> verTurnosDisponibles(Turno t) {
-    return agenda.obtenerTodosTurnosDisponible(t);
-  }
-
-  public ArrayList<FraccionTurno> verTurnosDisponibles() {
-    return agenda.obtenerTodosTurnosDisponible();
-  }
 
   public String toStringShort() {
     return "Cliente [nro=" + nro + ", nombre=" + nombre + ", dni=" + dni + ", direccion="

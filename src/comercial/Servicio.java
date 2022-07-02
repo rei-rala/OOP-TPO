@@ -18,20 +18,21 @@ public class Servicio {
   private final Date fecha;
   private final Date fechaCreacion;
 
-  private double tiempoTrabajado;
   private TipoServicio tipoServicio;
   private EstadoServicio estadoServicio;
   private ArrayList<Tecnico> tecnicosAsignados = new ArrayList<Tecnico>();
   private ArrayList<Costo> articulosUtilizados = new ArrayList<Costo>();
   private ArrayList<Costo> articulosExtraUtilizados = new ArrayList<Costo>();
   private final double costoViaje = Empresa.getInstance().getCostoViaje();
-  private boolean almuerzo;
-  private boolean enPoderTecnico;
-  private boolean facturado;
-
+  
   private Turno turno;
   private int turnoInicio = -1;
   private int turnoFin = -1;
+  
+  private double tiempoTrabajado;
+  private boolean almuerzo;
+  private boolean enPoderTecnico;
+  private boolean facturado;
 
   public Servicio(Date fecha, TipoServicio tipoServicio, Turno turno, int turnoInicio, int turnoFin) throws Exception {
     this.nro = ++contadorServicios;
@@ -271,6 +272,10 @@ public class Servicio {
     double stHorasTecnico = obtenerValorHoraServicio() * tiempoTrabajado;
 
     return stHorasTecnico + costoArticulos + costoArticulosExtra + costoViaje;
+  }
+
+  public void forceCancelar() {
+    estadoServicio = EstadoServicio.CANCELADO;
   }
 
   public void cancelarServicio() throws Exception {

@@ -3,10 +3,6 @@ package comercial.articulos;
 import comercial.Recurso;
 
 public class Costo {
-  @Override
-  public String toString() {
-    return "[articulo=" + articulo + ", cantidad=" + cantidad + "]";
-  }
 
   private int cantidad;
   private Recurso articulo;
@@ -34,5 +30,9 @@ public class Costo {
 
   public double obtenerTotalCosto() {
     return articulo.getCosto() * cantidad;
+  }
+  @Override
+  public String toString() {
+    return "[articulo=" + articulo + ", cantidad=" + cantidad + "]";
   }
 }
