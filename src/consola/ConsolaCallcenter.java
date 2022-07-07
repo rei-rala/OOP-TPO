@@ -200,8 +200,7 @@ public class ConsolaCallcenter extends Consola {
 
     Servicio nuevoServicio = null;
     try {
-      nuevoServicio = callcenter.crearServicio(dia.getFecha(), ts, ftDesde.getTurno(), ftDesde.getNro(),
-          ftHasta.getNro());
+      nuevoServicio = callcenter.crearServicio(dia.getFecha(), ts, ftDesde, ftHasta);
     } catch (Exception e) {
       System.out.println("Error al crear servicio: " + e.getMessage());
       System.out.println("Intente nuevamente");

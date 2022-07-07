@@ -19,6 +19,7 @@ import excepciones.GuiException;
 
 import java.awt.GridLayout;
 
+@SuppressWarnings("serial")
 public class UiAdmin extends UiUsuariosBase {
 	private final Admin ADMIN;
 
@@ -31,9 +32,6 @@ public class UiAdmin extends UiUsuariosBase {
 	private JButton btnStockCostoArticulos;
 	private JButton btnValorHoraTecnicos;
 
-	/**
-	 * Create the panel.
-	 */
 	public UiAdmin(Admin admin) {
 		super("Menu admin");
 		this.ADMIN = admin;
@@ -59,14 +57,20 @@ public class UiAdmin extends UiUsuariosBase {
 		btnCostoCombustible = new JButton("Editar costo combustible");
 		btnCostoCombustible.addActionListener(this);
 		subPLayout.add(btnCostoCombustible);
+		// Estetico
+		subPLayout.add(new JLabel(""));
 
 		btnCostoViaje = new JButton("Editar costo viaje");
 		btnCostoViaje.addActionListener(this);
 		subPLayout.add(btnCostoViaje);
+		// Estetico
+		subPLayout.add(new JLabel(""));
 
 		btnStockCostoArticulos = new JButton("Editar stock y costo Articulos");
 		btnStockCostoArticulos.addActionListener(this);
 		subPLayout.add(btnStockCostoArticulos);
+		// Estetico
+		subPLayout.add(new JLabel(""));
 
 		btnValorHoraTecnicos = new JButton("Editar valor hora tecnicos");
 		btnValorHoraTecnicos.addActionListener(this);
@@ -123,7 +127,7 @@ public class UiAdmin extends UiUsuariosBase {
 		String opciones = "Seleccione un articulo por su SKU:";
 
 		for (Articulo a : arts) {
-			opciones += "\n\tSKU: " + a.getSKU() + " | " + a.getDescripcion() + " [COSTO: " + a.getCosto() + ", STOCK"
+			opciones += "\n\tSKU: " + a.getSKU() + " | " + a.getDescripcion() + " [COSTO: " + a.getCosto() + ", STOCK: "
 					+ a.getStock() + "]";
 		}
 

@@ -33,6 +33,10 @@ public class Callcenter extends Interno {
 		return Empresa.getInstance().getArticulos();
 	}
 
+  public Articulo getArticulos(int sku) {
+		return Empresa.getInstance().getArticulos(sku);
+	}
+
 	public void setStockArticulo(Articulo a, int stock) throws Exception {
 		a.setStock(stock);
 	}
@@ -60,6 +64,15 @@ public class Callcenter extends Interno {
 
 	public ArrayList<Tecnico> getTecnicos() {
 		return Empresa.getInstance().getTecnicos();
+	}
+
+  public Tecnico getTecnicos(int legajo, Servicio s) throws Exception {
+		for (Tecnico t: getTecnicosDisponibles(s)) {
+      if (t.getLegajo() == legajo) {
+        return t;
+      }
+    }
+    throw new AsignacionException("El tecnico no se encuentra disponible para el servicio seleccionado");
 	}
 
 	// TECNICOS
@@ -131,8 +144,28 @@ public class Callcenter extends Interno {
 		}
 		s.otorgarPoderTecnico();
 	}
-	
+
 	// SERVICIOS
+	public Servicio getServicio(int nro) throws ServicioException {
+		Servicio encontrado = null;
+		for (Servicio s : Empresa.getInstance().getServicios()) {
+			if (s.getNro() != nro) {
+				continue;
+			}
+			if (s.isFacturado()) {
+				throw new ServicioException("El servicio ya fue facturado");
+			}
+			if (s.getEstadoServicio() == EstadoServicio.CANCELADO || s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
+				throw new ServicioException("El servicio se encuentra finalizado o cancelado");
+			}
+			if (s.isEnPoderTecnico()) {
+				throw new ServicioException("El servicio esta en poder de los tecnicos asignados");
+			}
+			encontrado = s;
+		}
+		return encontrado;
+	}
+
 	public ArrayList<Servicio> getServiciosPendientes() {
 		ArrayList<Servicio> serviciosPendientes = new ArrayList<Servicio>();
 
@@ -162,16 +195,19 @@ public class Callcenter extends Interno {
 		return t.verificarDisponibilidad(s);
 	}
 
-	public Servicio crearServicio(Date fechaServicio, TipoServicio ts, Turno t, int desde, int hasta)
+	public Servicio crearServicio(Date fechaServicio, TipoServicio ts, FraccionTurno ftDesde, FraccionTurno ftHasta)
 			throws Exception {
+		Turno tDesde = ftDesde.getTurno();
+		Turno tHasta = ftHasta.getTurno();
+		int desde = ftDesde.getNro();
+		int hasta = ftHasta.getNro();
 		double duracionServInicial = DateAux.calcularHoras(desde, hasta);
 		Date today = DateAux.getToday();
 
-		if (fechaServicio == null || ts == null || t == null) {
+		if (fechaServicio == null || ts == null || ftDesde == null || ftHasta == null) {
 			throw new ServicioException("Verificar datos ingresados");
 		}
 		if (fechaServicio.before(today) && fechaServicio.compareTo(today) > 0) {
-
 			throw new ServicioException("La fecha no debe ser anterior a la actual");
 		}
 		if (0 >= fechaServicio.getDay() || fechaServicio.getDay() > 6) {
@@ -180,10 +216,12 @@ public class Callcenter extends Interno {
 		if (desde >= 12 || hasta >= 12) {
 			throw new Exception("El numero de turno es incorrecto");
 		}
-		if (desde > hasta) {
-			throw new Exception("La hora de inicio no puede ser mayor a la hora de fin");
+
+		if (tDesde != tHasta) {
+			throw new ServicioException("El inicio y fin deben ser en el mismo turno");
 		}
-		if (fechaServicio.getDay() == 6 && t == Turno.TARDE) {
+
+		if (fechaServicio.getDay() == 6 && (tDesde == Turno.TARDE || tHasta == Turno.TARDE)) {
 			throw new Exception("No se puede asignar un servicio a sabado a la tarde");
 		}
 
@@ -197,7 +235,7 @@ public class Callcenter extends Interno {
 			throw new ServicioException("Duracion de servicio no valida");
 		}
 
-		return new Servicio(fechaServicio, ts, t, desde, hasta);
+		return new Servicio(fechaServicio, ts, tDesde, desde, hasta);
 	}
 
 	public void asignarServicio(Servicio s, Cliente c) throws Exception {
@@ -218,6 +256,5 @@ public class Callcenter extends Interno {
 		preValidarEdicionServicio(s);
 		s.cancelarServicio();
 	}
-
 
 }

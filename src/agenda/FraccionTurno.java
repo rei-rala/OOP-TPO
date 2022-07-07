@@ -8,71 +8,75 @@ public class FraccionTurno {
 	private final Dia dia;
 	private final Turno turno;
 	private final int nro;
-  private Servicio servicioAsignado;
-  private boolean estaOcupado;
-  private String horario;
+	private Servicio servicioAsignado;
+	private boolean estaOcupado;
+	private String horario;
 
-  public FraccionTurno(Dia dia, Turno turno, int nro) {
-    this.dia = dia;
-    this.turno = turno;
-    this.nro = nro;
-    this.horario = DateAux.getHorarioUnico(turno, nro);
-    this.estaOcupado = false;
-    this.servicioAsignado = null;
-  }
+	public FraccionTurno(Dia dia, Turno turno, int nro) {
+		this.dia = dia;
+		this.turno = turno;
+		this.nro = nro;
+		this.horario = DateAux.getHorarioUnico(turno, nro);
+		this.estaOcupado = false;
+		this.servicioAsignado = null;
+	}
 
-  public String getHorario() {
-    return horario;
-  }
+	public String getHorario() {
+		return horario;
+	}
 
-  public void asignarServicio(Servicio s) throws AsignacionException {
-    if (getEstaOcupado()) {
-      throw new AsignacionException("La fraccion del turno ya cuenta con asignacion");
-    }
-    servicioAsignado = s;
-    marcarOcupado();
-  }
+	public String getHorarioSiguiente() {
+		return DateAux.getHorarioUnico(turno, nro + 1);
+	}
 
-  public boolean getEstaOcupado() {
-    if (servicioAsignado == null) {
-      estaOcupado = false;
-    } else {
-      String programado = EstadoServicio.PROGRAMADO.toString();
-      String asignado = EstadoServicio.EN_CURSO.toString();
-      String es = servicioAsignado.getEstadoServicio().toString();
-      boolean esProgramado = es.contains(programado);
-      boolean esAsignado = es.contains(asignado);
+	public void asignarServicio(Servicio s) throws AsignacionException {
+		if (getEstaOcupado()) {
+			throw new AsignacionException("La fraccion del turno ya cuenta con asignacion");
+		}
+		servicioAsignado = s;
+		marcarOcupado();
+	}
 
-      estaOcupado = (esProgramado || esAsignado);
-    }
+	public boolean getEstaOcupado() {
+		if (servicioAsignado == null) {
+			estaOcupado = false;
+		} else {
+			String programado = EstadoServicio.PROGRAMADO.toString();
+			String asignado = EstadoServicio.EN_CURSO.toString();
+			String es = servicioAsignado.getEstadoServicio().toString();
+			boolean esProgramado = es.contains(programado);
+			boolean esAsignado = es.contains(asignado);
 
-    return estaOcupado;
-  }
+			estaOcupado = (esProgramado || esAsignado);
+		}
 
-  public Servicio getServicioAsignado() {
-    return servicioAsignado;
-  }
+		return estaOcupado;
+	}
 
-  public void marcarOcupado() {
-    estaOcupado = true;
-  }
+	public Servicio getServicioAsignado() {
+		return servicioAsignado;
+	}
 
-  public Dia getDia() {
-    return dia;
-  }
+	public void marcarOcupado() {
+		estaOcupado = true;
+	}
 
-  public int getNro() {
-    return nro;
-  }
+	public Dia getDia() {
+		return dia;
+	}
 
-  public Turno getTurno() {
-    return turno;
-  }
+	public int getNro() {
+		return nro;
+	}
 
-  @Override
-  public String toString() {
-    return "FraccionTurno [servicioAsignado=" + servicioAsignado + ", estaOcupado=" + estaOcupado + ", diaSemana="
-        + dia.getDiaSemana() + ", turno=" + turno + ", horario=" + horario + ", nro=" + nro + "]";
-  }
+	public Turno getTurno() {
+		return turno;
+	}
+
+	@Override
+	public String toString() {
+		return "FraccionTurno [servicioAsignado=" + servicioAsignado + ", estaOcupado=" + estaOcupado + ", diaSemana="
+				+ dia.getDiaSemana() + ", turno=" + turno + ", horario=" + horario + ", nro=" + nro + "]";
+	}
 
 }

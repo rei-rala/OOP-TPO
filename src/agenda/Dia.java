@@ -31,6 +31,7 @@ public class Dia {
       FraccionTurno nvoManana = new FraccionTurno(this, Turno.MANANA, i);
       this.turnos.add(nvoManana);
     }
+    
     if (fecha.getDay() == 6) {
       return;
     }
@@ -70,6 +71,10 @@ public class Dia {
 	        return "error";
 	    }
 	  }
+  
+  public String getFechaString() {
+	  return DateAux.getDateString(fecha);
+  }
 
   public FraccionTurno obtenerFraccionTurno(int nroTurno, Turno t) {
     FraccionTurno encontrado = null;

@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 
+@SuppressWarnings("serial")
 public class UiAdministrativo extends UiUsuariosBase {
 	private final Administrativo ADMINISTRATIVO;
 	private JButton btnNewButton;

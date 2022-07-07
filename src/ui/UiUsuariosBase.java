@@ -12,7 +12,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
 @SuppressWarnings("serial")
-public class UiUsuariosBase extends JPanel implements ActionListener, UiMethods {
+public abstract class UiUsuariosBase extends JPanel implements ActionListener, UiMethods {
+
 	private JLabel lblTitulo;
 	private JButton btnLogout;
 
@@ -25,7 +26,7 @@ public class UiUsuariosBase extends JPanel implements ActionListener, UiMethods 
 		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 		add(lblTitulo, BorderLayout.NORTH);
 
-		btnLogout = new JButton("Logout");
+		btnLogout = new JButton("LOGOUT");
 		btnLogout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -43,7 +44,6 @@ public class UiUsuariosBase extends JPanel implements ActionListener, UiMethods 
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-	}
+	abstract public void actionPerformed(ActionEvent e);
 
 }

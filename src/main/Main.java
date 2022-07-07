@@ -26,16 +26,22 @@ public class Main {
 		instanciarObjectosAdicionalesEmpresa();
 		testWorkflowInicial();
 
-		// GUI
-		/*
-		 * EventQueue.invokeLater(new Runnable() { public void run() { try {
-		 * Gui.getInstance().initialize(); } catch (Exception e) { e.printStackTrace();
-		 * } } });
-		 */
+		String ejecucion = "G";
 
-		ui.run();
+		while (("GUI".contains(ejecucion) || "CONSOLA".contains(ejecucion)) == false) {
+			System.out.print("Iniciando programa, ingrese (G)ui o (C)onsola:\n\t=> ");
+			ejecucion = scanner.nextLine();
+			ejecucion = ejecucion.toUpperCase();
+		}
 
-		consolaInicio();
+		if ("GUI".contains(ejecucion)) {
+			System.out.println("Iniciando GUI");
+			// New GUI
+			ui.run();
+		} else {
+			System.out.println("Iniciando Consola");
+			consolaInicio();
+		}
 
 		close();
 	}
@@ -234,22 +240,27 @@ public class Main {
 		Tecnico tecnicoCC = new Tecnico("Tecnico prueba wf CC", "", Seniority.SENIOR);
 		Date testDate = DateAux.getStartDay(new Date());
 
+		Agenda agC = clienteCC.getAgenda();
+		FraccionTurno cFtDesde = agC.getDias().get(0).obtenerFraccionTurno(0, Turno.MANANA);
+		FraccionTurno cFtDesdeNoV = agC.getDias().get(0).obtenerFraccionTurno(-1, Turno.MANANA);
+		FraccionTurno cFtHasta = agC.getDias().get(0).obtenerFraccionTurno(5, Turno.MANANA);
+		FraccionTurno cFtHastaNoV = agC.getDias().get(0).obtenerFraccionTurno(5, Turno.TARDE);
 		// Creando servicio con parametros invalidos
 		try {
-			testCC.crearServicio(testDate, TipoServicio.INSTALACION, Turno.MANANA, 0, -1);
+			testCC.crearServicio(testDate, TipoServicio.INSTALACION, cFtDesde, cFtDesdeNoV);
 		} catch (Exception e) {
 			System.out.println("***** Control funcionando: Forzado intento crear servicio parametros no validos 1  => "
 					+ e.getMessage());
 		}
 		try {
-			testCC.crearServicio(testDate, TipoServicio.INSTALACION, Turno.TARDE, 0, 13);
+			testCC.crearServicio(testDate, TipoServicio.INSTALACION, cFtDesde, cFtHastaNoV);
 		} catch (Exception e) {
 			System.out.println("***** Control funcionando: Forzado intento crear servicio parametros no validos 2  => "
 					+ e.getMessage());
 		}
 
 		// Creando un servicio valido y asignandolo al cliente
-		Servicio s1 = testCC.crearServicio(testDate, TipoServicio.INSTALACION, Turno.MANANA, 0, 2);
+		Servicio s1 = testCC.crearServicio(testDate, TipoServicio.INSTALACION, cFtDesde, cFtHasta);
 		// probando liberar servicio sin cliente
 		try {
 			testCC.liberarServicioCallcenter(s1);
@@ -271,35 +282,6 @@ public class Main {
 					"***** Control funcionando: Forzado intento liberar servicio falta TECNICO  => " + e.getMessage());
 		}
 
-		// Creando servicio con sobreturnos con Servicio s1
-		Servicio sobreturnado = testCC.crearServicio(new Date(2022, 8, 1), TipoServicio.INSTALACION, Turno.MANANA, 0,
-				5);
-		// Creando otro servicio sin sobreturno con Servicio s1
-		Servicio s2 = testCC.crearServicio(testDate, TipoServicio.INSTALACION, Turno.TARDE, 0, 2);
-
-		// probando verificacion sobreturno
-		try {
-			clienteCC.verificarDisponibilidad(sobreturnado);
-		} catch (Exception e) {
-			System.out.println("***** Control funcionando: Verifica CLIENTE con turno ocupado " + e.getMessage());
-		}
-
-		// asignando pese a sobreturno
-		try {
-			testCC.asignarServicio(sobreturnado, clienteCC);
-		} catch (Exception e) {
-			System.out.println(
-					"***** Control funcionando: Forzado intento asignar CLIENTE con sobreturno  => " + e.getMessage());
-		}
-
-		// asignando a cliente que ya cuenta con un turno
-		try {
-			testCC.asignarServicio(s2, clienteCC);
-		} catch (Exception e) {
-			System.out.println("***** Control funcionando: Forzado intento asignar CLIENTE con turno vigente  => "
-					+ e.getMessage());
-		}
-
 		// Asignando servicio a tecnico
 		testCC.asignarServicio(sTestCC, tecnicoCC);
 		System.out.println("ASIGNADO EXITOSAMENTE TECNICO 'tecnicoCC'");
@@ -310,13 +292,6 @@ public class Main {
 		} catch (Exception e) {
 			System.out.println("***** Control funcionando: Forzado intento asignar TECNICO al mismo servicio  => "
 					+ e.getMessage());
-		}
-		// Probando asignar sobreturno tecnico
-		try {
-			testCC.asignarServicio(sobreturnado, tecnicoCC);
-		} catch (Exception e) {
-			System.out.println(
-					"***** Control funcionando: Forzado intento asignar TECNICO sobreturnado  => " + e.getMessage());
 		}
 
 		// Liberando servicio
@@ -329,10 +304,6 @@ public class Main {
 		} catch (Exception e) {
 			System.out.println("***** Control funcionando: Forzado intento cancelar servicio  => " + e.getMessage());
 		}
-
-		// Cancelando servicio
-		testCC.cancelarServicio(sobreturnado);
-		System.out.println("CANCELADO EXITOSAMENTE SERVICIO 'sobreturnado'");
 
 		System.out.println("\n------- EXITO WORKFLOW CALLCENTER -------");
 	}
@@ -357,10 +328,12 @@ public class Main {
 
 		// centrado en el rol tecnico
 		Tecnico testTec = new Tecnico("Workflow test Tecnico", "", Seniority.JUNIOR);
+		FraccionTurno tFtDesde = testTec.getAgenda().getDias().get(1).obtenerFraccionTurno(0, Turno.MANANA);
+		FraccionTurno tFtHasta = testTec.getAgenda().getDias().get(1).obtenerFraccionTurno(3, Turno.MANANA);
 
 		// Preasignando un servicio
 		Callcenter auxCC = new Callcenter("", "");
-		Servicio auxS = auxCC.crearServicio(new Date(2022, 8, 01), TipoServicio.INSTALACION, Turno.MANANA, 0, 2);
+		Servicio auxS = auxCC.crearServicio(new Date(2022, 8, 01), TipoServicio.INSTALACION, tFtDesde, tFtHasta);
 		auxCC.asignarServicio(auxS, new Cliente("Cliente workflow test"));
 		auxCC.asignarServicio(auxS, testTec);
 		auxCC.liberarServicioCallcenter(auxS);
@@ -608,8 +581,10 @@ public class Main {
 	}
 
 	public static void close() {
+		System.out.print("Se cerrara el programa.\nIngrese cualquier caracter. =>");
+		scanner.nextLine();
+		System.out.println("Saliendo del programa...");
 		scanner.close();
-		System.out.println("Saliendo del sistema...");
 		System.exit(0);
 	}
 }

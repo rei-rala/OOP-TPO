@@ -16,6 +16,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 
+@SuppressWarnings("serial")
 public class UiTecnico extends UiUsuariosBase {
 	private final Tecnico TECNICO;
 	private JPanel panel;
@@ -23,9 +24,7 @@ public class UiTecnico extends UiUsuariosBase {
 	private JPanel subSubPanel;
 	private JButton btnSeleccionServicio;
 
-	/**
-	 * Create the panel.
-	 */
+
 	public UiTecnico(Tecnico tecnico) {
 		super("Menu Administrativo");
 		this.TECNICO = tecnico;
