@@ -15,7 +15,6 @@ import comercial.articulos.*;
 import comercial.Servicio;
 import comercial.TipoServicio;
 import excepciones.*;
-import gui.GuiUsuarioBase;
 import main.DateAux;
 import personas.*;
 

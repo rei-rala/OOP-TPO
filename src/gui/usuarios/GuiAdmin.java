@@ -15,7 +15,6 @@ import java.awt.BorderLayout;
 
 import comercial.articulos.Articulo;
 import excepciones.GuiException;
-import gui.GuiUsuarioBase;
 
 import java.awt.GridLayout;
 

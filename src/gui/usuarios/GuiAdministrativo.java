@@ -7,8 +7,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 
-import gui.GuiUsuarioBase;
-
 @SuppressWarnings("serial")
 public class GuiAdministrativo extends GuiUsuarioBase {
 	private final Administrativo ADMINISTRATIVO;

@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -42,10 +43,21 @@ public class GuiLogin extends JPanel implements ActionListener, GuiMethods {
 		panel.setLayout(new GridLayout(0, 7, 0, 0));
 
 		// ESTETICO
-		for (int i = 0; i < 16; i++) {
+		for (int i = 0; i < 8; i++) {
 			panel.add(new JLabel(""));
 		}
-
+		
+		panel.add(new JLabel("[Perfil: legajo]"));
+		panel.add(new JLabel("Admin: 1"));
+		panel.add(new JLabel("Administrativo: 2"));
+		panel.add(new JLabel("Tecnico: 3"));
+		panel.add(new JLabel("Callcenter: 4"));
+		
+		// ESTETICO
+		for (int i = 0; i < 3; i++) {
+			panel.add(new JLabel(""));
+		}
+		
 		lblNewLabel_1 = new JLabel("Numero legajo");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
@@ -91,6 +103,13 @@ public class GuiLogin extends JPanel implements ActionListener, GuiMethods {
 		// ESTETICO
 		for (int i = 0; i < 16; i++) {
 			panel.add(new JLabel(""));
+		}
+		
+		for (Component c: panel.getComponents()) {
+			if (c.getClass() == JLabel.class) {
+				JLabel jl = (JLabel) c;
+				jl.setHorizontalAlignment(SwingConstants.CENTER);
+			}
 		}
 	}
 
