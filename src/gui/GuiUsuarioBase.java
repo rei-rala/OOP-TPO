@@ -36,13 +36,6 @@ public abstract class GuiUsuarioBase extends JPanel implements ActionListener, G
 		add(btnLogout, BorderLayout.SOUTH);
 	}
 
-	protected void reemplazarContenido(JPanel jpContenido) {
-		setVisible(false);
-		removeAll();
-		add(jpContenido);
-		setVisible(true);
-	}
-
 	@Override
 	abstract public void actionPerformed(ActionEvent e);
 
