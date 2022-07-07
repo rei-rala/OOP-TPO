@@ -3,14 +3,9 @@ package ui;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import excepciones.CredencialException;
-import gui.homes.AdminHome;
-import gui.homes.AdministrativoHome;
-import gui.homes.CallcenterHome;
-import gui.homes.TecnicoHome;
 import personas.Admin;
 import personas.Administrativo;
 import personas.Callcenter;
@@ -99,12 +94,16 @@ public class UiApplicationWindow implements UiMethods {
 			Admin a = (Admin) usuarioLogeado;
 			jp = new UiAdmin(a);
 		} else if (classI == Administrativo.class) {
-			jp = new AdministrativoHome();
+      // TODO: Implementar UiAdministrativo
+      //Administrativo a = (Administrativo) usuarioLogeado;
+			jp = new JPanel();
 		} else if (classI == Tecnico.class) {
 			Tecnico t = (Tecnico) usuarioLogeado;
 			jp = new UiTecnico(t);
 		} else if (classI == Callcenter.class) {
-			jp = new CallcenterHome();
+      // TODO: Implementar UiCallcenter
+      //Callcenter c = (Callcenter) usuarioLogeado;
+      jp = new JPanel();
 		} else {
 			throw new CredencialException("USUARIO NO AUTORIZADO");
 		}

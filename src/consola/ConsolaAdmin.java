@@ -42,8 +42,8 @@ public class ConsolaAdmin extends Consola {
       mEdicionHorasTecnico();
     } else {
       System.out.println("Opcion invalida");
-      pantallaAdmin();
     }
+    pantallaAdmin();
   }
 
   private void mCostoCombustible() {
@@ -52,10 +52,9 @@ public class ConsolaAdmin extends Consola {
     while (true) {
       System.out.println("\nEDITANDO COSTO COMBUSTIBLE");
       System.out.print("Ingrese nuevo costo (Actual: " + costoAnterior + ") o 0 para volver al menu anterior => ");
-      double costo = scDoubleParse( 0);
+      double costo = scDoubleParse(0);
 
       if (costo == 0) {
-        pantallaAdmin();
         break;
       }
       try {
@@ -67,33 +66,27 @@ public class ConsolaAdmin extends Consola {
       System.out.print("Costo de combustible modificado a " + costo);
       break;
     }
-    pantallaAdmin();
   }
 
   private void mCostoViaje() {
     double costoAnterior = admin.getCostoViaje();
 
-    while (true) {
-      System.out.println("\nEDITANDO COSTO DE VIAJE");
-      System.out.print("Ingrese nuevo costo (Actual: " + costoAnterior + ") o 0 para volver al menu anterior => ");
-      double costo = scDoubleParse( 0);
+    System.out.println("\nEDITANDO COSTO DE VIAJE");
+    System.out.print("Ingrese nuevo costo (Actual: " + costoAnterior + ") o 0 para volver al menu anterior => ");
+    double costo = scDoubleParse(0);
 
-      if (costo == 0) {
-        pantallaAdmin();
-        break;
-      }
-
-      try {
-        admin.modificarCostoViaje(costo);
-      } catch (Exception e) {
-        System.out.println("ERROR CAMBIANDO COSTO VIAJE: " + e.getMessage());
-        return;
-      }
-
-      System.out.println("Costo de viaje modificado a " + costo);
-      break;
+    if (costo == 0) {
+      return;
     }
-    pantallaAdmin();
+
+    try {
+      admin.modificarCostoViaje(costo);
+    } catch (Exception e) {
+      System.out.println("ERROR CAMBIANDO COSTO VIAJE: " + e.getMessage());
+      return;
+    }
+
+    System.out.println("Costo de viaje modificado a " + costo);
   }
 
   private void mEdicionArticulos() {
@@ -108,10 +101,9 @@ public class ConsolaAdmin extends Consola {
     }
 
     System.out.print("Ingrese numero de articulo a editar (0 para volver al menu anterior): => ");
-    int opcion = scIntParse( 0, articulos.size());
+    int opcion = scIntParse(0, articulos.size());
 
     if (opcion == 0) {
-      pantallaAdmin();
       return;
     }
 
@@ -123,19 +115,17 @@ public class ConsolaAdmin extends Consola {
     System.out.println("\nEDITANDO STOCK Y COSTOS DE " + articulo.getDescripcion());
     System.out.print("Ingrese nuevo stock (Actual: " + articulo.getStock()
         + "), 0 para mantener stock anterior o -1 para volver al menu anterior =>");
-    int stock = scIntParse( 0);
+    int stock = scIntParse(0);
 
     if (stock == -1) {
-      pantallaAdmin();
       return;
     }
 
     System.out.println("Ingrese nuevo costo (Actual: " + articulo.getCosto()
         + "), 0 para mantener stock anterior o -1 para volver al menu anterior\n=> ");
-    double costo = scDoubleParse( (double) 0);
+    double costo = scDoubleParse((double) 0);
 
     if (costo == -1) {
-      pantallaAdmin();
       return;
     }
 
@@ -149,7 +139,7 @@ public class ConsolaAdmin extends Consola {
 
     System.out.println("Confirmar nuevo stock " + stock + " y costo " + costo + " para " + articulo + "?");
     System.out.print("(0. No, 1. Si) =>");
-    int opcion = scIntParse( 0, 1);
+    int opcion = scIntParse(0, 1);
 
     if (opcion == 1) {
       try {
@@ -160,7 +150,6 @@ public class ConsolaAdmin extends Consola {
       }
       System.out.println("Stock y costo modificados");
     }
-    pantallaAdmin();
   }
 
   private void mEdicionHorasTecnico() {
@@ -177,7 +166,7 @@ public class ConsolaAdmin extends Consola {
     System.out.println("0. Volver al menu anterior");
     System.out.print("=>");
 
-    int seniority = scIntParse( 0, 3);
+    int seniority = scIntParse(0, 3);
 
     if (seniority == 3) {
       mEdicionHorasTecnico(Seniority.SENIOR);
@@ -186,14 +175,13 @@ public class ConsolaAdmin extends Consola {
     } else if (seniority == 1) {
       mEdicionHorasTecnico(Seniority.JUNIOR);
     }
-    pantallaAdmin();
   }
 
   private void mEdicionHorasTecnico(Seniority s) {
     System.out.println("\nEDITANDO HORAS DE " + s);
     System.out.print("Ingrese nuevo costo hora (Actual: " + admin.getCostoHoraTecnico(s)
         + "), 0 para sin cambios, -1 para volver al menu anterior =>");
-    double costoHora = scDoubleParse( -1);
+    double costoHora = scDoubleParse(-1);
 
     if (costoHora == -1) {
       return;

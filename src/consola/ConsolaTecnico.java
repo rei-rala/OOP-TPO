@@ -31,8 +31,10 @@ public class ConsolaTecnico extends Consola {
 
 		if (opcion == 0) {
 			return;
-		}
-		mListarServicios();
+		} else {
+      mListarServicios();
+    }
+    pantallaTecnico();
 	}
 
 	public void mListarServicios() {
@@ -60,7 +62,6 @@ public class ConsolaTecnico extends Consola {
 			Servicio elegido = servs.get(opcion - 1);
 			mVerServicio(elegido);
 		}
-		pantallaTecnico();
 	}
 
 	public void mVerServicio(Servicio s) {
@@ -91,7 +92,6 @@ public class ConsolaTecnico extends Consola {
 		int opc = scIntParse(0, 4);
 
 		if (opc == 0) {
-			pantallaTecnico();
 			return;
 		}
 

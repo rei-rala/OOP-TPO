@@ -2,29 +2,22 @@ package ui.usuarios;
 
 import javax.swing.JPanel;
 
-import comercial.EstadoServicio;
-import comercial.Servicio;
-import excepciones.AsignacionException;
-import excepciones.GuiException;
+import comercial.*;
+import excepciones.*;
 import main.DateAux;
 import personas.Tecnico;
 import ui.UiUsuariosBase;
-import ui.UiMethods;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
-import javax.swing.SwingConstants;
-import java.awt.Component;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 
 public class UiTecnico extends UiUsuariosBase {
-	private Tecnico tecnico;
+	private final Tecnico TECNICO;
 	private JPanel panel;
 	private JPanel subPanel;
 	private JPanel subSubPanel;
@@ -35,7 +28,7 @@ public class UiTecnico extends UiUsuariosBase {
 	 */
 	public UiTecnico(Tecnico tecnico) {
 		super("Menu Administrativo");
-		this.tecnico = tecnico;
+		this.TECNICO = tecnico;
 
 		panel = new JPanel();
 		add(panel, BorderLayout.CENTER);
@@ -56,7 +49,7 @@ public class UiTecnico extends UiUsuariosBase {
 	}
 
 	public void seleccionarServicio() throws Exception {
-		ArrayList<Servicio> servs = tecnico.getServiciosPendientes();
+		ArrayList<Servicio> servs = TECNICO.getServiciosPendientes();
 		String opciones = "Selecciona un servicio:";
 
 		for (int i = 0; i < servs.size(); i++) {

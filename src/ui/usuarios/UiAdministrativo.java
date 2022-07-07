@@ -1,19 +1,15 @@
 package ui.usuarios;
 
-import javax.swing.JPanel;
 
 import personas.Administrativo;
 import ui.UiUsuariosBase;
-import ui.UiMethods;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
 public class UiAdministrativo extends UiUsuariosBase {
-
-	private Administrativo administrativo;
+	private final Administrativo ADMINISTRATIVO;
 	private JButton btnNewButton;
 
 	/**
@@ -21,7 +17,7 @@ public class UiAdministrativo extends UiUsuariosBase {
 	 */
 	public UiAdministrativo(Administrativo administrativo) {
 		super("Menu Administrativo");
-		this.administrativo = administrativo;
+		this.ADMINISTRATIVO = administrativo;
 		
 		btnNewButton = new JButton("ADMINISTRATIVO");
 		add(btnNewButton);
@@ -29,7 +25,8 @@ public class UiAdministrativo extends UiUsuariosBase {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+    // TODO: ACTIONS
+		System.out.println(ADMINISTRATIVO);
 		
 	}
 

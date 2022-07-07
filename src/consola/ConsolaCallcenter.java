@@ -110,7 +110,6 @@ public class ConsolaCallcenter extends Consola {
     Dia diaSeleccionado = a.getDias().get(opcion - 1);
 
     if (opcion == 0) {
-      pantallaCallcenter();
       return;
     }
 
@@ -227,8 +226,6 @@ public class ConsolaCallcenter extends Consola {
 
     System.out.println("Servicio creado numero" + nuevoServicio.getNro() + " con exito!");
     System.out.println("Asignado a cliente " + nuevoServicio.getCliente().getNombre());
-
-    pantallaCallcenter();
   }
 
   private void mListarServicios() {
@@ -255,7 +252,6 @@ public class ConsolaCallcenter extends Consola {
 
     if (opcion == 0) {
       System.out.println("Seleccion cancelada");
-      pantallaCallcenter();
       return;
     }
 
@@ -551,7 +547,6 @@ public class ConsolaCallcenter extends Consola {
           "Stock de '" + articulo.getDescripcion() + " modificado a " + stock);
     }
 
-    pantallaCallcenter();
   }
 
 }

@@ -7,24 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import empresa.Empresa;
-import excepciones.CredencialException;
-import gui.Gui;
-import gui.homes.AdminHome;
-import gui.homes.AdministrativoHome;
-import gui.homes.CallcenterHome;
-import gui.homes.TecnicoHome;
-import personas.Admin;
-import personas.Administrativo;
-import personas.Callcenter;
-import personas.Interno;
-import personas.Tecnico;
+import personas.*;
 
 public class UiLogin extends JPanel implements ActionListener, UiMethods {
 	private static final long serialVersionUID = 1L;

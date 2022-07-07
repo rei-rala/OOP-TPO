@@ -5,32 +5,22 @@ import javax.swing.JPanel;
 import personas.Admin;
 import personas.Seniority;
 import ui.UiUsuariosBase;
-import ui.UiApplicationWindow;
-import ui.UiMethods;
 
 import javax.swing.JLabel;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import java.awt.BorderLayout;
-import javax.swing.JTextField;
 
 import comercial.articulos.Articulo;
 import excepciones.GuiException;
 
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.BoxLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
 public class UiAdmin extends UiUsuariosBase {
-	private UiApplicationWindow ui = UiApplicationWindow.getInstance();
-	private Admin admin;
+	private final Admin ADMIN;
 
 	private JPanel pPrincipal;
 	private JPanel pLayout;
@@ -46,7 +36,7 @@ public class UiAdmin extends UiUsuariosBase {
 	 */
 	public UiAdmin(Admin admin) {
 		super("Menu admin");
-		this.admin = admin;
+		this.ADMIN = admin;
 
 		pPrincipal = new JPanel();
 		add(pPrincipal, BorderLayout.CENTER);
@@ -85,17 +75,17 @@ public class UiAdmin extends UiUsuariosBase {
 
 	public void invocarEdicionCombustible() throws Exception {
 		double nuevoCC = guiValidarDouble(
-				"Ingrese nuevo costo para combustible <ACTUAL: " + admin.getCostoCombustible() + ">");
+				"Ingrese nuevo costo para combustible <ACTUAL: " + ADMIN.getCostoCombustible() + ">");
 
-		admin.modificarCostoCombustible(nuevoCC);
-		alert("Costo combustible cambiado a " + admin.getCostoCombustible());
+		ADMIN.modificarCostoCombustible(nuevoCC);
+		alert("Costo combustible cambiado a " + ADMIN.getCostoCombustible());
 	}
 
 	public void invocarEdicionViaje() throws Exception {
-		double nuevoCV = guiValidarDouble("Ingrese nuevo costo para viaje <ACTUAL: " + admin.getCostoViaje() + ">");
+		double nuevoCV = guiValidarDouble("Ingrese nuevo costo para viaje <ACTUAL: " + ADMIN.getCostoViaje() + ">");
 
-		admin.modificarCostoCombustible(nuevoCV);
-		alert("Costo viaje cambiado a " + admin.getCostoViaje());
+		ADMIN.modificarCostoCombustible(nuevoCV);
+		alert("Costo viaje cambiado a " + ADMIN.getCostoViaje());
 	}
 
 	public void invocarEdicionCHT() throws Exception {
@@ -120,16 +110,16 @@ public class UiAdmin extends UiUsuariosBase {
 			throw new GuiException("Seleccion no valida");
 		}
 
-		double currentCHT = admin.getCostoHoraTecnico(seleccionSeniority);
+		double currentCHT = ADMIN.getCostoHoraTecnico(seleccionSeniority);
 		double nuevoCosto = guiValidarDouble(
 				"Ingrese nuevo costo por hora para " + seleccionSeniority + "<ACTUAL " + currentCHT + ">");
 
-		admin.setCostoHoraTecnico(seleccionSeniority, nuevoCosto);
-		alert("CHT para " + seleccionSeniority + " ahora es " + admin.getCostoHoraTecnico(seleccionSeniority));
+		ADMIN.setCostoHoraTecnico(seleccionSeniority, nuevoCosto);
+		alert("CHT para " + seleccionSeniority + " ahora es " + ADMIN.getCostoHoraTecnico(seleccionSeniority));
 	}
 
 	private void invocarEdicionArticulosAdmin() throws Exception {
-		ArrayList<Articulo> arts = admin.getArticulos();
+		ArrayList<Articulo> arts = ADMIN.getArticulos();
 		String opciones = "Seleccione un articulo por su SKU:";
 
 		for (Articulo a : arts) {
@@ -139,7 +129,7 @@ public class UiAdmin extends UiUsuariosBase {
 
 		int eleccion = guiValidarInt(opciones);
 
-		Articulo seleccionArticulo = admin.getArticulos(eleccion);
+		Articulo seleccionArticulo = ADMIN.getArticulos(eleccion);
 
 		if (seleccionArticulo == null) {
 			throw new GuiException("Seleccion no valida");
@@ -151,8 +141,8 @@ public class UiAdmin extends UiUsuariosBase {
 		boolean confirma = confirm("Acepta valores de " + descripcion + "? (S:" + nvoStock + "|C:" + nvoCosto + ")");
 
 		if (confirma) {
-			admin.editarCifrasArticulo(seleccionArticulo, nvoStock, nvoCosto);
-			alert("Nuevos valores fijados: " + admin.getArticulos(eleccion));
+			ADMIN.editarCifrasArticulo(seleccionArticulo, nvoStock, nvoCosto);
+			alert("Nuevos valores fijados: " + ADMIN.getArticulos(eleccion));
 			return;
 		}
 

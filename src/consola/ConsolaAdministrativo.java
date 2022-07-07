@@ -37,6 +37,8 @@ public class ConsolaAdministrativo extends Consola {
     } else if (opcion == 2) {
       mVisualizarFacturas();
     }
+
+    pantallaAdministrativo();
   }
 
   private void mGestionarServiciosAFacturar() {
@@ -65,7 +67,6 @@ public class ConsolaAdministrativo extends Consola {
     int opcion = scIntParse( 0, servicios.size());
 
     if (opcion == 0) {
-      pantallaAdministrativo();
       return;
     }
 
@@ -113,7 +114,6 @@ public class ConsolaAdministrativo extends Consola {
     int opc = scIntParse( 0, 5);
 
     if (opc == 0) {
-      pantallaAdministrativo();
       return;
     } else if (opc == 1) {
       mMostrarTecnicos(s);
@@ -251,7 +251,6 @@ public class ConsolaAdministrativo extends Consola {
       mostrarFactura(f);
       return;
     }
-    pantallaAdministrativo();
   }
 
   private void mostrarFactura(Factura f) {
