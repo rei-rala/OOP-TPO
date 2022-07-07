@@ -1,4 +1,4 @@
-package ui;
+package gui;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -12,12 +12,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
 @SuppressWarnings("serial")
-public abstract class UiUsuariosBase extends JPanel implements ActionListener, UiMethods {
+public abstract class GuiUsuarioBase extends JPanel implements ActionListener, GuiMethods {
 
 	private JLabel lblTitulo;
 	private JButton btnLogout;
 
-	public UiUsuariosBase(String titulo) {
+	public GuiUsuarioBase(String titulo) {
 		setBorder(null);
 		setLayout(new BorderLayout(0, 0));
 
@@ -30,7 +30,7 @@ public abstract class UiUsuariosBase extends JPanel implements ActionListener, U
 		btnLogout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				UiApplicationWindow.getInstance().logUserOut();
+				GuiMain.getInstance().logUserOut();
 			}
 		});
 		add(btnLogout, BorderLayout.SOUTH);

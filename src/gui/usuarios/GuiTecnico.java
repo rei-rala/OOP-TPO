@@ -1,12 +1,12 @@
-package ui.usuarios;
+package gui.usuarios;
 
 import javax.swing.JPanel;
 
 import comercial.*;
 import excepciones.*;
+import gui.GuiUsuarioBase;
 import main.DateAux;
 import personas.Tecnico;
-import ui.UiUsuariosBase;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.awt.GridLayout;
 import javax.swing.JLabel;
 
 @SuppressWarnings("serial")
-public class UiTecnico extends UiUsuariosBase {
+public class GuiTecnico extends GuiUsuarioBase {
 	private final Tecnico TECNICO;
 	private JPanel panel;
 	private JPanel subPanel;
@@ -25,7 +25,7 @@ public class UiTecnico extends UiUsuariosBase {
 	private JButton btnSeleccionServicio;
 
 
-	public UiTecnico(Tecnico tecnico) {
+	public GuiTecnico(Tecnico tecnico) {
 		super("Menu Administrativo");
 		this.TECNICO = tecnico;
 

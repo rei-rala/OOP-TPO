@@ -1,4 +1,4 @@
-package ui;
+package gui;
 
 import java.awt.EventQueue;
 
@@ -6,20 +6,20 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import excepciones.*;
+import gui.usuarios.*;
 import personas.*;
-import ui.usuarios.*;
 
-public class UiApplicationWindow implements UiMethods {
-	private static UiApplicationWindow instance;
+public class GuiMain implements GuiMethods {
+	private static GuiMain instance;
 	private JFrame framePrincipal;
 	private Interno usuarioLogeado = null;
 
-	private UiApplicationWindow() {
+	private GuiMain() {
 	}
 
-	public static UiApplicationWindow getInstance() {
+	public static GuiMain getInstance() {
 		if (instance == null) {
-			instance = new UiApplicationWindow();
+			instance = new GuiMain();
 		}
 
 		return instance;
@@ -74,7 +74,7 @@ public class UiApplicationWindow implements UiMethods {
 	}
 
 	private void goToLogin() {
-		switchUiPanel(new UiLogin());
+		switchUiPanel(new GuiLogin());
 	}
 
 	private void goToHome() throws Exception {
@@ -87,16 +87,16 @@ public class UiApplicationWindow implements UiMethods {
 
 		if (classI == Admin.class) {
 			Admin a = (Admin) usuarioLogeado;
-			jp = new UiAdmin(a);
+			jp = new GuiAdmin(a);
 		} else if (classI == Administrativo.class) {
 			Administrativo a = (Administrativo) usuarioLogeado;
-			jp = new UiAdministrativo(a);
+			jp = new GuiAdministrativo(a);
 		} else if (classI == Tecnico.class) {
 			Tecnico t = (Tecnico) usuarioLogeado;
-			jp = new UiTecnico(t);
+			jp = new GuiTecnico(t);
 		} else if (classI == Callcenter.class) {
 			Callcenter c = (Callcenter) usuarioLogeado;
-			jp = new UiCallcenter(c);
+			jp = new GuiCallcenter(c);
 		} else {
 			throw new CredencialException("USUARIO NO AUTORIZADO");
 		}

@@ -1,4 +1,4 @@
-package ui.usuarios;
+package gui.usuarios;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -15,12 +15,12 @@ import comercial.articulos.*;
 import comercial.Servicio;
 import comercial.TipoServicio;
 import excepciones.*;
+import gui.GuiUsuarioBase;
 import main.DateAux;
 import personas.*;
-import ui.UiUsuariosBase;
 
 @SuppressWarnings("serial")
-public class UiCallcenter extends UiUsuariosBase {
+public class GuiCallcenter extends GuiUsuarioBase {
   private final Callcenter CALLCENTER;
   private JPanel panel;
   private JPanel subPanel;
@@ -30,7 +30,7 @@ public class UiCallcenter extends UiUsuariosBase {
   private JButton btnGestionServicios;
   private JButton btnGestionArticulo;
 
-  public UiCallcenter(Callcenter callcenter) {
+  public GuiCallcenter(Callcenter callcenter) {
     super("MENU CALLCENTER");
     this.CALLCENTER = callcenter;
 

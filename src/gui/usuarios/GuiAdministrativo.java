@@ -1,22 +1,23 @@
-package ui.usuarios;
+package gui.usuarios;
 
 
 import personas.Administrativo;
-import ui.UiUsuariosBase;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 
+import gui.GuiUsuarioBase;
+
 @SuppressWarnings("serial")
-public class UiAdministrativo extends UiUsuariosBase {
+public class GuiAdministrativo extends GuiUsuarioBase {
 	private final Administrativo ADMINISTRATIVO;
 	private JButton btnNewButton;
 
 	/**
 	 * Create the panel.
 	 */
-	public UiAdministrativo(Administrativo administrativo) {
+	public GuiAdministrativo(Administrativo administrativo) {
 		super("Menu Administrativo");
 		this.ADMINISTRATIVO = administrativo;
 		

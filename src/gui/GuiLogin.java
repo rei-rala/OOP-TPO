@@ -1,4 +1,4 @@
-package ui;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -15,10 +15,10 @@ import javax.swing.SwingConstants;
 import empresa.Empresa;
 import personas.*;
 
-public class UiLogin extends JPanel implements ActionListener, UiMethods {
+public class GuiLogin extends JPanel implements ActionListener, GuiMethods {
 	private static final long serialVersionUID = 1L;
 
-	private static UiApplicationWindow ui = UiApplicationWindow.getInstance();
+	private static GuiMain ui = GuiMain.getInstance();
 	private final Empresa empresa = Empresa.getInstance();
 
 	private JLabel lblNewLabel;
@@ -29,7 +29,7 @@ public class UiLogin extends JPanel implements ActionListener, UiMethods {
 	private JTextField contrasena;
 	private JButton btnLogin;
 
-	public UiLogin() {
+	public GuiLogin() {
 		setLayout(new BorderLayout(0, 0));
 
 		lblNewLabel = new JLabel("Bienvenido");

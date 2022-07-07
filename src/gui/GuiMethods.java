@@ -1,11 +1,11 @@
-package ui;
+package gui;
 
 import javax.swing.JOptionPane;
 
 import empresa.Empresa;
 import excepciones.*;
 
-public interface UiMethods {
+public interface GuiMethods {
   default boolean confirm(String message) {
 
     return JOptionPane.showConfirmDialog(null, message) == JOptionPane.OK_OPTION;

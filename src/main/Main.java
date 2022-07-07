@@ -1,8 +1,8 @@
 package main;
 
 import empresa.*;
+import gui.*;
 import personas.*;
-import ui.*;
 import comercial.*;
 import comercial.articulos.*;
 import agenda.*;
@@ -18,7 +18,7 @@ public class Main {
 	static Scanner scanner = new Scanner(System.in);
 	static boolean isRunning = true;
 	static Interno i;
-	private static UiApplicationWindow ui = UiApplicationWindow.getInstance();
+	private static GuiMain gui = GuiMain.getInstance();
 
 	public static void main(String[] args) throws Exception {
 
@@ -36,8 +36,7 @@ public class Main {
 
 		if ("GUI".contains(ejecucion)) {
 			System.out.println("Iniciando GUI");
-			// New GUI
-			ui.run();
+			gui.run();
 		} else {
 			System.out.println("Iniciando Consola");
 			consolaInicio();

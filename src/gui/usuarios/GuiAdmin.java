@@ -1,10 +1,9 @@
-package ui.usuarios;
+package gui.usuarios;
 
 import javax.swing.JPanel;
 
 import personas.Admin;
 import personas.Seniority;
-import ui.UiUsuariosBase;
 
 import javax.swing.JLabel;
 
@@ -16,11 +15,12 @@ import java.awt.BorderLayout;
 
 import comercial.articulos.Articulo;
 import excepciones.GuiException;
+import gui.GuiUsuarioBase;
 
 import java.awt.GridLayout;
 
 @SuppressWarnings("serial")
-public class UiAdmin extends UiUsuariosBase {
+public class GuiAdmin extends GuiUsuarioBase {
 	private final Admin ADMIN;
 
 	private JPanel pPrincipal;
@@ -32,7 +32,7 @@ public class UiAdmin extends UiUsuariosBase {
 	private JButton btnStockCostoArticulos;
 	private JButton btnValorHoraTecnicos;
 
-	public UiAdmin(Admin admin) {
+	public GuiAdmin(Admin admin) {
 		super("Menu admin");
 		this.ADMIN = admin;
 
