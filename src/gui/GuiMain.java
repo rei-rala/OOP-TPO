@@ -32,7 +32,7 @@ public class GuiMain implements GuiMethods {
 					initialize();
 					instance.framePrincipal.setVisible(true);
 				} catch (Exception e) {
-					uiExceptionHandler(e);
+					guiExceptionHandler(e);
 				}
 			}
 		});

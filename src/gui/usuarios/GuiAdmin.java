@@ -76,7 +76,7 @@ public class GuiAdmin extends GuiUsuarioBase {
 		subPLayout.add(btnValorHoraTecnicos);
 	}
 
-	public void invocarEdicionCombustible() throws Exception {
+	private void invocarEdicionCombustible() throws Exception {
 		double nuevoCC = guiValidarDouble(
 				"Ingrese nuevo costo para combustible <ACTUAL: " + ADMIN.getCostoCombustible() + ">");
 
@@ -84,14 +84,14 @@ public class GuiAdmin extends GuiUsuarioBase {
 		alert("Costo combustible cambiado a " + ADMIN.getCostoCombustible());
 	}
 
-	public void invocarEdicionViaje() throws Exception {
+	private void invocarEdicionViaje() throws Exception {
 		double nuevoCV = guiValidarDouble("Ingrese nuevo costo para viaje <ACTUAL: " + ADMIN.getCostoViaje() + ">");
 
 		ADMIN.modificarCostoCombustible(nuevoCV);
 		alert("Costo viaje cambiado a " + ADMIN.getCostoViaje());
 	}
 
-	public void invocarEdicionCHT() throws Exception {
+	private void invocarEdicionCHT() throws Exception {
 		String opciones = "\n\t1) Junior\n\t2) Semi-Senior\n\t3) Senior";
 		int seleccion = guiValidarInt("Seleccione seniority:" + opciones, 1, 3);
 
@@ -167,7 +167,7 @@ public class GuiAdmin extends GuiUsuarioBase {
 				invocarEdicionArticulosAdmin();
 			}
 		} catch (Exception exception) {
-			uiExceptionHandler(exception);
+			guiExceptionHandler(exception);
 		}
 
 	}

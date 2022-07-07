@@ -59,7 +59,7 @@ public class GuiTecnico extends GuiUsuarioBase {
 		btnSeleccionServicio.addActionListener(this);
 	}
 
-	public Servicio seleccionarServicioAsignado() throws Exception {
+	private Servicio seleccionarServicioAsignado() throws Exception {
 		ArrayList<Servicio> servs = TECNICO.getServiciosPendientes();
 		String opciones = "Selecciona un servicio por su ID:";
 
@@ -143,7 +143,7 @@ public class GuiTecnico extends GuiUsuarioBase {
 		}
 
 		if (opc == 2) {
-			mAnadirArticuloExtra(s);
+			anadirArticuloExtra(s);
 		}
 
 		if (opc == 3) {
@@ -186,7 +186,7 @@ public class GuiTecnico extends GuiUsuarioBase {
 		}
 	}
 
-	private void mAnadirArticuloExtra(Servicio s) throws Exception {
+	private void anadirArticuloExtra(Servicio s) throws Exception {
 		String descripcion = input("Ingrese la descripcion del articulo extra");
 		double costo = guiValidarDouble("Ingrese el costo del articulo extra");
 
@@ -230,7 +230,7 @@ public class GuiTecnico extends GuiUsuarioBase {
 				mostrarServicio();
 			}
 		} catch (Exception exception) {
-			uiExceptionHandler(exception);
+			guiExceptionHandler(exception);
 		}
 
 	}

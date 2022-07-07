@@ -337,7 +337,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
         edicionStockArticulo();
       }
     } catch (Exception exception) {
-      uiExceptionHandler(exception);
+      guiExceptionHandler(exception);
     }
   }
 

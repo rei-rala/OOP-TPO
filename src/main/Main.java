@@ -37,6 +37,7 @@ public class Main {
 		if ("GUI".contains(ejecucion)) {
 			System.out.println("Iniciando GUI");
 			gui.run();
+			consolaInicio();
 		} else {
 			System.out.println("Iniciando Consola");
 			consolaInicio();

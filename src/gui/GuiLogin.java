@@ -126,7 +126,7 @@ public class GuiLogin extends JPanel implements ActionListener, GuiMethods {
 				login();
 			}
 		} catch (Exception exc) {
-			uiExceptionHandler(exc);
+			guiExceptionHandler(exc);
 		}
 
 	}

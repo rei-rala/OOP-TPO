@@ -31,11 +31,11 @@ public interface GuiMethods {
     return JOptionPane.showInputDialog(null, message, title);
   }
 
-  default void uiExceptionHandler(String error) {
-    uiExceptionHandler(new Exception("ERROR INESPERADO: " + error));
+  default void guiExceptionHandler(String error) {
+    guiExceptionHandler(new Exception("ERROR INESPERADO: " + error));
   }
 
-  default void uiExceptionHandler(Exception e) {
+  default void guiExceptionHandler(Exception e) {
     Class<? extends Exception> eCls = e.getClass();
     String title = "Se produjo un error";
     String message = e.getMessage();
@@ -105,7 +105,7 @@ public interface GuiMethods {
     } catch (GuiException e) {
       throw e;
     } catch (Exception e) {
-      uiExceptionHandler(new ValorException("Proporcionar valor numerico"));
+      guiExceptionHandler(new ValorException("Proporcionar valor numerico"));
     }
 
     return guiValidarInt(message);
@@ -121,7 +121,7 @@ public interface GuiMethods {
     } catch (GuiException e) {
       throw e;
     } catch (Exception e) {
-      uiExceptionHandler(e);
+      guiExceptionHandler(e);
     }
 
     return guiValidarInt(message, min);
@@ -137,7 +137,7 @@ public interface GuiMethods {
     } catch (GuiException e) {
       throw e;
     } catch (Exception e) {
-      uiExceptionHandler(e);
+      guiExceptionHandler(e);
     }
 
     return guiValidarInt(message, min, max);
@@ -150,7 +150,7 @@ public interface GuiMethods {
     } catch (GuiException e) {
       throw e;
     } catch (Exception e) {
-      uiExceptionHandler(new ValorException("Proporcionar valor numerico double"));
+      guiExceptionHandler(new ValorException("Proporcionar valor numerico double"));
     }
 
     return guiValidarDouble(message);
@@ -167,7 +167,7 @@ public interface GuiMethods {
     } catch (GuiException e) {
       throw e;
     } catch (Exception e) {
-      uiExceptionHandler(e);
+      guiExceptionHandler(e);
     }
 
     return guiValidarDouble(message, min);
@@ -184,7 +184,7 @@ public interface GuiMethods {
     } catch (GuiException e) {
       throw e;
     } catch (Exception e) {
-      uiExceptionHandler(e);
+      guiExceptionHandler(e);
     }
 
     return guiValidarDouble(message, min, max);

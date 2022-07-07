@@ -117,4 +117,8 @@ public class Administrativo extends Interno {
     return Empresa.getInstance().getFacturas();
   }
 
+  public Factura getFacturas(int nroFactura) {
+    return Empresa.getInstance().getFacturas(nroFactura);
+  }
+
 }
