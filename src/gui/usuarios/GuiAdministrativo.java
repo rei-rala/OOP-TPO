@@ -18,7 +18,7 @@ public class GuiAdministrativo extends GuiUsuarioBase {
 	 * Create the panel.
 	 */
 	public GuiAdministrativo(Administrativo administrativo) {
-		super("Menu Administrativo");
+		super("Bienvenido " + administrativo.getNombre() + "<ADMINISTRATIVO>");
 		this.ADMINISTRATIVO = administrativo;
 		
 		btnNewButton = new JButton("ADMINISTRATIVO");

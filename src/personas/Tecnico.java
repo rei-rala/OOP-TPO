@@ -1,7 +1,6 @@
 package personas;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import agenda.*;
 import comercial.*;
@@ -9,7 +8,6 @@ import comercial.articulos.*;
 import empresa.Empresa;
 import excepciones.*;
 import main.DateAux;
-
 
 public class Tecnico extends Interno {
   private Seniority seniority;
@@ -52,13 +50,15 @@ public class Tecnico extends Interno {
     ArrayList<Servicio> asignados = new ArrayList<Servicio>();
 
     for (Servicio s : Empresa.getInstance().getServicios()) {
-      if (s.getFecha().before(DateAux.getNextDay(new Date()))) {
+      if (s.getFecha().before(DateAux.getToday())) {
         s.forceCancelar();
         continue;
       }
+
       if (s.getTecnicos().contains(this) == false) {
         continue;
       }
+
       if (s.isFacturado()) {
         continue;
       }
@@ -77,6 +77,19 @@ public class Tecnico extends Interno {
     return asignados;
   }
 
+  public Servicio getServiciosPendientes(int nroServicio) {
+    Servicio s = null;
+
+    for (Servicio serv : getServiciosPendientes()) {
+      if (serv.getNro() == nroServicio) {
+        s = serv;
+        break;
+      }
+    }
+
+    return s;
+  }
+
   @Override
   public String toString() {
     return "Tecnico [seniority=" + seniority + ", legajo=" + legajo + ", nombre=" + nombre + ", dni=" + dni
@@ -84,17 +97,6 @@ public class Tecnico extends Interno {
   }
 
   // METODOS TECNICO -> SERVICIO
-  public ArrayList<Servicio> verServiciosAsignados() {
-    ArrayList<Servicio> asignados = new ArrayList<Servicio>();
-
-    for (Servicio s : Empresa.getInstance().getServicios()) {
-      if (s.getTecnicos().contains(this)) {
-        asignados.add(s);
-      }
-    }
-
-    return asignados;
-  }
 
   public void asignarServicio(Servicio s) throws Exception {
     if (s.getTecnicos().contains(this)) {
@@ -233,11 +235,12 @@ public class Tecnico extends Interno {
   }
 
   public void avanzarServicio(Servicio s) throws Exception {
-    if (s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
-      finalizarServicio(s);
-    }
     if (s.getEstadoServicio() == EstadoServicio.PROGRAMADO) {
       ejecutarServicio(s);
+    } else if (s.getEstadoServicio() == EstadoServicio.EN_CURSO) {
+      finalizarServicio(s);
+    } else {
+      throw new ServicioException("El servicio no esta en curso");
     }
   }
 

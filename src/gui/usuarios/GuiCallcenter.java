@@ -31,7 +31,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
   private JButton btnGestionArticulo;
 
   public GuiCallcenter(Callcenter callcenter) {
-    super("MENU CALLCENTER");
+    super("Bienvenido " + callcenter.getNombre() + "<CALLCENTER>");
     this.CALLCENTER = callcenter;
 
     panel = new JPanel();
@@ -189,6 +189,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
 
       CALLCENTER.asignarServicio(s, c);
       alert("Servicio nro " + s.getNro() + " asignado a cliente nro " + c.getNro());
+      editarServicio(s);
       return;
     }
     alert("Cancelada creacion de servicio");
@@ -198,23 +199,22 @@ public class GuiCallcenter extends GuiUsuarioBase {
     String opciones = "Seleccione servicio por su numero:";
     ArrayList<Servicio> sPendientes = CALLCENTER.getServiciosPendientes();
 
+    if (sPendientes.size() == 0) {
+      throw new AsignacionException("No hay servicios pendientes");
+    }
+
     for (Servicio s : sPendientes) {
       opciones += "\n\t" + s.getNro() + ") " + s.getFecha();
     }
 
     int opcionServicio = guiValidarInt(opciones);
 
-    Servicio servSeleccionado = CALLCENTER.getServicio(opcionServicio);
+    Servicio servSeleccionado = CALLCENTER.getServiciosPendientes(opcionServicio);
 
     if (servSeleccionado == null) {
       throw new ValorException("Seleccion no valida");
     }
-    if (sPendientes.contains(servSeleccionado)) {
-      editarServicio(servSeleccionado);
-      return;
-    }
-
-    throw new CredencialException("No es un servicio pendiente por callcenter");
+    editarServicio(servSeleccionado);
   }
 
   private void editarServicio(Servicio s) throws Exception {
@@ -233,9 +233,14 @@ public class GuiCallcenter extends GuiUsuarioBase {
       editarTecnicoServicio(s);
     } else if (opcion == 3) {
       enviarServicioATecnicos(s);
+      return;
     } else if (opcion == 4) {
       cancelarServicio(s);
+      return;
     }
+
+    // Volver a mostrar el menu del servicio tras accion no terminal
+    editarServicio(s);
   }
 
   private void editarClienteServicio(Servicio s) throws Exception {
@@ -253,9 +258,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
     opciones += "El servicio nro " + s.getNro() + " (" + DateAux.getDateString(s.getFecha()) + " - "
         + s.getHorarioServicio() + ")";
 
-    int eleccion = guiValidarInt(opciones, 0, 1);
-
-    if (eleccion == 1) {
+    if (confirm(opciones)) {
       CALLCENTER.asignarServicio(s, c);
       alert("Servicio nro " + s.getNro() + " asignado a cliente nro " + c.getNro());
       return;
@@ -269,6 +272,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
 
     if (confirm("Asignar tecnico " + t.getNombre() + " al servicio " + s.getNro() + "?")) {
       CALLCENTER.asignarServicio(s, t);
+      alert("Tecnico " + t.getNombre() + " asignado al servicio nro " + s.getNro());
     } else {
       throw new GuiException("Cancelado por usuario");
     }

@@ -33,7 +33,7 @@ public class GuiAdmin extends GuiUsuarioBase {
 	private JButton btnValorHoraTecnicos;
 
 	public GuiAdmin(Admin admin) {
-		super("Menu admin");
+		super("Bienvenido " + admin.getNombre() + "<ADMINISTRADOR>");
 		this.ADMIN = admin;
 
 		pPrincipal = new JPanel();
