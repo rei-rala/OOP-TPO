@@ -203,7 +203,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
     }
 
     for (Servicio s : sPendientes) {
-      opciones += "\n\t" + s.getNro() + ") " + s.getFecha();
+      opciones += "\n\t" + s.getNro() + ") " + DateAux.getDateString(s.getFecha());
     }
 
     int opcionServicio = guiValidarInt(opciones);
@@ -220,7 +220,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
     String opciones = "Servicio:\n" + s.toStringShorter();
     opciones += "\n\nSELECCIONE:";
     opciones += "\n\t1) Asignar cliente" + (s.getCliente() == null ? "" : " (Ya tiene cliente)");
-    opciones += "\n\t2) Asignar tecnico estado <Tecnicos asignados: " + s.getTecnicos().size() + ">";
+    opciones += "\n\t2) Asignar tecnico <Tecnicos asignados: " + s.getTecnicos().size() + ">";
     opciones += "\n\t3) Enviar este servicio a los tecnicos <Estado actual: " + s.getEstadoServicio() + ">";
     opciones += "\n\t4) Cancelar servicio";
 

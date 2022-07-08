@@ -181,6 +181,7 @@ public class GuiTecnico extends GuiUsuarioBase {
 		String msgConfirm = "Anadir " + cantidad + " " + a.getDescripcion() + " a Servicio nro " + s.getNro() + "?";
 		if (confirm(msgConfirm)) {
 			TECNICO.anadirArticuloServicio(s, cantidad, a);
+      alert("Se ha anadido el articulo");
 		} else {
 			alert("Cancelado por usuario");
 		}
@@ -196,6 +197,7 @@ public class GuiTecnico extends GuiUsuarioBase {
 
 		if (confirm(msgConfirm)) {
 			TECNICO.anadirArticuloExtraServicio(s, 1, ae);
+      alert("Se ha anadido el articulo extra");
 		} else {
 			alert("Cancelado por usuario");
 		}
@@ -206,6 +208,7 @@ public class GuiTecnico extends GuiUsuarioBase {
 		String msgConfirm = "Esta seguro que desea " + accion + " almuerzo?";
 		if (confirm(msgConfirm)) {
 			TECNICO.toggleAlmuerzoServicio(s);
+      alert("El estado del almuerzo cambio a " + s.isIncluyeAlmuerzo());
 		} else {
 			alert("No se edito almuerzo del servicio");
 		}
