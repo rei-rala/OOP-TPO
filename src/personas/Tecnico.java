@@ -50,7 +50,7 @@ public class Tecnico extends Interno {
     ArrayList<Servicio> asignados = new ArrayList<Servicio>();
 
     for (Servicio s : Empresa.getInstance().getServicios()) {
-      if (s.getFecha().before(DateAux.getToday())) {
+      if (s.getFecha().before(DateAux.getInstance().getToday())) {
         s.forceCancelar();
         continue;
       }

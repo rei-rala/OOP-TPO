@@ -12,14 +12,14 @@ public class DateAux {
   private DateAux() {
   }
 
-  static DateAux getInstance() {
+  public static DateAux getInstance() {
     if (instancia == null) {
       instancia = new DateAux();
     }
     return instancia;
   }
 
-  public static String getNombreDiaSemana(Date fecha) {
+  public String getNombreDiaSemana(Date fecha) {
     int nroDia = fecha.getDay();
 
     switch (nroDia) {
@@ -42,7 +42,7 @@ public class DateAux {
     }
   }
 
-  public static Date getStartDay(Date d) {
+  public Date getStartDay(Date d) {
     Date f = d;
     f.setHours(0);
     f.setMinutes(0);
@@ -51,19 +51,19 @@ public class DateAux {
     return f;
   }
 
-  public static Date getStartDay() {
+  public Date getStartDay() {
     return getStartDay(new Date());
   }
 
-  public static Date getNow() {
+  public Date getNow() {
     return new Date();
   }
 
-  public static Date getToday() {
+  public Date getToday() {
     return getStartDay(getNow());
   }
 
-  public static Date getNextDay(Date d) {
+  public Date getNextDay(Date d) {
     Date f = new Date(d.getTime());
     int newDate = f.getDate() + 1;
     f.setDate(newDate);
@@ -71,32 +71,32 @@ public class DateAux {
     return getStartDay(f);
   }
 
-  public static Date getNextDay() {
+  public Date getNextDay() {
     return getNextDay(new Date());
   }
 
-  public static double calcularHoras(int turnoDesde, int turnoHasta) {
+  public double calcularHoras(int turnoDesde, int turnoHasta) {
     return (turnoHasta - turnoDesde + 1) / 2 + 0.5;
   }
 
-  public static String getMinutos(int nroTurno) {
+  public String getMinutos(int nroTurno) {
     return nroTurno % 2 == 0 ? "00" : "30";
   }
 
-  public static String getHoraManana(int nroTurno) {
+  public String getHoraManana(int nroTurno) {
     int h = (int) 8 + nroTurno / 2;
     return 10 > h ? "0" + h : "" + h;
   }
 
-  public static String getHoraTarde(int nroTurno) {
+  public String getHoraTarde(int nroTurno) {
     return "" + ((int) 14 + nroTurno / 2);
   }
 
-  public static String getHorarioUnico(Turno turno, int nroTurno) {
+  public String getHorarioUnico(Turno turno, int nroTurno) {
     return (turno == Turno.MANANA ? getHoraManana(nroTurno) : getHoraTarde(nroTurno)) + ":" + getMinutos(nroTurno);
   }
 
-  public static String getHorarioCompleto(Turno turno, int inicioTurno, int finalTurno) {
+  public String getHorarioCompleto(Turno turno, int inicioTurno, int finalTurno) {
     int finalTno = finalTurno + 1;
     String inicioTurnoStr = (turno == Turno.MANANA ? getHoraManana(inicioTurno) : getHoraTarde(inicioTurno)) + ":"
         + getMinutos(inicioTurno);
@@ -105,11 +105,11 @@ public class DateAux {
     return inicioTurnoStr + "-" + finalTurnoStr;
   }
 
-  public static String getHorarioCompleto(Servicio s) {
+  public String getHorarioCompleto(Servicio s) {
     return getHorarioCompleto(s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
   }
 
-  public static String getDateString(Date d) {
+  public String getDateString(Date d) {
     int dia = d.getDate();
     int mes = d.getMonth() + 1;
     int anio = 1900 + d.getYear();

@@ -16,8 +16,8 @@ public class Dia {
   private final ArrayList<FraccionTurno> turnos;
 
   public Dia(Date fecha) {
-    this.fecha = DateAux.getStartDay(fecha);
-    this.fechaString = DateAux.getDateString(this.fecha);
+    this.fecha = DateAux.getInstance().getStartDay(fecha);
+    this.fechaString = DateAux.getInstance().getDateString(this.fecha);
     this.diaSemana = getNombreDiaSemana();
     this.turnos = new ArrayList<FraccionTurno>();
 

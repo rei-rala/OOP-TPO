@@ -121,7 +121,7 @@ public class ConsolaCallcenter extends Consola {
 
     System.out.println("\n--------- Creando servicio ---------");
     System.out.println("Cliente numero: " + c.getNro() + " nombre" + c.getNombre());
-    System.out.println("Dia seleccionado: " + dia.getNombreDiaSemana() + " " + DateAux.getDateString(dia.getFecha()));
+    System.out.println("Dia seleccionado: " + dia.getNombreDiaSemana() + " " + DateAux.getInstance().getDateString(dia.getFecha()));
     System.out.println("---------- Seleccione TIPO DE SERVICIO ---------");
 
     System.out.println("1. Servicio de instalacion (requiere al menos 1 hora)");
@@ -182,7 +182,7 @@ public class ConsolaCallcenter extends Consola {
     System.out.println("CREARA SERVICIO PARA CLIENTE " + c.getNro() + " (" + c.getNombre() + ")");
     System.out.println("Datos servicio:");
     System.out.println("Tipo servicio: " + ts.toString());
-    System.out.println("Dia: " + dia.getNombreDiaSemana() + " " + DateAux.getDateString(dia.getFecha()));
+    System.out.println("Dia: " + dia.getNombreDiaSemana() + " " + DateAux.getInstance().getDateString(dia.getFecha()));
     System.out.println("Desde: " + ftDesde.getHorario());
     System.out.println("Hasta: " + ftHasta.getHorario());
     System.out.println("---------------------------------");
@@ -238,7 +238,7 @@ public class ConsolaCallcenter extends Consola {
           : "numero " + s.getCliente().getNro() + " nombre "
               + s.getCliente().getNombre();
       System.out.println((i + 1) + ") Servicio " + s.getEstadoServicio() + " numero: " + s.getNro() + ", fecha: "
-          + DateAux.getDateString(s.getFecha()) + ", horario " + DateAux.getHorarioCompleto(s) + " | "
+          + DateAux.getInstance().getDateString(s.getFecha()) + ", horario " + DateAux.getInstance().getHorarioCompleto(s) + " | "
           + " cliente: " + idCliente);
     }
 

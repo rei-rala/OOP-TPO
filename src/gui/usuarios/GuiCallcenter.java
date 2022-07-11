@@ -205,7 +205,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
     }
 
     for (Servicio s : sPendientes) {
-      opciones += "\n\t" + s.getNro() + ") " + DateAux.getDateString(s.getFecha());
+      opciones += "\n\t" + s.getNro() + ") " + DateAux.getInstance().getDateString(s.getFecha());
     }
 
     int opcionServicio = guiValidarInt(opciones);
@@ -256,7 +256,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
     }
 
     String opciones = "Confirma asignar a cliente nro " + c.getNro() + " (" + c.getNombre() + ")";
-    opciones += "El servicio nro " + s.getNro() + " (" + DateAux.getDateString(s.getFecha()) + " - "
+    opciones += "El servicio nro " + s.getNro() + " (" + DateAux.getInstance().getDateString(s.getFecha()) + " - "
         + s.getHorarioServicio() + ")";
 
     if (confirm(opciones)) {

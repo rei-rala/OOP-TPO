@@ -66,9 +66,9 @@ public class ConsolaTecnico extends Consola {
 
 	public void mVerServicio(Servicio s) {
 		String nroServicio = "\nNumero servicio " + s.getNro();
-		String fechaCreacion = "\nCreado " + DateAux.getDateString(s.getFechaCreacion());
-		String diaServicio = "\nFecha Servicio " + DateAux.getDateString(s.getFecha());
-		String horarioServicio = "\nHorario " + DateAux.getHorarioCompleto(s);
+		String fechaCreacion = "\nCreado " + DateAux.getInstance().getDateString(s.getFechaCreacion());
+		String diaServicio = "\nFecha Servicio " + DateAux.getInstance().getDateString(s.getFecha());
+		String horarioServicio = "\nHorario " + DateAux.getInstance().getHorarioCompleto(s);
 		String cliente = "\nCliente" + s.getCliente().toStringShort();
 		String articulos = "\nArticulos " + s.getArticulos().toString();
 		String articulosExtra = "\nArticulos " + s.getArticulosExtra().toString();

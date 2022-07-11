@@ -36,13 +36,13 @@ public class Servicio {
 
   public Servicio(Date fecha, TipoServicio tipoServicio, Turno turno, int turnoInicio, int turnoFin) throws Exception {
     this.nro = ++contadorServicios;
-    this.fechaCreacion = DateAux.getNow();
-    this.fecha = DateAux.getStartDay(fecha);
+    this.fechaCreacion = DateAux.getInstance().getNow();
+    this.fecha = DateAux.getInstance().getStartDay(fecha);
     this.tipoServicio = tipoServicio;
     this.turno = turno;
     this.turnoInicio = turnoInicio;
     this.turnoFin = turnoFin;
-    this.tiempoTrabajado = DateAux.calcularHoras(turnoInicio, turnoFin);
+    this.tiempoTrabajado = DateAux.getInstance().calcularHoras(turnoInicio, turnoFin);
     this.estadoServicio = EstadoServicio.PROGRAMADO;
     this.almuerzo = false;
     this.enPoderTecnico = false;
@@ -176,7 +176,7 @@ public class Servicio {
   }
 
   public String getHorarioServicio() {
-    return DateAux.getHorarioCompleto(turno, turnoInicio, turnoFin);
+    return DateAux.getInstance().getHorarioCompleto(turno, turnoInicio, turnoFin);
   }
 
   // EDICION DE SERVICIO
@@ -317,7 +317,7 @@ public class Servicio {
     return "Numero=" + nro
         + "\nCliente=" + clienteStr
         + "\nEstado " + estadoServicio
-        + "\nFecha=" + DateAux.getDateString(fecha)
+        + "\nFecha=" + DateAux.getInstance().getDateString(fecha)
         + "\nTipo=" + tipoServicio
         + "\ntecnicosAsignados=" + tecnicosAsignados.size()
         + "\narticulosUtilizados=" + articulosUtilizados.size()
@@ -328,7 +328,7 @@ public class Servicio {
     String clienteStr = getCliente() == null ? "<SIN CLIENTE ASIGNADO>"
         : getCliente().getNombre() + "(ID: "
             + getCliente().getNro() + ")";
-    return "Servicio [nro=" + nro + "\nfecha=" + DateAux.getDateString(fecha)
+    return "Servicio [nro=" + nro + "\nfecha=" + DateAux.getInstance().getDateString(fecha)
         + "\ncliente=" + clienteStr + "\ntiempoTrabajado="
         + tiempoTrabajado + "\ntipoServicio=" + tipoServicio + "\ntecnicosAsignados=" + tecnicosAsignados.size()
         + "\narticulosUtilizados=" + articulosUtilizados
@@ -337,7 +337,7 @@ public class Servicio {
 
   @Override
   public String toString() {
-    return "Servicio [nro=" + nro + ", cliente=" + cliente + ", fecha=" + DateAux.getDateString(fecha)
+    return "Servicio [nro=" + nro + ", cliente=" + cliente + ", fecha=" + DateAux.getInstance().getDateString(fecha)
         + ", tiempoTrabajado="
         + tiempoTrabajado + ", tipoServicio=" + tipoServicio + ", estadoServicio=" + estadoServicio
         + ", tecnicosAsignados=" + tecnicosAsignados + ", articulosUtilizados=" + articulosUtilizados

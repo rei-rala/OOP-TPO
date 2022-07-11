@@ -91,9 +91,9 @@ public class Main {
     // los legajos corresponderian a los siguientes roles de acuerdo al orden en el
     // que se instancian.
     // 4: Callcenter | 3: Tecnico Senior | 2: Administrativo | 1: ADMIN
-    Callcenter cc = new Callcenter("Callcenter ADICIONAL", "");
-    Tecnico t = new Tecnico("Tecnico ADICIONAL", "", Seniority.JUNIOR);
-    Administrativo a = new Administrativo("Administrativo ADICIONAL", "");
+    Callcenter cc = (Callcenter) e.getInternos(4);
+    Tecnico t = (Tecnico) e.getInternos(3);
+    Administrativo a = (Administrativo) e.getInternos(2);
 
     // HARDCODED:
     // A. 3 servicios creados sin ninguna asignacion.
@@ -105,62 +105,68 @@ public class Main {
     // TOTAL: 11 servicios asignados al mismo tecnico (pobre tipo).
 
     // Variables de control la creacion de los servicios
-    int etapaB = 2, etapaC = 5, etapaD = 6, etapaE = 8, etapaF = 10;
+    int etapaA = 3, etapaB = 6, etapaC = 7, etapaD = 8, etapaE = 10, etapaF = 12;
     // Fecha base, iremos avanzando la fecha en cada iteracion
-    Date fecha = DateAux.getNextDay(DateAux.getToday());
+    Date fecha = DateAux.getInstance().getNextDay(DateAux.getInstance().getToday());
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 1; i <= 12; i++) {
+
       while (fecha.getDay() == 0 || fecha.getDay() >= 5) {
-        fecha = DateAux.getNextDay(fecha);
-        System.out.println("NUEVA FECHA ==> " + fecha + DateAux.getNombreDiaSemana(fecha));
+        fecha = DateAux.getInstance().getNextDay(fecha);
       }
 
       // Propiedades de los servicios creados
       TipoServicio tipoServAlternar = i % 2 == 0 ? TipoServicio.INSTALACION : TipoServicio.REPARACION;
-      fecha = i % 2 == 0 ? fecha : DateAux.getNextDay(fecha);
+      fecha = i % 2 == 0 ? fecha : DateAux.getInstance().getNextDay(fecha);
       Turno turnoAlternar = i % 2 == 0 ? Turno.MANANA : Turno.TARDE;
       int turnoInicio = 0, turnoFin = 5;
 
-      // Punto A: Creacion servicio
       Servicio servicioDinamico = new Servicio(fecha, tipoServAlternar, turnoAlternar, turnoInicio, turnoFin);
 
+      // A: Creacion servicio
+      if (etapaA > i) {
+        continue;
+      }
+
+      Cliente clienteDinamico = new Cliente("");
+      clienteDinamico.setNombre("Cliente Dinamico " + i + "[Asignacion Cliente]");
+      cc.asignarServicio(servicioDinamico, clienteDinamico);
+
+      // B: Asignacion de un cliente
       if (etapaB > i) {
         continue;
       }
 
-      // Punto B: Asignacion de un cliente
-      Cliente clienteDinamico = new Cliente("");
-      clienteDinamico.setNombre("Cliente Dinamico " + (i + 1) + "[Asignacion Cliente]");
-      cc.asignarServicio(servicioDinamico, clienteDinamico);
-
-      if (etapaC > i) {
-        continue;
-      }
-      // Punto C: Asignacion Tecnico
       clienteDinamico.setNombre("Cliente Dinamico " + (i + 1) + "[Asignacion Tecnico]");
       cc.asignarServicio(servicioDinamico, t);
 
-      if (etapaD > i) {
+      // C: Asignacion Tecnico
+      if (etapaC > i) {
         continue;
       }
-      // Punto D: Liberacion desde Callcenter
+
       clienteDinamico.setNombre("Cliente Dinamico " + (i + 1) + "[Servicio liberado desde CC]");
       cc.liberarServicioCallcenter(servicioDinamico);
 
+      // D: Liberacion desde Callcenter (servicio en curso)
+      if (etapaD > i) {
+        continue;
+      }
+
+      clienteDinamico.setNombre("Cliente Dinamico " + (i + 1) + "[Servicio finalizado tecnico]");
+      t.ejecutarServicio(servicioDinamico);
+
+      // Punto E: Tecnico finaliza servicio
       if (etapaE > i) {
         continue;
       }
 
-      // Punto E: Tecnico finaliza servicio
-      clienteDinamico.setNombre("Cliente Dinamico " + (i + 1) + "[Servicio finalizado tecnico]");
-      t.ejecutarServicio(servicioDinamico);
       t.finalizarServicio(servicioDinamico);
 
+      // Punto F: Administrativo factura servicio
       if (etapaF > i) {
         continue;
       }
-
-      // Punto F: Administrativo factura servicio
       clienteDinamico.setNombre("Cliente Dinamico " + (i + 1) + "[Servicio facturado]");
       a.facturarServicio(servicioDinamico);
     }
@@ -245,10 +251,10 @@ public class Main {
     Cliente clienteCC = new Cliente("Cliente [Prueba Workflow Callcenter]");
     // tambien obtenemos un tecnico de prueba
     Tecnico tecnicoCC = new Tecnico("Tecnico [Prueba Workflow Callcenter]", "", Seniority.SENIOR);
-    Date testDate = DateAux.getStartDay();
+    Date testDate = DateAux.getInstance().getStartDay();
 
     if (testDate.getDay() == 0) {
-      testDate = DateAux.getNextDay(testDate);
+      testDate = DateAux.getInstance().getNextDay(testDate);
     }
 
     Agenda agC = clienteCC.getAgenda();
@@ -344,10 +350,10 @@ public class Main {
 
     // Preasignando un sFervicio
     Callcenter auxCC = new Callcenter("", "");
-    Date fWFTecnico = DateAux.getToday();
+    Date fWFTecnico = DateAux.getInstance().getNextDay();
 
     while (fWFTecnico.getDay() == 0 || fWFTecnico.getDay() >= 5) {
-      fWFTecnico = DateAux.getNextDay(fWFTecnico);
+      fWFTecnico = DateAux.getInstance().getNextDay(fWFTecnico);
     }
 
     Servicio auxS = auxCC.crearServicio(fWFTecnico, TipoServicio.INSTALACION, tFtDesde, tFtHasta);
@@ -358,6 +364,11 @@ public class Main {
     // Inicio tareas TECNICO
     ArrayList<Servicio> servsAsignados = testTec.getServiciosPendientes();
     System.out.println("\ntestTec tiene estos servicios: ");
+
+    if (servsAsignados.size() == 0) {
+      System.out.println("* NO ENCONTRO SERVICIOS: SE PRODUCIRA UN ERROR *");
+    }
+
     for (Servicio s : servsAsignados) {
       System.out.println("\tServicio nro: " + s.getNro() + ", Cliente: " + s.getCliente().getNombre());
     }

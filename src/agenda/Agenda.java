@@ -23,10 +23,10 @@ public class Agenda {
   }
 
   private void inicializarDias() {
-    Date currentDate = DateAux.getToday();
+    Date currentDate = DateAux.getInstance().getToday();
     int i = 0;
     while (i < cantDiasGeneradosXDefecto) {
-      currentDate = DateAux.getNextDay(currentDate);
+      currentDate = DateAux.getInstance().getNextDay(currentDate);
       // si es domingo lo omitimos
       if (currentDate.getDay() == 0) {
         continue;
@@ -51,13 +51,13 @@ public class Agenda {
   }
 
   public Dia obtenerDiaAgenda(Date fecha) {
-    Date f = DateAux.getStartDay(fecha);
+    Date f = DateAux.getInstance().getStartDay(fecha);
 
     Dia encontrado = null;
 
     for (Dia d : dias) {
 
-      if (DateAux.getDateString(d.getFecha()).equalsIgnoreCase(DateAux.getDateString(f))) {
+      if (DateAux.getInstance().getDateString(d.getFecha()).equalsIgnoreCase(DateAux.getInstance().getDateString(f))) {
         encontrado = d;
         break;
       }
@@ -89,9 +89,9 @@ public class Agenda {
   }
 
   public boolean verificarDisponibilidad(Servicio s) throws Exception {
-    Date fecha = s.getFecha();
+    Date fecha = DateAux.getInstance().getStartDay(s.getFecha());
 
-    if (fecha.before(DateAux.getToday())) {
+    if (fecha.before(DateAux.getInstance().getToday())) {
       s.forceCancelar();
       throw new AgendaException("La fecha debe ser posterior");
     }
@@ -117,7 +117,7 @@ public class Agenda {
 
     for (int i = 0; i < dias.size(); i++) {
       Dia d = dias.get(i);
-      formateado += (i + 1) + ") Fecha " + DateAux.getDateString(d.getFecha()) + " - " + d.getNombreDiaSemana()
+      formateado += (i + 1) + ") Fecha " + DateAux.getInstance().getDateString(d.getFecha()) + " - " + d.getNombreDiaSemana()
           + (d.verificarDiaOcupado() ? " *SERVICIO PENDIENTE*" : "") + "\n";
     }
 

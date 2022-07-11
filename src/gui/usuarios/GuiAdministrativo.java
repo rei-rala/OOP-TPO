@@ -74,7 +74,7 @@ public class GuiAdministrativo extends GuiUsuarioBase {
 
     String opciones = "Seleccione un servicio por su numero:";
     for (Servicio s : servicios) {
-      opciones += "\n" + s.getNro() + ") Fecha servicio: " + DateAux.getDateString(s.getFecha());
+      opciones += "\n" + s.getNro() + ") Fecha servicio: " + DateAux.getInstance().getDateString(s.getFecha());
     }
 
     int nroServicio = guiValidarInt(opciones);
@@ -97,7 +97,7 @@ public class GuiAdministrativo extends GuiUsuarioBase {
     }
 
     int nro = s.getNro();
-    String fecha = DateAux.getDateString(s.getFecha());
+    String fecha = DateAux.getInstance().getDateString(s.getFecha());
     Cliente cliente = s.getCliente();
     String horario = s.getHorarioServicio();
     TipoServicio ts = s.getTipoServicio();

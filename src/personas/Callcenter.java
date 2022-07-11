@@ -214,8 +214,8 @@ public class Callcenter extends Interno {
     Turno tHasta = ftHasta.getTurno();
     int desde = ftDesde.getNro();
     int hasta = ftHasta.getNro();
-    double duracionServInicial = DateAux.calcularHoras(desde, hasta);
-    Date today = DateAux.getToday();
+    double duracionServInicial = DateAux.getInstance().calcularHoras(desde, hasta);
+    Date today = DateAux.getInstance().getToday();
 
     if (fechaServicio == null || ts == null || ftDesde == null || ftHasta == null) {
       throw new ServicioException("Verificar datos ingresados");

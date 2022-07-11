@@ -16,7 +16,7 @@ public class FraccionTurno {
 		this.dia = dia;
 		this.turno = turno;
 		this.nro = nro;
-		this.horario = DateAux.getHorarioUnico(turno, nro);
+		this.horario = DateAux.getInstance().getHorarioUnico(turno, nro);
 		this.estaOcupado = false;
 		this.servicioAsignado = null;
 	}
@@ -26,7 +26,7 @@ public class FraccionTurno {
 	}
 
 	public String getHorarioSiguiente() {
-		return DateAux.getHorarioUnico(turno, nro + 1);
+		return DateAux.getInstance().getHorarioUnico(turno, nro + 1);
 	}
 
 	public void asignarServicio(Servicio s) throws AsignacionException {

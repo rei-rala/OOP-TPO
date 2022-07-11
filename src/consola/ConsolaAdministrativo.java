@@ -53,7 +53,7 @@ public class ConsolaAdministrativo extends Consola {
 
       System.out
           .println("\t" + (i + 1) + ") Servicio nro " + s.getNro() + " [fecha servicio=" + s.getFecha() + ", Horario ["
-              + DateAux.getHorarioCompleto(s.getTurno(), inicioT, finT) + ", cliente="
+              + DateAux.getInstance().getHorarioCompleto(s.getTurno(), inicioT, finT) + ", cliente="
               + s.getCliente().getNombre() + "]");
     }
 
@@ -231,9 +231,9 @@ public class ConsolaAdministrativo extends Consola {
 
       System.out.print("\t" + (i + 1) + ") ");
       System.out
-          .println("Factura nro " + f.getNro() + " [facturado:" + DateAux.getDateString(f.getFecha()) + ", cliente: "
+          .println("Factura nro " + f.getNro() + " [facturado:" + DateAux.getInstance().getDateString(f.getFecha()) + ", cliente: "
               + f.getServicio().getCliente().getNombre() + ", Servicio nro " + f.getServicio().getNro() + " del "
-              + DateAux.getDateString(f.getServicio().getFecha()) + "]");
+              + DateAux.getInstance().getDateString(f.getServicio().getFecha()) + "]");
     }
 
     if (0 >= facturas.size()) {

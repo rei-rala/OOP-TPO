@@ -68,7 +68,7 @@ public class GuiTecnico extends GuiUsuarioBase {
 		}
 
 		for (Servicio s : servs) {
-			String fStr = DateAux.getDateString(s.getFecha());
+			String fStr = DateAux.getInstance().getDateString(s.getFecha());
 			String horario = s.getHorarioServicio();
 			opciones += "\n" + s.getNro() + ") Fecha: " + fStr + " - " + horario;
 		}
@@ -91,9 +91,9 @@ public class GuiTecnico extends GuiUsuarioBase {
 
 	private void editarServicio(Servicio s) throws Exception {
 		String nroServicio = "\nNumero servicio " + s.getNro();
-		String fechaCreacion = "\nCreado " + DateAux.getDateString(s.getFechaCreacion());
-		String diaServicio = "\nFecha Servicio " + DateAux.getDateString(s.getFecha());
-		String horarioServicio = "\nHorario " + DateAux.getHorarioCompleto(s);
+		String fechaCreacion = "\nCreado " + DateAux.getInstance().getDateString(s.getFechaCreacion());
+		String diaServicio = "\nFecha Servicio " + DateAux.getInstance().getDateString(s.getFecha());
+		String horarioServicio = "\nHorario " + DateAux.getInstance().getHorarioCompleto(s);
 		String cliente = "\nCliente" + s.getCliente().toStringShort();
 
 		String articulos = "\nArticulos :";
