@@ -5,7 +5,7 @@ import java.util.Date;
 import empresa.Empresa;
 
 public class Factura {
-  static public int contadorFacturas = 0;
+  private static int contadorFacturas = 0;
 
   private final int nro;
   private final Servicio servicio;

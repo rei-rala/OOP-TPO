@@ -24,9 +24,8 @@ public class Agenda {
 
   private void inicializarDias() {
     Date currentDate = DateAux.getToday();
-    System.out.println(currentDate.toString());
     int i = 0;
-    do {
+    while (i < cantDiasGeneradosXDefecto) {
       currentDate = DateAux.getNextDay(currentDate);
       // si es domingo lo omitimos
       if (currentDate.getDay() == 0) {
@@ -34,7 +33,7 @@ public class Agenda {
       }
       obtenerDiaAgenda(currentDate);
       i++;
-    } while (i < cantDiasGeneradosXDefecto);
+    }
 
     this.cantDias = dias.size();
   }
@@ -89,21 +88,23 @@ public class Agenda {
     }
   }
 
-  public boolean verificarDisponibilidad(Servicio s) {
+  public boolean verificarDisponibilidad(Servicio s) throws Exception {
     Date fecha = s.getFecha();
 
-    try {
-      if (fecha.before(DateAux.getToday())) {
-        throw new AgendaException("La fecha debe ser posterior");
-      }
-      Dia d = obtenerDiaAgenda(fecha);
-      if (d == null) {
-        throw new AgendaException("Dia no valido");
-      }
-      return d.verificarDisponibilidad(s);
-    } catch (Exception e) {
-      return false;
+    if (fecha.before(DateAux.getToday())) {
+      s.forceCancelar();
+      throw new AgendaException("La fecha debe ser posterior");
     }
+    Dia d = obtenerDiaAgenda(fecha);
+    if (d == null) {
+      throw new AgendaException("Dia no valido");
+    }
+
+    if (this.propietario.getClass() == Tecnico.class) {
+      d.verificarDisponibilidadPostServicio(s);
+    }
+
+    return d.verificarDisponibilidad(s);
   }
 
   @Override
@@ -125,8 +126,8 @@ public class Agenda {
 
   public ArrayList<Dia> obtenerDias() {
     ArrayList<Dia> diasDispo = new ArrayList<Dia>();
-    
-    for (Dia d: dias) {
+
+    for (Dia d : dias) {
       if (d.getFecha().after(new Date())) {
         diasDispo.add(d);
       }

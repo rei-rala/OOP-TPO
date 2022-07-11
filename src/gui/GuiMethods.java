@@ -59,12 +59,7 @@ public interface GuiMethods {
       title = "Error inesperado";
     }
     JOptionPane.showMessageDialog(null, message, title, icon);
-
-    if (eCls != GuiException.class) {
-      e.printStackTrace();
-    } else {
-      System.out.println(e.getLocalizedMessage());
-    }
+    e.printStackTrace();
   }
 
   default double redondearDouble(Double d) {

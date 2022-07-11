@@ -11,11 +11,13 @@ import main.DateAux;
 @SuppressWarnings("deprecation")
 public class Dia {
   private final Date fecha;
+  private final String fechaString;
   private final String diaSemana;
   private final ArrayList<FraccionTurno> turnos;
 
   public Dia(Date fecha) {
     this.fecha = DateAux.getStartDay(fecha);
+    this.fechaString = DateAux.getDateString(this.fecha);
     this.diaSemana = getNombreDiaSemana();
     this.turnos = new ArrayList<FraccionTurno>();
 
@@ -31,7 +33,7 @@ public class Dia {
       FraccionTurno nvoManana = new FraccionTurno(this, Turno.MANANA, i);
       this.turnos.add(nvoManana);
     }
-    
+
     if (fecha.getDay() == 6) {
       return;
     }
@@ -45,35 +47,35 @@ public class Dia {
     return fecha;
   }
 
+  public String getFechaString() {
+    return fechaString;
+  }
+
   public String getDiaSemana() {
     return diaSemana;
   }
-  
-  public String getNombreDiaSemana() {
-	    int nroDia = fecha.getDay();
 
-	    switch (nroDia) {
-	      case 0:
-	        return "DOMINGO";
-	      case 1:
-	        return "LUNES";
-	      case 2:
-	        return "MARTES";
-	      case 3:
-	        return "MIERCOLES";
-	      case 4:
-	        return "JUEVES";
-	      case 5:
-	        return "VIERNES";
-	      case 6:
-	        return "SABADO";
-	      default:
-	        return "error";
-	    }
-	  }
-  
-  public String getFechaString() {
-	  return DateAux.getDateString(fecha);
+  public String getNombreDiaSemana() {
+    int nroDia = fecha.getDay();
+
+    switch (nroDia) {
+      case 0:
+        return "DOMINGO";
+      case 1:
+        return "LUNES";
+      case 2:
+        return "MARTES";
+      case 3:
+        return "MIERCOLES";
+      case 4:
+        return "JUEVES";
+      case 5:
+        return "VIERNES";
+      case 6:
+        return "SABADO";
+      default:
+        return "error";
+    }
   }
 
   public FraccionTurno obtenerFraccionTurno(int nroTurno, Turno t) {
@@ -105,11 +107,9 @@ public class Dia {
     return seleccion;
   }
 
-
   public boolean validarTurnos(Turno t, int desde, int hasta) {
-	  String tno = t.toString();
-	  
-	  
+    String tno = t.toString();
+
     if (desde > hasta || 0 > desde || 0 > hasta) {
       return false;
     }
@@ -126,7 +126,6 @@ public class Dia {
 
     return true;
   }
-
 
   private boolean estanTurnosOcupados(Turno t, int inicio, int fin) throws Exception {
     boolean ocupado = false;
@@ -145,7 +144,6 @@ public class Dia {
 
     return ocupado;
   }
-  
 
   /**
    * Verifica si se tiene al menos un servicio en el dia
@@ -185,6 +183,30 @@ public class Dia {
     return turnos;
   }
 
+  public void verificarDisponibilidadPostServicio(Servicio s) throws Exception {
+    Turno turnoServicio = s.getTurno();
+    int turnoInicio = s.getTurnoInicio();
+    int turnoAnteriorInicio;
+
+    if (turnoInicio == 0) {
+      return;
+    }
+
+    // Si no es 0 el inicio del nuevo turno, siempre vamos a verificar la
+    // disponibilidad del turno anterior al servicio
+    turnoAnteriorInicio = turnoInicio - 1;
+
+    FraccionTurno ft = obtenerFraccionTurno(turnoAnteriorInicio, turnoServicio);
+
+    if (ft == null) {
+      throw new AsignacionException("Parametros de turno no validos");
+    }
+
+    if (ft.getEstaOcupado()) {
+      throw new AsignacionException("El tecnico requiere un turno adicional tras finalizar un servicio");
+    }
+  }
+
   public boolean verificarDisponibilidad(Servicio s) throws Exception {
     Turno t = s.getTurno();
     int desde = s.getTurnoInicio();
@@ -196,30 +218,29 @@ public class Dia {
     if (estanTurnosOcupados(t, desde, hasta)) {
       throw new AgendaException("Turno/s ya ocupado/s");
     }
+
     return true;
   }
-  
 
   public void asignarServicio(Servicio s) throws Exception {
     try {
-    	ArrayList<FraccionTurno> ftAsignar = obtenerTurnos(s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
+      ArrayList<FraccionTurno> ftAsignar = obtenerTurnos(s.getTurno(), s.getTurnoInicio(), s.getTurnoFin());
 
-        for (FraccionTurno ft : ftAsignar) {
-          if (ft.getEstaOcupado()) {
-            throw new AsignacionException("El turno se encuentra ocupado");
-          }
+      for (FraccionTurno ft : ftAsignar) {
+        if (ft.getEstaOcupado()) {
+          throw new AsignacionException("El turno se encuentra ocupado");
         }
+      }
 
-        for (FraccionTurno ft : ftAsignar) {
-          ft.asignarServicio(s);
-        }
+      for (FraccionTurno ft : ftAsignar) {
+        ft.asignarServicio(s);
+      }
     } catch (AgendaException e) {
       throw e;
     } catch (Exception e) {
       throw new AgendaException("Error NOT HANDLED:\n" + e);
     }
   }
-
 
   @Override
   public String toString() {

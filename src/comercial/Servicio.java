@@ -11,7 +11,7 @@ import excepciones.*;
 import main.DateAux;
 
 public class Servicio {
-  static int contadorServicios = 0;
+  private static int contadorServicios = 0;
 
   private final int nro;
   private Cliente cliente;
@@ -24,11 +24,11 @@ public class Servicio {
   private ArrayList<Costo> articulosUtilizados = new ArrayList<Costo>();
   private ArrayList<Costo> articulosExtraUtilizados = new ArrayList<Costo>();
   private final double costoViaje = Empresa.getInstance().getCostoViaje();
-  
+
   private Turno turno;
   private int turnoInicio = -1;
   private int turnoFin = -1;
-  
+
   private double tiempoTrabajado;
   private boolean almuerzo;
   private boolean enPoderTecnico;
@@ -37,7 +37,7 @@ public class Servicio {
   public Servicio(Date fecha, TipoServicio tipoServicio, Turno turno, int turnoInicio, int turnoFin) throws Exception {
     this.nro = ++contadorServicios;
     this.fechaCreacion = DateAux.getNow();
-    this.fecha = fecha;
+    this.fecha = DateAux.getStartDay(fecha);
     this.tipoServicio = tipoServicio;
     this.turno = turno;
     this.turnoInicio = turnoInicio;

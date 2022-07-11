@@ -7,15 +7,39 @@ import java.util.Date;
 
 @SuppressWarnings("deprecation")
 public class DateAux {
+  private static DateAux instancia;
 
-  public static final long DAY_IN_MS = 1000 * 60 * 60 * 24;
-
-  public static Date getNow() {
-    return new Date();
+  private DateAux() {
   }
 
-  public static Date getToday() {
-    return getStartDay(getNow());
+  static DateAux getInstance() {
+    if (instancia == null) {
+      instancia = new DateAux();
+    }
+    return instancia;
+  }
+
+  public static String getNombreDiaSemana(Date fecha) {
+    int nroDia = fecha.getDay();
+
+    switch (nroDia) {
+      case 0:
+        return "DOMINGO";
+      case 1:
+        return "LUNES";
+      case 2:
+        return "MARTES";
+      case 3:
+        return "MIERCOLES";
+      case 4:
+        return "JUEVES";
+      case 5:
+        return "VIERNES";
+      case 6:
+        return "SABADO";
+      default:
+        return "error";
+    }
   }
 
   public static Date getStartDay(Date d) {
@@ -27,9 +51,28 @@ public class DateAux {
     return f;
   }
 
+  public static Date getStartDay() {
+    return getStartDay(new Date());
+  }
+
+  public static Date getNow() {
+    return new Date();
+  }
+
+  public static Date getToday() {
+    return getStartDay(getNow());
+  }
+
   public static Date getNextDay(Date d) {
-    long inputMilliseconds = getStartDay(d).getTime();
-    return new Date(inputMilliseconds + (1000 * 60 * 60 * 24));
+    Date f = new Date(d.getTime());
+    int newDate = f.getDate() + 1;
+    f.setDate(newDate);
+
+    return getStartDay(f);
+  }
+
+  public static Date getNextDay() {
+    return getNextDay(new Date());
   }
 
   public static double calcularHoras(int turnoDesde, int turnoHasta) {
@@ -68,7 +111,7 @@ public class DateAux {
 
   public static String getDateString(Date d) {
     int dia = d.getDate();
-    int mes = d.getMonth()+1;
+    int mes = d.getMonth() + 1;
     int anio = 1900 + d.getYear();
 
     return "" + dia + "/" + mes + "/" + anio;

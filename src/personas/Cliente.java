@@ -1,13 +1,12 @@
 package personas;
 
-
 import agenda.*;
 import comercial.Servicio;
 import empresa.Empresa;
 import excepciones.*;
 
 public class Cliente extends Persona {
-  static int contadorClientes = 0;
+  private static int contadorClientes = 0;
 
   private final int nro;
   private final Agenda agenda;
@@ -71,14 +70,13 @@ public class Cliente extends Persona {
       throw new AsignacionException("El servicio ya se encuentra asignado a este cliente");
     }
 
-    if (!verificarDisponibilidad(s)) {
+    if (verificarDisponibilidad(s) == false) {
       throw new AgendaException("El cliente ya tiene un servicio vigente");
     }
-
     agenda.asignarServicio(s);
     s.setCliente(this);
-  }
 
+  }
 
   public String toStringShort() {
     return "Cliente [nro=" + nro + ", nombre=" + nombre + ", dni=" + dni + ", direccion="

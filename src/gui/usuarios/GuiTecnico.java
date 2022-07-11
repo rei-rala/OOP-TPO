@@ -135,7 +135,9 @@ public class GuiTecnico extends GuiUsuarioBase {
 		}
 
 		if (es != EstadoServicio.EN_CURSO) {
-			throw new ServicioException("Para acceder a estas opciones primero debe comenzar el servicio (opcion 4)");
+			alert("Para acceder a estas opciones primero debe comenzar el servicio (opcion 4)");
+      editarServicio(s);
+      return;
 		}
 
 		if (opc == 1) {

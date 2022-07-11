@@ -84,6 +84,10 @@ public class GuiAdministrativo extends GuiUsuarioBase {
       throw new Exception("No se encontro servicio seleccionado para facturar");
     }
 
+    if (servicios.contains(eleccion) == false) {
+      throw new Exception("El servicio seleccionado todavia no puede visualizarse");
+    }
+
     return eleccion;
   }
 

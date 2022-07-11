@@ -224,7 +224,7 @@ public class Callcenter extends Interno {
       throw new ServicioException("La fecha no debe ser anterior a la actual");
     }
     if (0 >= fechaServicio.getDay() || fechaServicio.getDay() > 6) {
-      throw new Exception("Dia no valido");
+      throw new Exception("Dia seleccionado no valido: Es domingo.");
     }
     if (desde >= 12 || hasta >= 12) {
       throw new Exception("El numero de turno es incorrecto");

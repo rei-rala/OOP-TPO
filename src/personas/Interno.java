@@ -4,14 +4,14 @@ import empresa.Empresa;
 
 public abstract class Interno extends Persona {
 
-	public static int conteoInternos = 0;
+	private static int contadorInternos = 0;
 	
 	protected final int legajo;
 	protected String contrasena;
 
 	public Interno(String nombre, long dni, String direccion, String telefono, String contrasena) {
 		super(nombre, dni, direccion, telefono);
-		this.legajo = ++conteoInternos;
+		this.legajo = ++contadorInternos;
 		this.contrasena = contrasena;
 
 		Empresa.getInstance().agregarInterno(this);
@@ -20,7 +20,7 @@ public abstract class Interno extends Persona {
 	// ALTERNATIVO SIN DATOS
 	public Interno(String nombre, String contrasena) {
 		super(nombre);
-		this.legajo = ++conteoInternos;
+		this.legajo = ++contadorInternos;
 		this.contrasena = contrasena;
 
 		Empresa.getInstance().agregarInterno(this);

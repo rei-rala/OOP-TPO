@@ -146,11 +146,12 @@ public class GuiCallcenter extends GuiUsuarioBase {
       }
     }
 
-    int selComienzo = guiValidarInt(msgDesde, 1, fraccsTurno.size());
+    // Se resta 1 porque seleccionamos un item de ArrayList
+    int selComienzo = guiValidarInt(msgDesde, 1, fraccsTurno.size()) - 1;
 
     // AUX seleccion final de turno
     ArrayList<FraccionTurno> fraccsTurnoHasta = new ArrayList<FraccionTurno>();
-    for (int i = selComienzo - 1; i < fraccsTurno.size(); i++) {
+    for (int i = selComienzo; i < fraccsTurno.size(); i++) {
       fraccsTurnoHasta.add(fraccsTurno.get(i));
     }
     // Fin AUX seleccion final turno
@@ -164,7 +165,8 @@ public class GuiCallcenter extends GuiUsuarioBase {
       }
     }
 
-    int selFinal = guiValidarInt(msgHasta, 1, fraccsTurnoHasta.size());
+    // Se resta 1 porque seleccionamos un item de ArrayList
+    int selFinal = guiValidarInt(msgHasta, 1, fraccsTurnoHasta.size()) - 1;
 
     String msgTipoServ = "Seleccione tipo de servicio:\n";
     msgTipoServ += "1) INSTALACION (Requiere al menos 1 hora de turno)\n2) REPARACION";
@@ -191,7 +193,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
       editarServicio(s);
       return;
     }
-    alert("Cancelada creacion de servicio");
+    throw new GuiException("Cancelada creacion de servicio");
   }
 
   private void seleccionServicioCC() throws Exception {
@@ -263,7 +265,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
       return;
     }
 
-    alert("Asignacion a cliente cancelada");
+    throw new GuiException("Asignacion a cliente cancelada");
   }
 
   private void editarTecnicoServicio(Servicio s) throws Exception {

@@ -5,14 +5,14 @@ import empresa.Empresa;
 import excepciones.StockException;
 
 abstract public class Articulo extends Recurso {
-	public static int conteoArticulos = 0;
+	private static int contadorArticulos = 0;
 
 	private final int SKU;
 	private int stock;
 
 	public Articulo(String descripcion, double costo, int stock) {
 		super(descripcion, costo);
-		this.SKU = ++conteoArticulos;
+		this.SKU = ++contadorArticulos;
 		this.stock = stock;
 
 		Empresa.getInstance().agregarArticulo(this);
