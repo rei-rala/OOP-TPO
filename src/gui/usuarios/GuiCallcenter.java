@@ -103,7 +103,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
     int nroSeleccionado = guiValidarInt(opciones);
     Cliente seleccionCliente = CALLCENTER.getClientes(nroSeleccionado);
 
-    if (seleccionCliente == null) {
+    if (seleccionCliente == null || clientes.contains(seleccionCliente) == false) {
       throw new ValorException("Ingreso una opcion no valida");
     }
     return seleccionCliente;
@@ -205,7 +205,17 @@ public class GuiCallcenter extends GuiUsuarioBase {
     }
 
     for (Servicio s : sPendientes) {
-      opciones += "\n\t" + s.getNro() + ") " + DateAux.getInstance().getDateString(s.getFecha());
+      boolean faltaTecnico = s.getTecnicos().size() == 0, faltaCliente = s.getCliente() == null;
+
+      // varias lineas para legibilidad
+      opciones += "\n\t" + s.getNro() + ") ";
+      opciones += DateAux.getInstance().getNombreDiaSemana(s.getFecha()) + " ";
+      opciones += DateAux.getInstance().getDateString(s.getFecha());
+      opciones += " [" + s.getHorarioServicio() + "] - ";
+      opciones += (faltaTecnico || faltaCliente) ? "Pendiente: " : "Listo para liberar";
+      opciones += faltaTecnico ? "Tecnico" : "";
+      opciones += (faltaTecnico && faltaCliente) ? ", " : "";
+      opciones += faltaCliente ? "Cliente" : "";
     }
 
     int opcionServicio = guiValidarInt(opciones);

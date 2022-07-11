@@ -83,6 +83,12 @@ public class DateAux {
     return nroTurno % 2 == 0 ? "00" : "30";
   }
 
+  public String getHorasFormat(double tiempoTrabajado) {
+    double correccion = tiempoTrabajado - 0.5;
+    return "" + (int) correccion + ":" + (correccion % 1 == 0 ? "00" : "30");
+
+  }
+
   public String getHoraManana(int nroTurno) {
     int h = (int) 8 + nroTurno / 2;
     return 10 > h ? "0" + h : "" + h;

@@ -74,7 +74,10 @@ public class GuiAdministrativo extends GuiUsuarioBase {
 
     String opciones = "Seleccione un servicio por su numero:";
     for (Servicio s : servicios) {
-      opciones += "\n" + s.getNro() + ") Fecha servicio: " + DateAux.getInstance().getDateString(s.getFecha());
+      opciones += "\n" + s.getNro() + ") ";
+      opciones += "Visita del " + DateAux.getInstance().getNombreDiaSemana(s.getFecha());
+      opciones += " " + DateAux.getInstance().getDateString(s.getFecha());
+      opciones += ", horario " + s.getHorarioServicio();
     }
 
     int nroServicio = guiValidarInt(opciones);
@@ -98,27 +101,30 @@ public class GuiAdministrativo extends GuiUsuarioBase {
 
     int nro = s.getNro();
     String fecha = DateAux.getInstance().getDateString(s.getFecha());
-    Cliente cliente = s.getCliente();
+    String cliente = s.getCliente().getNombre() + "(ID: " + s.getCliente().getNro() + ")";
     String horario = s.getHorarioServicio();
     TipoServicio ts = s.getTipoServicio();
-    EstadoServicio es = s.getEstadoServicio();
-    double tiempoTrabajado = s.getTiempoTrabajado();
+    String tiempoTrabajado = DateAux.getInstance().getHorasFormat(s.getTiempoTrabajado());
     double costoViaje = s.getCostoViaje();
     boolean incluyeAlmuerzo = s.isIncluyeAlmuerzo();
     double totalServicio = s.calcularTotalServicio();
 
-    ArrayList<Costo> arts = s.getArticulos();
-    int qArts = arts.size();
-    ArrayList<Costo> otrosArts = s.getArticulosExtra();
-    int qOtrosArts = otrosArts.size();
+    double costoArts = 0;
+    for (Costo c : s.getArticulos()) {
+      costoArts += c.obtenerTotalCosto();
+    }
+    double costoOtrosArts = 0;
+    for (Costo c : s.getArticulosExtra()) {
+      costoOtrosArts += c.obtenerTotalCosto();
+    }
     ArrayList<Tecnico> tecs = s.getTecnicos();
     int qTecs = tecs.size();
 
     String mensaje = "Mostrando servicio nro " + nro + " del " + fecha + " [" + horario + "]";
-    mensaje += "\nCliente: " + cliente + "\nTipoServicio: " + ts + "\nEstadoServicio: "
-        + es + "\nTiempoTrabajado: " + tiempoTrabajado + "\nCostoViaje: " + costoViaje + "\nIncluyeAlmuerzo: "
-        + (incluyeAlmuerzo ? "SI" : "NO") + "\nArticulos utilizados: " + qArts + "\nCantidad de otros costos: "
-        + qOtrosArts + "\nTecnicos asignados: " + qTecs + "\nTotal servicio: $" + totalServicio;
+    mensaje += "\nCliente: " + cliente + "\nTipoServicio: " + ts + "\nTiempoTrabajado: " + tiempoTrabajado
+        + "hs \nCostoViaje: $" + costoViaje + "\nIncluyeAlmuerzo: " + (incluyeAlmuerzo ? "SI" : "NO")
+        + "\nArticulos utilizados: $" + costoArts + "\nOtros costos: $" + costoOtrosArts + "\nTecnicos asignados: "
+        + qTecs + "\nTotal servicio: $" + totalServicio;
 
     mensaje += "\n\nQue desea realizar?";
     mensaje += "\n\t1) Ver Tecnicos asignados";
@@ -164,7 +170,6 @@ public class GuiAdministrativo extends GuiUsuarioBase {
     alert(mensaje);
   }
 
-
   private String concatenarArticulos(ArrayList<Costo> arrayCostos) {
     String preMensaje = "";
 
@@ -204,6 +209,7 @@ public class GuiAdministrativo extends GuiUsuarioBase {
 
     if (confirm(msgConfirm)) {
       ADMINISTRATIVO.agregarArticuloExtraServicio(ae, 1, s);
+      alert("Se anadio el articulo extra " + ae + " a Servicio nro " + s.getNro());
     } else {
       alert("Cancelado por usuario");
     }
@@ -214,7 +220,7 @@ public class GuiAdministrativo extends GuiUsuarioBase {
 
     if (confirm(msgConfirm)) {
       Factura f = ADMINISTRATIVO.facturarServicio(s);
-      alert("Servicio facturado con exito, numero de factura: " + f.getNro());
+      alert("Servicio " + s.getNro() + " facturado con exito, numero de factura: " + f.getNro());
     } else {
       alert("Cancelado por usuario");
     }
@@ -227,7 +233,12 @@ public class GuiAdministrativo extends GuiUsuarioBase {
 
     String opciones = "Seleccione una factura por su numero:";
     for (Factura f : facturas) {
-      opciones += "\n" + f.getNro() + ") " + f.getFecha();
+      Servicio s = f.getServicio();
+      opciones += "\n" + f.getNro() + ") ";
+      opciones += "Facturado: " + DateAux.getInstance().getDateString(f.getFecha());
+      opciones += " - Cliente: " + s.getCliente().getNombre() + "(ID: " + s.getCliente().getNro() + ")";
+      opciones += " - Servicio " + s.getNro() + " del " + DateAux.getInstance().getDateString(s.getFecha());
+      opciones += " - Total: $" + f.calcularTotal();
     }
 
     int nroFactura = guiValidarInt(opciones);
@@ -244,19 +255,20 @@ public class GuiAdministrativo extends GuiUsuarioBase {
     Factura f = obtenerFactura();
 
     int nro = f.getNro();
-    String s = f.getServicio().toStringShorter(), c = f.getServicio().getCliente().toStringShort(),
+    String s = f.getServicio().toStringShorter(),
+        c = f.getServicio().getCliente().getNombre() + "(ID: " + f.getServicio().getCliente().getNro() + ")",
         margen = f.calcularMargenStr();
     double subtotal = f.calcularSubTotal(), ganancia = f.calcularGanancias(), iva = f.calcularIVA(),
         total = f.calcularTotal();
 
     String mensaje = "Mostrando factura numero " + nro;
+    mensaje += "\n\nServicio asociado: " + s + "\n";
     mensaje += "\nCliente: " + c;
     mensaje += "\nTotal Servicio: $" + subtotal;
-    mensaje += "\nSubtotal Factura: $" + total;
     mensaje += "\nIVA: $" + iva;
+    mensaje += "\nSubtotal Factura: $" + total;
     mensaje += "\nGanancia: $" + ganancia;
     mensaje += "\nRentabilidad de este servicio: " + margen;
-    mensaje += "\nServicio asociado: " + s;
 
     alert(mensaje);
   }
