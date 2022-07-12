@@ -44,10 +44,18 @@ public class Callcenter extends Interno {
   public Cliente getClientes(int numeroCliente) {
     return Empresa.getInstance().getClientes(numeroCliente);
   }
+  
+  public Cliente getClientesDNI(int dni) {
+	    return Empresa.getInstance().getClientesDNI(dni);
+	  }
 
   public Cliente getClientes(Cliente c) {
     return Empresa.getInstance().getClientes(c);
   }
+  
+  public ArrayList<Cliente> getClientesActivos() {
+	    return Empresa.getInstance().getClientes();
+	  }
 
   public ArrayList<Cliente> getClientesSinServicios() {
     ArrayList<Cliente> clientes = new ArrayList<Cliente>();

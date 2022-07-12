@@ -373,6 +373,18 @@ public class Empresa {
     }
     return clienteEncontrado;
   }
+  
+  public Cliente getClientesDNI(int dni) {
+	    Cliente clienteEncontrado = null;
+
+	    for (Cliente c : clientes) {
+	      if (c.getDni() == dni) {
+	        clienteEncontrado = c;
+	        break;
+	      }
+	    }
+	    return clienteEncontrado;
+	  }
 
   public Cliente getClientes(Cliente c) {
     Cliente clienteEncontrado = null;
