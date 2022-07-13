@@ -70,7 +70,9 @@ public class GuiTecnico extends GuiUsuarioBase {
       String dStr = dateAux.getNombreDiaSemana(s.getFecha());
       String fStr = dateAux.getDateString(s.getFecha());
       String horario = s.getHorarioServicio();
-      opciones += "\n" + s.getNro() + ") " + dStr + " " + fStr + " - [" + horario + "]";
+      EstadoServicio estado = s.getEstadoServicio();
+
+      opciones += "\n" + s.getNro() + ") " + estado + ": " + dStr + " " + fStr + " - [" + horario + "]";
     }
 
     int opcion = guiValidarInt(opciones);
@@ -93,6 +95,7 @@ public class GuiTecnico extends GuiUsuarioBase {
     String nroServicio = "\nNumero servicio " + s.getNro();
     String fechaCreacion = "\nCreado " + dateAux.getDateString(s.getFechaCreacion());
     String diaServicio = "\nFecha Servicio " + dateAux.getDateString(s.getFecha());
+    String tipoServicio = "\nTipo de servicio: " + s.getTipoServicio();
     String horarioServicio = "\nHorario " + dateAux.getHorarioCompleto(s);
     String cliente = "\nCliente" + s.getCliente().toStringShort();
 
@@ -113,7 +116,7 @@ public class GuiTecnico extends GuiUsuarioBase {
     String almuerzo = "\nAlmuerzo " + (s.isIncluyeAlmuerzo() ? "INCLUIDO" : "no incluido");
     String estado = "\nEstado servicio " + s.getEstadoServicio();
 
-    String opciones = nroServicio + fechaCreacion + diaServicio + horarioServicio + cliente + articulos
+    String opciones = nroServicio + fechaCreacion + diaServicio + tipoServicio + horarioServicio + cliente + articulos
         + articulosExtra + almuerzo + estado;
 
     EstadoServicio es = s.getEstadoServicio();

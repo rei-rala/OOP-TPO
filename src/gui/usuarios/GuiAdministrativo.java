@@ -254,15 +254,18 @@ public class GuiAdministrativo extends GuiUsuarioBase {
     Factura f = obtenerFactura();
 
     int nro = f.getNro();
-    String s = f.getServicio().toStringShorter(),
-        c = f.getServicio().getCliente().getNombre() + "(ID: " + f.getServicio().getCliente().getNro() + ")",
-        margen = f.calcularMargenStr();
-    double subtotal = f.calcularSubTotal(), ganancia = f.calcularGanancias(), iva = f.calcularIVA(),
+    String s = f.getServicio().toStringShort(),
+        margen = f.calcularMargenStr(),
+        fechaServ = dateAux.getDateString(f.getServicio().getFecha()),
+        horarioServ = dateAux.getHorarioCompleto(f.getServicio());
+    double subtotal = f.calcularSubTotal(),
+        ganancia = f.calcularGanancias(),
+        iva = f.calcularIVA(),
         total = f.calcularTotal();
 
     String mensaje = "Mostrando factura numero " + nro;
-    mensaje += "\n\nServicio asociado: " + s + "\n";
-    mensaje += "\nCliente: " + c;
+    mensaje += "\n\nServicio del " + fechaServ + " [" + horarioServ + "]";
+    mensaje += "\n" + s + "\n";
     mensaje += "\nTotal Servicio: $" + subtotal;
     mensaje += "\nIVA: $" + iva;
     mensaje += "\nSubtotal Factura: $" + total;

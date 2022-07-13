@@ -312,38 +312,67 @@ public class Servicio {
   }
 
   public String toStringShorter() {
-    String clienteStr = getCliente() == null ? "<SIN CLIENTE ASIGNADO>"
-        : getCliente().getNombre() + "(ID: "
-            + getCliente().getNro() + ")";
+    String clienteStr = getCliente() == null
+        ? "<SIN CLIENTE ASIGNADO>"
+        : getCliente().getNombre() + " <ID: " + getCliente().getNro() + ">";
+    int cantTecnicos = getTecnicos().size(),
+        cantArticulos = getArticulos().size(),
+        cantArticulosExtra = getArticulosExtra().size();
 
-    return "Numero=" + nro
-        + "\nCliente=" + clienteStr
+    return "Numero: " + nro
+        + "\nCliente: " + clienteStr
         + "\nEstado " + estadoServicio
-        + "\nFecha=" + dateAux.getDateString(fecha)
-        + "\nTipo=" + tipoServicio
-        + "\ntecnicosAsignados=" + tecnicosAsignados.size()
-        + "\narticulosUtilizados=" + articulosUtilizados.size()
-        + "\narticulosExtraUtilizados=" + articulosExtraUtilizados.size();
+        + "\nFecha: " + dateAux.getDateString(fecha)
+        + "\nTipo: " + tipoServicio
+        + "\nTecnicos asignados: " + (cantTecnicos > 0 ? cantTecnicos : "<SIN TECNICOS ASIGNADOS>")
+        + "\nArticulos utilizados: " + (cantArticulos > 0 ? cantArticulos : "<SIN ARTICULOS UTILIZADOS>")
+        + "\nArticulos extra utilizados: "
+        + (cantArticulosExtra > 0 ? cantArticulosExtra : "<SIN ARTICULOS EXTRA UTILIZADOS>");
   }
 
   public String toStringShort() {
     String clienteStr = getCliente() == null ? "<SIN CLIENTE ASIGNADO>"
         : getCliente().getNombre() + "(ID: "
             + getCliente().getNro() + ")";
-    return "Servicio [nro=" + nro + "\nfecha=" + dateAux.getDateString(fecha)
-        + "\ncliente=" + clienteStr + "\ntiempoTrabajado="
-        + tiempoTrabajado + "\ntipoServicio=" + tipoServicio + "\ntecnicosAsignados=" + tecnicosAsignados.size()
-        + "\narticulosUtilizados=" + articulosUtilizados
-        + "\narticulosExtraUtilizados=" + articulosExtraUtilizados + "\ncostoViaje=" + costoViaje;
+
+    double totalArts = 0, totalOtrosArts = 0;
+    String tArts = "Articulos " + articulosUtilizados.size(),
+        tOtrosArts = "Articulos extra " + articulosExtraUtilizados.size();
+
+    for (Costo cArts : articulosUtilizados) {
+      totalArts += cArts.obtenerTotalCosto();
+    }
+
+    for (Costo cArtsExtra : articulosExtraUtilizados) {
+      totalOtrosArts += cArtsExtra.obtenerTotalCosto();
+    }
+
+    return "\nNumero: " + nro
+        + "\nFecha: " + dateAux.getDateString(fecha)
+        + "\nCliente: " + clienteStr
+        + "\nTiempo trabajado: " + tiempoTrabajado
+        + "\nTipo servicio: " + tipoServicio
+        + "\nTecnicos asignados: " + tecnicosAsignados.size()
+        + "\n" + tArts + " ($ " + (totalArts > 0 ? totalArts : "-") + ")"
+        + "\n" + tOtrosArts + " ($ " + (totalOtrosArts > 0 ? totalOtrosArts : "-") + ")"
+        + "\nCosto Viaje: " + costoViaje
+        + " ]";
   }
 
   @Override
   public String toString() {
-    return "Servicio [nro=" + nro + ", cliente=" + cliente + ", fecha=" + dateAux.getDateString(fecha)
-        + ", tiempoTrabajado="
-        + tiempoTrabajado + ", tipoServicio=" + tipoServicio + ", estadoServicio=" + estadoServicio
-        + ", tecnicosAsignados=" + tecnicosAsignados + ", articulosUtilizados=" + articulosUtilizados
-        + ", articulosExtraUtilizados=" + articulosExtraUtilizados + ", costoViaje=" + costoViaje + ", facturado="
-        + facturado + "]";
+    return "Servicio [ "
+        + "nro: " + nro
+        + ", Cliente: " + cliente
+        + ", Fecha: " + dateAux.getDateString(fecha)
+        + ", Tiempo trabajado: " + tiempoTrabajado
+        + ", Tipo servicio: " + tipoServicio
+        + ", Estado servicio: " + estadoServicio
+        + ", Tecnicos asignados: " + tecnicosAsignados
+        + ", Articulos utilizados: " + articulosUtilizados
+        + ", Articulos extra utilizados: " + articulosExtraUtilizados
+        + ", Costo viaje: " + costoViaje
+        + ", Facturado: " + facturado
+        + " ]";
   }
 }

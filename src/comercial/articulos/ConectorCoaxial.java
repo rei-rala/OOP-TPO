@@ -3,7 +3,7 @@ package comercial.articulos;
 public class ConectorCoaxial extends Articulo {
 
 	public ConectorCoaxial(double costo, int stock) {
-		super("Divisor Coaxial de 1 a 2", costo, stock);
+		super("ConectorCoaxial RG6", costo, stock);
 	}
 
 	@Override

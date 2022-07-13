@@ -28,8 +28,12 @@ public class Factura {
 
   @Override
   public String toString() {
-    return "Factura [nro=" + nro + ", servicio=" + servicio + ", subtotal=" + subtotal + ", iva=" + iva + ", total="
-        + total + "]";
+    return "Factura [nro=" + nro
+        + ", servicio=" + servicio
+        + ", subtotal=" + subtotal
+        + ", iva=" + iva
+        + ", total=" + total
+        + "]";
   }
 
   public int getNro() {
@@ -39,7 +43,7 @@ public class Factura {
   public Servicio getServicio() {
     return servicio;
   }
-  
+
   public Date getFecha() {
     return fecha;
   }
