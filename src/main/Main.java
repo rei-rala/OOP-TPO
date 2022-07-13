@@ -19,6 +19,7 @@ public class Main {
   static boolean isRunning = true;
   static Interno i;
   private static GuiMain gui = GuiMain.getInstance();
+  private final static DateAux dateAux = DateAux.getInstance();
 
   public static void main(String[] args) throws Exception {
 
@@ -107,17 +108,17 @@ public class Main {
     // Variables de control la creacion de los servicios
     int etapaA = 3, etapaB = 6, etapaC = 7, etapaD = 8, etapaE = 10, etapaF = 12;
     // Fecha base, iremos avanzando la fecha en cada iteracion
-    Date fecha = DateAux.getInstance().getNextDay(DateAux.getInstance().getToday());
+    Date fecha = dateAux.getNextDay(dateAux.getToday());
 
     for (int i = 1; i <= 12; i++) {
 
       while (fecha.getDay() == 0 || fecha.getDay() >= 5) {
-        fecha = DateAux.getInstance().getNextDay(fecha);
+        fecha = dateAux.getNextDay(fecha);
       }
 
       // Propiedades de los servicios creados
       TipoServicio tipoServAlternar = i % 2 == 0 ? TipoServicio.INSTALACION : TipoServicio.REPARACION;
-      fecha = i % 2 == 0 ? fecha : DateAux.getInstance().getNextDay(fecha);
+      fecha = i % 2 == 0 ? fecha : dateAux.getNextDay(fecha);
       Turno turnoAlternar = i % 2 == 0 ? Turno.MANANA : Turno.TARDE;
       int turnoInicio = 0, turnoFin = 5;
 
@@ -251,10 +252,10 @@ public class Main {
     Cliente clienteCC = new Cliente("Cliente [Prueba Workflow Callcenter]");
     // tambien obtenemos un tecnico de prueba
     Tecnico tecnicoCC = new Tecnico("Tecnico [Prueba Workflow Callcenter]", "", Seniority.SENIOR);
-    Date testDate = DateAux.getInstance().getStartDay();
+    Date testDate = dateAux.getStartDay();
 
     if (testDate.getDay() == 0) {
-      testDate = DateAux.getInstance().getNextDay(testDate);
+      testDate = dateAux.getNextDay(testDate);
     }
 
     Agenda agC = clienteCC.getAgenda();
@@ -350,10 +351,10 @@ public class Main {
 
     // Preasignando un sFervicio
     Callcenter auxCC = new Callcenter("", "");
-    Date fWFTecnico = DateAux.getInstance().getNextDay();
+    Date fWFTecnico = dateAux.getNextDay();
 
     while (fWFTecnico.getDay() == 0 || fWFTecnico.getDay() >= 5) {
-      fWFTecnico = DateAux.getInstance().getNextDay(fWFTecnico);
+      fWFTecnico = dateAux.getNextDay(fWFTecnico);
     }
 
     Servicio auxS = auxCC.crearServicio(fWFTecnico, TipoServicio.INSTALACION, tFtDesde, tFtHasta);

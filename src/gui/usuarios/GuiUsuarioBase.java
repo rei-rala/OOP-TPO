@@ -1,5 +1,7 @@
 package gui.usuarios;
 
+import main.DateAux;
+
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
@@ -15,6 +17,7 @@ import javax.swing.JButton;
 
 @SuppressWarnings("serial")
 public abstract class GuiUsuarioBase extends JPanel implements ActionListener, GuiMethods {
+  protected final DateAux dateAux = DateAux.getInstance();
 
 	private JLabel lblTitulo;
 	private JButton btnLogout;

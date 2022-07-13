@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 import comercial.*;
 import comercial.articulos.*;
 import excepciones.*;
-import main.DateAux;
 import personas.*;
 
 @SuppressWarnings("serial")
@@ -75,8 +74,8 @@ public class GuiAdministrativo extends GuiUsuarioBase {
     String opciones = "Seleccione un servicio por su numero:";
     for (Servicio s : servicios) {
       opciones += "\n" + s.getNro() + ") ";
-      opciones += "Visita del " + DateAux.getInstance().getNombreDiaSemana(s.getFecha());
-      opciones += " " + DateAux.getInstance().getDateString(s.getFecha());
+      opciones += "Visita del " + dateAux.getNombreDiaSemana(s.getFecha());
+      opciones += " " + dateAux.getDateString(s.getFecha());
       opciones += ", horario " + s.getHorarioServicio();
     }
 
@@ -100,11 +99,11 @@ public class GuiAdministrativo extends GuiUsuarioBase {
     }
 
     int nro = s.getNro();
-    String fecha = DateAux.getInstance().getDateString(s.getFecha());
+    String fecha = dateAux.getDateString(s.getFecha());
     String cliente = s.getCliente().getNombre() + "(ID: " + s.getCliente().getNro() + ")";
     String horario = s.getHorarioServicio();
     TipoServicio ts = s.getTipoServicio();
-    String tiempoTrabajado = DateAux.getInstance().getHorasFormat(s.getTiempoTrabajado());
+    String tiempoTrabajado = dateAux.getHorasFormat(s.getTiempoTrabajado());
     double costoViaje = s.getCostoViaje();
     boolean incluyeAlmuerzo = s.isIncluyeAlmuerzo();
     double totalServicio = s.calcularTotalServicio();
@@ -235,9 +234,9 @@ public class GuiAdministrativo extends GuiUsuarioBase {
     for (Factura f : facturas) {
       Servicio s = f.getServicio();
       opciones += "\n" + f.getNro() + ") ";
-      opciones += "Facturado: " + DateAux.getInstance().getDateString(f.getFecha());
+      opciones += "Facturado: " + dateAux.getDateString(f.getFecha());
       opciones += " - Cliente: " + s.getCliente().getNombre() + "(ID: " + s.getCliente().getNro() + ")";
-      opciones += " - Servicio " + s.getNro() + " del " + DateAux.getInstance().getDateString(s.getFecha());
+      opciones += " - Servicio " + s.getNro() + " del " + dateAux.getDateString(s.getFecha());
       opciones += " - Total: $" + f.calcularTotal();
     }
 

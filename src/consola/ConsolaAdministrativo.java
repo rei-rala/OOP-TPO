@@ -4,7 +4,6 @@ import personas.*;
 import comercial.*;
 import comercial.articulos.*;
 
-import main.DateAux;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ public class ConsolaAdministrativo extends Consola {
 
       System.out
           .println("\t" + (i + 1) + ") Servicio nro " + s.getNro() + " [fecha servicio=" + s.getFecha() + ", Horario ["
-              + DateAux.getInstance().getHorarioCompleto(s.getTurno(), inicioT, finT) + ", cliente="
+              + dateAux.getHorarioCompleto(s.getTurno(), inicioT, finT) + ", cliente="
               + s.getCliente().getNombre() + "]");
     }
 
@@ -231,9 +230,9 @@ public class ConsolaAdministrativo extends Consola {
 
       System.out.print("\t" + (i + 1) + ") ");
       System.out
-          .println("Factura nro " + f.getNro() + " [facturado:" + DateAux.getInstance().getDateString(f.getFecha()) + ", cliente: "
+          .println("Factura nro " + f.getNro() + " [facturado:" + dateAux.getDateString(f.getFecha()) + ", cliente: "
               + f.getServicio().getCliente().getNombre() + ", Servicio nro " + f.getServicio().getNro() + " del "
-              + DateAux.getInstance().getDateString(f.getServicio().getFecha()) + "]");
+              + dateAux.getDateString(f.getServicio().getFecha()) + "]");
     }
 
     if (0 >= facturas.size()) {

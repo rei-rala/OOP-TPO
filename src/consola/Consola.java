@@ -1,9 +1,11 @@
 package consola;
 
 import java.util.Scanner;
+import main.DateAux;
 
 abstract public class Consola {
 	final protected Scanner sc;
+  final protected DateAux dateAux = DateAux.getInstance();
 
 	public Consola(Scanner sc) {
 		this.sc = sc;

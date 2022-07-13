@@ -14,6 +14,7 @@ public class Agenda {
   private final Persona propietario;
   private int cantDias = 0;
   private final int cantDiasGeneradosXDefecto = 15;
+  private DateAux dateAux = DateAux.getInstance();
 
   public Agenda(Persona propietario) {
     this.dias = new ArrayList<Dia>();
@@ -23,10 +24,10 @@ public class Agenda {
   }
 
   private void inicializarDias() {
-    Date currentDate = DateAux.getInstance().getToday();
+    Date currentDate = dateAux.getToday();
     int i = 0;
     while (i < cantDiasGeneradosXDefecto) {
-      currentDate = DateAux.getInstance().getNextDay(currentDate);
+      currentDate = dateAux.getNextDay(currentDate);
       // si es domingo lo omitimos
       if (currentDate.getDay() == 0) {
         continue;
@@ -51,13 +52,13 @@ public class Agenda {
   }
 
   public Dia obtenerDiaAgenda(Date fecha) {
-    Date f = DateAux.getInstance().getStartDay(fecha);
+    Date f = dateAux.getStartDay(fecha);
 
     Dia encontrado = null;
 
     for (Dia d : dias) {
 
-      if (DateAux.getInstance().getDateString(d.getFecha()).equalsIgnoreCase(DateAux.getInstance().getDateString(f))) {
+      if (dateAux.getDateString(d.getFecha()).equalsIgnoreCase(dateAux.getDateString(f))) {
         encontrado = d;
         break;
       }
@@ -92,9 +93,9 @@ public class Agenda {
   }
 
   public void verificarDisponibilidad(Servicio s) throws Exception {
-    Date fecha = DateAux.getInstance().getStartDay(s.getFecha());
+    Date fecha = dateAux.getStartDay(s.getFecha());
 
-    if (fecha.before(DateAux.getInstance().getToday())) {
+    if (fecha.before(dateAux.getToday())) {
       s.forceCancelar();
       throw new AgendaException("La fecha debe ser posterior");
     }
@@ -120,7 +121,7 @@ public class Agenda {
 
     for (int i = 0; i < dias.size(); i++) {
       Dia d = dias.get(i);
-      formateado += (i + 1) + ") Fecha " + DateAux.getInstance().getDateString(d.getFecha()) + " - " + d.getNombreDiaSemana()
+      formateado += (i + 1) + ") Fecha " + dateAux.getDateString(d.getFecha()) + " - " + d.getNombreDiaSemana()
           + (d.verificarDiaOcupado() ? " *SERVICIO PENDIENTE*" : "") + "\n";
     }
 

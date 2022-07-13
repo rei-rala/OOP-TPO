@@ -1,6 +1,7 @@
 package personas;
 
 import empresa.Empresa;
+import main.DateAux;
 
 public abstract class Interno extends Persona {
 
@@ -8,6 +9,8 @@ public abstract class Interno extends Persona {
 	
 	protected final int legajo;
 	protected String contrasena;
+
+  protected DateAux dateAux = DateAux.getInstance();
 
 	public Interno(String nombre, long dni, String direccion, String telefono, String contrasena) {
 		super(nombre, dni, direccion, telefono);

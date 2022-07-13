@@ -7,7 +7,6 @@ import comercial.articulos.Articulo;
 import comercial.articulos.ArticuloExtra;
 import comercial.articulos.Costo;
 import excepciones.*;
-import main.DateAux;
 import personas.Tecnico;
 
 import java.awt.event.ActionEvent;
@@ -68,8 +67,8 @@ public class GuiTecnico extends GuiUsuarioBase {
     }
 
     for (Servicio s : servs) {
-      String dStr = DateAux.getInstance().getNombreDiaSemana(s.getFecha());
-      String fStr = DateAux.getInstance().getDateString(s.getFecha());
+      String dStr = dateAux.getNombreDiaSemana(s.getFecha());
+      String fStr = dateAux.getDateString(s.getFecha());
       String horario = s.getHorarioServicio();
       opciones += "\n" + s.getNro() + ") " + dStr + " " + fStr + " - [" + horario + "]";
     }
@@ -92,9 +91,9 @@ public class GuiTecnico extends GuiUsuarioBase {
 
   private void editarServicio(Servicio s) throws Exception {
     String nroServicio = "\nNumero servicio " + s.getNro();
-    String fechaCreacion = "\nCreado " + DateAux.getInstance().getDateString(s.getFechaCreacion());
-    String diaServicio = "\nFecha Servicio " + DateAux.getInstance().getDateString(s.getFecha());
-    String horarioServicio = "\nHorario " + DateAux.getInstance().getHorarioCompleto(s);
+    String fechaCreacion = "\nCreado " + dateAux.getDateString(s.getFechaCreacion());
+    String diaServicio = "\nFecha Servicio " + dateAux.getDateString(s.getFecha());
+    String horarioServicio = "\nHorario " + dateAux.getHorarioCompleto(s);
     String cliente = "\nCliente" + s.getCliente().toStringShort();
 
     String articulos = "\nArticulos :";

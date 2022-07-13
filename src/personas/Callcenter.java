@@ -8,7 +8,6 @@ import empresa.Empresa;
 import comercial.*;
 import comercial.articulos.*;
 import excepciones.*;
-import main.DateAux;
 
 @SuppressWarnings("deprecation")
 public class Callcenter extends Interno {
@@ -223,8 +222,8 @@ public class Callcenter extends Interno {
     Turno tHasta = ftHasta.getTurno();
     int desde = ftDesde.getNro();
     int hasta = ftHasta.getNro();
-    double duracionServInicial = DateAux.getInstance().calcularHoras(desde, hasta);
-    Date today = DateAux.getInstance().getToday();
+    double duracionServInicial = dateAux.calcularHoras(desde, hasta);
+    Date today = dateAux.getToday();
 
     if (fechaServicio == null || ts == null || ftDesde == null || ftHasta == null) {
       throw new ServicioException("Verificar datos ingresados");

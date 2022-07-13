@@ -15,7 +15,6 @@ import comercial.articulos.*;
 import comercial.Servicio;
 import comercial.TipoServicio;
 import excepciones.*;
-import main.DateAux;
 import personas.*;
 
 @SuppressWarnings("serial")
@@ -238,8 +237,8 @@ public class GuiCallcenter extends GuiUsuarioBase {
 
       // varias lineas para legibilidad
       opciones += "\n\t" + s.getNro() + ") ";
-      opciones += DateAux.getInstance().getNombreDiaSemana(s.getFecha()) + " ";
-      opciones += DateAux.getInstance().getDateString(s.getFecha());
+      opciones += dateAux.getNombreDiaSemana(s.getFecha()) + " ";
+      opciones += dateAux.getDateString(s.getFecha());
       opciones += " [" + s.getHorarioServicio() + "] - ";
       opciones += (faltaTecnico || faltaCliente) ? "Pendiente: " : "Listo para liberar";
       opciones += faltaTecnico ? "Tecnico" : "";
@@ -295,7 +294,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
     }
 
     String opciones = "Confirma asignar a cliente nro " + c.getNro() + " (" + c.getNombre() + ")";
-    opciones += "El servicio nro " + s.getNro() + " (" + DateAux.getInstance().getDateString(s.getFecha()) + " - "
+    opciones += "El servicio nro " + s.getNro() + " (" + dateAux.getDateString(s.getFecha()) + " - "
         + s.getHorarioServicio() + ")";
 
     if (confirm(opciones)) {
