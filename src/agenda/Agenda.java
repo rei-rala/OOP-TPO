@@ -86,14 +86,12 @@ public class Agenda {
       aAsignar.verificarDisponibilidadPostServicio(s);
     }
 
-    if (aAsignar.verificarDisponibilidad(s) == false) {
-      throw new AsignacionException("No se puede asignar el servicio");
-    }
+    aAsignar.verificarDisponibilidad(s);
     
     aAsignar.asignarServicio(s);
   }
 
-  public boolean verificarDisponibilidad(Servicio s) throws Exception {
+  public void verificarDisponibilidad(Servicio s) throws Exception {
     Date fecha = DateAux.getInstance().getStartDay(s.getFecha());
 
     if (fecha.before(DateAux.getInstance().getToday())) {
@@ -109,7 +107,7 @@ public class Agenda {
       d.verificarDisponibilidadPostServicio(s);
     }
 
-    return d.verificarDisponibilidad(s);
+    d.verificarDisponibilidad(s);
   }
 
   @Override

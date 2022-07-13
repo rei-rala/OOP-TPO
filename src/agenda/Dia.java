@@ -207,7 +207,7 @@ public class Dia {
     }
   }
 
-  public boolean verificarDisponibilidad(Servicio s) throws Exception {
+  public void verificarDisponibilidad(Servicio s) throws Exception {
     Turno t = s.getTurno();
     int desde = s.getTurnoInicio();
     int hasta = s.getTurnoFin();
@@ -218,8 +218,6 @@ public class Dia {
     if (estanTurnosOcupados(t, desde, hasta)) {
       throw new AgendaException("Turno/s ya ocupado/s");
     }
-
-    return true;
   }
 
   public void asignarServicio(Servicio s) throws Exception {

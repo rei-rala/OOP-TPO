@@ -46,16 +46,16 @@ public class Callcenter extends Interno {
   }
   
   public Cliente getClientesDNI(int dni) {
-	    return Empresa.getInstance().getClientesDNI(dni);
-	  }
+    return Empresa.getInstance().getClientesDNI(dni);
+  }
 
   public Cliente getClientes(Cliente c) {
     return Empresa.getInstance().getClientes(c);
   }
   
   public ArrayList<Cliente> getClientesActivos() {
-	    return Empresa.getInstance().getClientes();
-	  }
+    return Empresa.getInstance().getClientes();
+  }
 
   public ArrayList<Cliente> getClientesSinServicios() {
     ArrayList<Cliente> clientes = new ArrayList<Cliente>();
@@ -89,10 +89,12 @@ public class Callcenter extends Interno {
 
     for (Tecnico t : getTecnicos()) {
       try {
-        if (t.verificarDisponibilidad(s)) {
-          tecnicosDisponibles.add(t);
-        }
+        t.verificarDisponibilidad(s);
+        tecnicosDisponibles.add(t);
       } catch (Exception e) {
+        System.out.print("Tecnico " + t.getNombre());
+        System.out.print(t.getLegajo() + " no disponible para el servicio con servicio/horario: ");
+        System.out.print(s.getFecha() + " " + s.getHorarioServicio());
       }
     }
     return tecnicosDisponibles;
@@ -205,15 +207,14 @@ public class Callcenter extends Interno {
     return servicioPendiente;
   }
 
-  public boolean verificarDisponibilidadCliente(Cliente c, Servicio s) throws Exception {
+  public void verificarDisponibilidadCliente(Cliente c, Servicio s) throws Exception {
     preValidarCliente(c);
-    return c.verificarDisponibilidad(s);
+    c.verificarDisponibilidad(s);
   }
 
-  public boolean verificarDisponibilidadTecnico(Tecnico t, Servicio s) throws Exception {
+  public void verificarDisponibilidadTecnico(Tecnico t, Servicio s) throws Exception {
     preValidarTecnico(t);
-
-    return t.verificarDisponibilidad(s);
+    t.verificarDisponibilidad(s);
   }
 
   public Servicio crearServicio(Date fechaServicio, TipoServicio ts, FraccionTurno ftDesde, FraccionTurno ftHasta)

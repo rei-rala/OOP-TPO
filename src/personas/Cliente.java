@@ -73,12 +73,12 @@ public class Cliente extends Persona {
 	 * disponibilidad para cierto servicio
 	 * 
 	 */
-	public boolean verificarDisponibilidad(Servicio s) throws Exception {
+	public void verificarDisponibilidad(Servicio s) throws Exception {
 		if (verificarPoseeServicio()) {
 			throw new AgendaException("El cliente ya tiene un servicio vigente");
 		}
 
-		return agenda.verificarDisponibilidad(s);
+		agenda.verificarDisponibilidad(s);
 	}
 
 	public void asignarServicio(Servicio s) throws Exception {
@@ -86,9 +86,8 @@ public class Cliente extends Persona {
 			throw new AsignacionException("El servicio ya se encuentra asignado a este cliente");
 		}
 
-		if (verificarDisponibilidad(s) == false) {
-			throw new AgendaException("El cliente ya tiene un servicio vigente");
-		}
+		verificarDisponibilidad(s);
+    
 		agenda.asignarServicio(s);
 		s.setCliente(this);
 

@@ -42,8 +42,8 @@ public class Tecnico extends Interno {
     return agenda;
   }
 
-  public boolean verificarDisponibilidad(Servicio s) throws Exception {
-    return agenda.verificarDisponibilidad(s);
+  public void verificarDisponibilidad(Servicio s) throws Exception {
+    agenda.verificarDisponibilidad(s);
   }
 
   public ArrayList<Servicio> getServiciosPendientes() {
