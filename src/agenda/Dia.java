@@ -130,7 +130,7 @@ public class Dia {
   private boolean estanTurnosOcupados(Turno t, int inicio, int fin) throws Exception {
     boolean ocupado = false;
 
-    for (int i = inicio; i < fin; i++) {
+    for (int i = inicio; i <= fin; i++) {
       FraccionTurno ft = obtenerFraccionTurno(i, t);
 
       if (ft == null) {
@@ -163,9 +163,9 @@ public class Dia {
 
   public ArrayList<FraccionTurno> obtenerTurnos(Turno t, int desde, int hasta) throws Exception {
     ArrayList<FraccionTurno> turnos = new ArrayList<FraccionTurno>();
-    int expectedSize = hasta - desde;
+    int expectedSize = hasta - desde + 1;
 
-    for (int i = desde; i < hasta; i++) {
+    for (int i = desde; i <= hasta; i++) {
       FraccionTurno ft = obtenerFraccionTurno(i, t);
       if (ft == null) {
         throw new AsignacionException("Parametros de turno no validos");
@@ -235,7 +235,7 @@ public class Dia {
       for (FraccionTurno ft : ftAsignar) {
         ft.asignarServicio(s);
       }
-    } catch (AgendaException e) {
+    } catch (AsignacionException e) {
       throw e;
     } catch (Exception e) {
       throw new AgendaException("Error NOT HANDLED:\n" + e);

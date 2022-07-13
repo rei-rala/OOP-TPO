@@ -81,11 +81,16 @@ public class Agenda {
     if (aAsignar == null) {
       throw new AgendaException("No se pudo asignar el servicio");
     }
-    if (aAsignar.verificarDisponibilidad(s)) {
-      aAsignar.asignarServicio(s);
-    } else {
+    
+    if (this.propietario.getClass() == Tecnico.class) {
+      aAsignar.verificarDisponibilidadPostServicio(s);
+    }
+
+    if (aAsignar.verificarDisponibilidad(s) == false) {
       throw new AsignacionException("No se puede asignar el servicio");
     }
+    
+    aAsignar.asignarServicio(s);
   }
 
   public boolean verificarDisponibilidad(Servicio s) throws Exception {
