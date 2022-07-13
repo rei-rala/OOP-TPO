@@ -6,6 +6,7 @@ import java.util.Date;
 import comercial.Servicio;
 import excepciones.AgendaException;
 import excepciones.AsignacionException;
+import excepciones.ServicioException;
 import main.DateAux;
 
 @SuppressWarnings("deprecation")
@@ -107,24 +108,39 @@ public class Dia {
     return seleccion;
   }
 
-  public boolean validarTurnos(Turno t, int desde, int hasta) {
+  /**
+   * Valida los valores de turno
+   * 
+   * @param t     turno a validar, no null
+   * @param desde numero de turno de inicio
+   * @param hasta numero de turno de fin
+   * @throws ServicioException si los valores de turno no son validos
+   */
+  public void validarTurnos(Turno t, int desde, int hasta) throws ServicioException {
+
+    if (t == null) {
+      throw new ServicioException("Turno no puede ser null");
+    }
+
     String tno = t.toString();
 
-    if (desde > hasta || 0 > desde || 0 > hasta) {
-      return false;
+    if (desde > hasta) {
+      throw new ServicioException("El final del turno debe ser posterior a su inicio");
+    }
+
+    if (0 > desde || 0 > hasta) {
+      throw new ServicioException("El nro de turno es invalido");
     }
 
     if (tno.contains(Turno.MANANA.toString())) {
       if (desde > turnos.size() || hasta > turnos.size()) {
-        return false;
+        throw new ServicioException("El nro de turno no corresponde al turno manana");
       }
     } else {
       if (desde > turnos.size() || hasta > turnos.size()) {
-        return false;
+        throw new ServicioException("El nro de turno no corresponde al turno tarde");
       }
     }
-
-    return true;
   }
 
   private boolean estanTurnosOcupados(Turno t, int inicio, int fin) throws Exception {
@@ -212,9 +228,8 @@ public class Dia {
     int desde = s.getTurnoInicio();
     int hasta = s.getTurnoFin();
 
-    if (validarTurnos(t, desde, hasta) == false) {
-      throw new AgendaException("Turno no validos");
-    }
+    validarTurnos(t, desde, hasta);
+
     if (estanTurnosOcupados(t, desde, hasta)) {
       throw new AgendaException("Turno/s ya ocupado/s");
     }
