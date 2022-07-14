@@ -40,6 +40,11 @@ public class Callcenter extends Interno {
     a.setStock(stock);
   }
 
+  // CLIENTES
+  public Cliente crearCliente(String nombre, long dni, String direccion, String telefono) throws Exception {
+    return new Cliente(nombre, dni, direccion, telefono);
+  }
+
   public Cliente getClientes(int numeroCliente) {
     return Empresa.getInstance().getClientes(numeroCliente);
   }

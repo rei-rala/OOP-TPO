@@ -53,7 +53,7 @@ public class GuiCallcenter extends GuiUsuarioBase {
     btnCrearCliente = new JButton("Crear cliente");
     btnCrearCliente.addActionListener(this);
     pOpcionesCC.add(btnCrearCliente);
-    
+
     pOpcionesCC.add(new JLabel(""));
 
     btnNewServicio = new JButton("Crear servicio para cliente");
@@ -119,19 +119,23 @@ public class GuiCallcenter extends GuiUsuarioBase {
   }
 
   private void crearCliente() throws Exception {
+    int dni = guiValidarInt("Ingrese DNI de cliente:");
 
-    Cliente cliente = CALLCENTER.getClientes(1);
-
-    int nroSeleccionado = guiValidarInt("Ingrese DNI de cliente:");
-
-    if (cliente.existeCliente(nroSeleccionado))
-      alert("DNI: " + nroSeleccionado + " existente en el sistema");
-    else {
-
-      cliente = new Cliente("Cliente creado", nroSeleccionado, "Direccion1", "1156937106");
-      alert("DNI: " + nroSeleccionado + " dado de alta");
+    while (Cliente.existeCliente(dni)) {
+      alert("DNI: " + dni + " existente en el sistema");
+      dni = guiValidarInt("Ingrese DNI de cliente:");
     }
 
+    String nombre = input("Ingrese nombre de cliente:");
+    String telefono = input("Ingrese telefono de cliente:");
+    String direccion = input("Ingrese direccion de cliente:");
+
+    if (nombre.isBlank() || direccion.isBlank() || telefono.isBlank()) {
+      throw new ValorException("Complete todos los campos");
+    }
+
+    Cliente cliente = CALLCENTER.crearCliente(nombre, dni, direccion, telefono);
+    alert("Cliente con DNI: " + cliente.getDni() + " dado de alta");
   }
 
   private void crearServicioCliente() throws Exception {
@@ -139,7 +143,6 @@ public class GuiCallcenter extends GuiUsuarioBase {
     if (c != null) {
       seleccionarDiaServicio(c);
     }
-
   }
 
   private void seleccionarDiaServicio(Cliente c) throws Exception {

@@ -29,7 +29,6 @@ public class Cliente extends Persona {
 
 		Empresa.getInstance().agregarCliente(this);
 	}
-	
 
 
 	public int getNro() {
@@ -45,6 +44,17 @@ public class Cliente extends Persona {
 	 * @returns verdadero si el cliente tiene un servicio vigente
 	 * 
 	 */
+  public static boolean existeCliente(int dni) {
+
+		for (Cliente c : Empresa.getInstance().getClientes()) {
+			if (c.getDni() == dni)
+				return true;
+		}
+
+		return false;
+
+	}
+
 	public boolean verificarPoseeServicio() {
 		boolean poseeServicio = false;
 
@@ -57,16 +67,6 @@ public class Cliente extends Persona {
 		return poseeServicio;
 	}
 
-	public boolean existeCliente(int dni) {
-
-		for (Cliente c : Empresa.getInstance().getClientes()) {
-			if (c.getDni() == dni)
-				return true;
-		}
-
-		return false;
-
-	}
 
 	/**
 	 * Un cliente solo podra tener asignado un servicio por vez Esto verifica la
